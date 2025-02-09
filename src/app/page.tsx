@@ -10,6 +10,7 @@ import DisclaimerSection from "@/components/sections/disclaimer";
 import CTASection from "@/components/sections/cta";
 import InspirationVideo from "@/components/sections/video";
 import Header from "@/components/header";
+import SocialSection from "@/components/sections/social";
 
 const Index = () => {
   return (
@@ -24,6 +25,7 @@ const Index = () => {
       <InspirationVideo />
       <DisclaimerSection />
       <CTASection />
+      <SocialSection />
     </div>
   );
 };
