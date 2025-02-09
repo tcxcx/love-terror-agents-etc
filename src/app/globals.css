@@ -103,5 +103,5 @@ body {
 
 .typing-effect {
   @apply overflow-hidden whitespace-nowrap;
-  animation: typing 3.5s steps(40, end), cursor-blink 0.75s step-end infinite;
+  animation: typing 1.5s steps(10, end), cursor-blink 0.75s step-end infinite;
 }

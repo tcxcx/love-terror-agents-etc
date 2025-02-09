@@ -95,7 +95,7 @@ export default {
   		animation: {
   			'slide-up': 'slide-up 0.5s ease-out',
   			'fade-in': 'fade-in 0.3s ease-out',
-  			typing: 'typing 2s steps(20, end)',
+  			typing: 'typing 1s steps(6, end)',
   			'cursor-blink': 'cursor-blink 0.7s infinite',
   			float: 'float 3s ease-in-out infinite',
   			'shiny-text': 'shiny-text 8s infinite'

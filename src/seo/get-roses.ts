@@ -41,7 +41,7 @@ export async function generateMetadata({
     const roseCount = details.tokenAmount?.toString() ?? "1";
     const chain = searchParams.chain ?? "1";
 
-    const ogImageUrl = `${baseUrl}/api/og/claim?roses=${encodeURIComponent(
+    const ogImageUrl = `${baseUrl}/api/og/love?roses=${encodeURIComponent(
       roseCount
     )}&chain=${encodeURIComponent(chain)}`;
 
@@ -57,8 +57,8 @@ export async function generateMetadata({
         title,
         description,
         images: [{ url: ogImageUrl }],
-        url: `${baseUrl}/claim`,
-        siteName: "valentines-terrorist",
+        url: `${baseUrl}/love`,
+        siteName: "AI Valentines | Cringy Cupid",
         type: "website",
       },
       twitter: {
@@ -81,8 +81,8 @@ export async function generateMetadata({
         title: fallbackTitle,
         description: fallbackDescription,
         images: [{ url: fallbackImage }],
-        url: `${baseUrl}/claim`,
-        siteName: "valentines-terrorist",
+        url: `${baseUrl}/love`,
+        siteName: "AI Valentines | Cringy Cupid",
         type: "website",
       },
       twitter: {

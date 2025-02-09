@@ -51,7 +51,7 @@ export const usePeanut = () => {
     }) => {
       try {
         const tokenDetails = getTokenDetails(tokenAddress);
-        const baseUrl = `${window.location.origin}/claim`;
+        const baseUrl = `${window.location.origin}/love`;
 
         return {
           chainId: chainId.toString(),

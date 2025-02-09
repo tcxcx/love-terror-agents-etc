@@ -183,3 +183,43 @@ export interface ShareOptions {
   link: string;
   message: string;
 }
+
+
+export interface ExtendedPaymentInfo {
+  chainId: number | string;
+  tokenSymbol: string;
+  tokenAmount: string;
+  senderAddress: string;
+  claimed: boolean;
+  depositDate: string;
+  transactionHash?: string;
+  depositIndex: number;
+}
+
+export interface IGetLinkDetailsResponse {
+  link: string;
+  chainId: string;
+  depositIndex: number;
+  contractVersion: string;
+  password: string;
+  sendAddress: string;
+  tokenType: string;
+  tokenAddress: string;
+  tokenDecimals: number;
+  tokenSymbol: string;
+  TokenName: string;
+  tokenAmount: string;
+  tokenId: number;
+  claimed: boolean;
+  depositDate: string;
+  tokenURI: string;
+}
+
+export interface ChainSelectProps {
+  value: string | null;
+  onChange: (value: string) => void;
+  chains: Chain[];
+  label: string;
+  chainId?: number | undefined | string;
+  ccip?: boolean;
+}
