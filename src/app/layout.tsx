@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster"
 import { Geist, Geist_Mono } from "next/font/google";
-import { AI } from "@/actions/index";
 import { GridPattern } from "@/components/magicui/grid-pattern";
 import Providers from "@/utils/providers";
 import { cn } from "@/lib/utils";
@@ -31,7 +30,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <AI>
         <Providers>
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <GridPattern
@@ -47,7 +45,6 @@ export default function RootLayout({
           </body>
           <Toaster />
         </Providers>
-      </AI>
     </html>
   );
 }

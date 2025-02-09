@@ -43,7 +43,7 @@ const TerminalWindow = () => {
           <span className="text-secondary-lighter">{">"}</span> let a cringy AI Cupid be your digital wingman...
         </div>
         <div className="mt-2">
-          <span className="text-secondary-lighter">{">"}</span> guessing wonapos;t be easy let them be a simp for YOU...
+          <span className="text-secondary-lighter">{">"}</span> guessing will not be easy let them be a simp for YOU...
         </div>
         <div className="mt-2">
           <span className="text-secondary-lighter">{">"}</span> hey! even autists should play hard to get...
@@ -61,6 +61,7 @@ const TerminalWindow = () => {
           <Button
             onClick={() => navigate.push('/roses')}
             variant="secondary"
+            disabled={true}
             className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300"
           >
             🌹 Send Roses 🌹
@@ -68,6 +69,8 @@ const TerminalWindow = () => {
           <Button
             onClick={() => navigate.push('/love')}
             variant="secondary"
+            disabled={true}
+
             className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300"
           >
             💝 Claim $LOVE 💝

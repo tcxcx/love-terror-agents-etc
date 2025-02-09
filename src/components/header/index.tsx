@@ -50,7 +50,7 @@ const HeaderFull: React.FC = () => {
                 </SparklesText>
                 <span className="absolute mt-28 sm:mt-20 opacity-0 group-hover:opacity-100 group-hover:-rotate-12 transition-all duration-300">
                   <span className="inline-block pl-5 pt-10 font-clash bg-gradient-to-r text-sm from-pink-300 via-purple-400 to-cyan-300 bg-clip-text text-transparent">
-                    Get some $LOVE
+                    Get some $LOVE soon
                   </span>
                 </span>
               </div>
