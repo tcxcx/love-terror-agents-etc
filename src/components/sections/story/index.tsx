@@ -16,10 +16,10 @@ const DevStorySection = () => {
               <p className="text-accent/80 mb-4">
                 During #ETHGlobal, this dev came up to me saying:<br/>
                 &quot;Bro, I wish I was a DevRel like you. You get to travel, touch grass, AND have a gf?! 
-                Meanwhile I&lsquo;m here grinding 24/7 on smart contracts living off energy drinks and copium&quot; 😭
+                Meanwhile I&lsquo;m here grinding 24/7 on smart contracts living off energy drinks and hopium&quot; 😭
               </p>
               <p className="text-accent/80 font-mono">
-                That&lsquo;s why we built this. For all my fellow keyboard warriors out there. 🫡
+                That&lsquo;s why we built this shitty website. For all my fellow keyboard autistic warriors out there. 🫡
               </p>
               <div className="mt-4 text-sm text-accent/60">
                 6:09 PM · Feb 14, 2024 · 420 reposts · 69 likes

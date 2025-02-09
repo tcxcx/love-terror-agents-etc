@@ -1,28 +1,15 @@
-import { Suspense } from 'react';
-import ValentineChat from '@/components/valentine-chat';
-import { getGameState } from '@/utils/supabase/queries';
-import { createGameState } from '@/utils/supabase/mutations';
-// import { generateMetadata } from "@/seo/get-roses";
-import GiftCounter from '@/components/gift-counter';
 
-// export { generateMetadata };
+import React from "react";
+import Header from "@/components/header";
+import SendRoses from "@/components/send-roses";
 
-
-export default async function Page() {
-  // Initialize game state on page load
-  const gameState = await getGameState();
-  if (!gameState) {
-    await createGameState();
-  }
-
-
+const RosesPage = () => {
   return (
-    <>
-      <GiftCounter gameState={gameState!} />
-
-      <Suspense fallback={<div>Loading game state...</div>}>
-        <ValentineChat />
-      </Suspense>
-    </>
+    <div className="min-h-screen bg-gradient-to-b from-primary-lighter to-white">
+      <Header />
+      <SendRoses />
+    </div>
   );
-}
+};
+
+export default RosesPage;

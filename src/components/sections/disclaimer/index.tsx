@@ -21,7 +21,18 @@ const DisclaimerSection = () => {
             </p>
             <p className="font-mono text-sm">
               I&lsquo;m literally just trying to help my fellow keyboard warriors find love and spread the one.
-              This is NOT financial advice. DYOR (Date at Your Own Risk).
+              <br/>
+              </p>
+              <p className="font-mono text-sm"> 
+              You cannot buy love.
+              <br/>
+              </p>
+              <p className="font-mono text-sm">
+              You can only buy $LOVE.
+              <br/>
+              </p>
+              <p className="font-mono text-sm">
+              This is NOT financial advice. DYOR x 2 (Date at Your Own Risk).
             </p>
             <p className="text-xs italic">
               * Results may vary. Success rate directly proportional to your ability to touch grass and be a CHAD.

@@ -9,10 +9,12 @@ import FeatureGrid from "@/components/sections/features/feature-grid";
 import DisclaimerSection from "@/components/sections/disclaimer";
 import CTASection from "@/components/sections/cta";
 import InspirationVideo from "@/components/sections/video";
+import Header from "@/components/header";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-lighter to-white">
+      <Header />
       <HeroSection />
       <TerminalWindow />
       <TokenSection />

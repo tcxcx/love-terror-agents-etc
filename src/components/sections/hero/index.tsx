@@ -17,7 +17,7 @@ const HeroSection = () => {
             onClick={() => router.push('/love')}
             className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-neutral-600 hover:duration-300 hover:dark:text-neutral-400 cursor-pointer"
           >
-          <span>✨  Helping dev&lsquo;s get laid for Valentine&lsquo;s Day 👀</span>
+          <span>✨  Helping dev&lsquo;s get dates for Valentine&lsquo;s Day 👀</span>
 
           <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
           </AnimatedShinyText>         
@@ -28,6 +28,7 @@ const HeroSection = () => {
           </h1>
           <p className="text-lg text-accent/80 mt-6 font-mono">
             {">"} I am a simp for Love <span className="text-red-500 animate-pulse">❤</span>
+
           </p>
           <p className="text-sm text-accent/60 italic">
             (It&lsquo;s ok, we are all just trying our best...)

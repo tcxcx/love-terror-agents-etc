@@ -21,20 +21,29 @@ const TerminalWindow = () => {
       </div>
       <div className="bg-accent p-6 font-mono text-primary-lighter">
         <div className="typing-effect">
-          <span className="text-secondary-lighter">{">"}</span> Initializing <span className="text-secondary-lighter animate-pulse">simp</span> mode...
+          <AnimatedSpan>
+            <span className="text-secondary-lighter">{">"}</span> Initializing <span className="text-secondary-lighter animate-pulse">simp</span> mode...
+            </AnimatedSpan>
           <br/>
+            <AnimatedSpan>
+
           <span className="text-red-400">
             Roses are red 🌹<br/>
             Violets are blue 💜<br/>
             My portfolio&lsquo;s rekt ❤️‍🩹<br/>
-            But I still love you 💝s
-          </span>
+            But I still love you 💝</span>
+          </AnimatedSpan>
         </div>
+        <AnimatedSpan>
+
         <div className="mt-2">
           <span className="text-secondary-lighter">{">"}</span> send roses to your valentine...
         </div>
         <div className="mt-2">
-          <span className="text-secondary-lighter">{">"}</span> let AI Cupid be your digital wingman...
+          <span className="text-secondary-lighter">{">"}</span> let a cringy AI Cupid be your digital wingman...
+        </div>
+        <div className="mt-2">
+          <span className="text-secondary-lighter">{">"}</span> guessing won't be easy let them be a simp for you...
         </div>
         <div className="mt-2">
           <span className="text-secondary-lighter">{">"}</span> hey! even autists should play hard to get...
@@ -46,16 +55,18 @@ const TerminalWindow = () => {
         <div className="mt-2 animate-pulse">
           <span className="text-secondary-lighter">{">"}</span> waiting for your move, champion... <span className="text-secondary-lighter animate-pulse">_</span>
         </div>
+        </AnimatedSpan>
+
         <div className="mt-4 flex justify-center gap-4">
           <Button
-            onClick={() => navigate.push('/send-roses')}
+            onClick={() => navigate.push('/roses')}
             variant="secondary"
             className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300"
           >
             🌹 Send Roses 🌹
           </Button>
           <Button
-            onClick={() => navigate.push('/claim-love')}
+            onClick={() => navigate.push('/love')}
             variant="secondary"
             className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300"
           >
