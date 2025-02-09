@@ -3,7 +3,7 @@ import React from "react";
 import { Copy, Link } from "lucide-react";
 
 const TokenSection = () => {
-  const contractAddress = "0x1234567890abcdef1234567890abcdef12345678";
+  const contractAddress = "will reveal soon 😍";
 
 
   return (
