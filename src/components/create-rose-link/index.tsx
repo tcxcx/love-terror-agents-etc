@@ -1,0 +1,182 @@
+'use client';
+
+import { useState } from "react";
+import { usePeanut } from "@/hooks/use-peanut";
+import { useToast } from "@/hooks/use-toast";
+import LinkUiForm from "@/components/create-link-input";
+import Overlay from "@/components/overlay";
+import { Token, TransactionDetails } from "@/types";
+import confetti from "canvas-confetti";
+import { useGetTokensOrChain } from "@/hooks/use-tokens-or-chain";
+import { useNetworkManager } from "@/hooks/use-dynamic-network";
+import { truncateAddress } from "@/utils/truncate-address";
+import { createRoseSubmission, createPeanutLink } from "@/utils/supabase/mutations/client";
+
+interface RoseLinkFormProps {
+    formData: any;
+    onSubmitForm: (handler: (data: any) => Promise<void>) => (e: React.BaseSyntheticEvent) => Promise<void>;
+  }
+  
+  export default function RoseLinkForm({ formData, onSubmitForm }: RoseLinkFormProps) {
+    const { toast } = useToast();
+  const currentChainId = useNetworkManager();
+  const chainId = currentChainId as number;
+  const availableTokens = useGetTokensOrChain(chainId, "tokens");
+
+  const {
+    createPayLink,
+    isLoading: isPeanutLoading,
+    copyToClipboard,
+  } = usePeanut();
+
+  const [overlayVisible, setOverlayVisible] = useState(false);
+  const [usdAmount, setUsdAmount] = useState<number>(0);
+  const [tokenAmount, setTokenAmount] = useState<number>(0);
+  const [transactionDetails, setTransactionDetails] =
+    useState<TransactionDetails | null>(null);
+  const [selectedToken, setSelectedToken] = useState<string>("");
+  const [currentText, setCurrentText] = useState<string>("");
+
+  const handleSubmit = async (formData: any) => {
+    if (!formData.formState.isValid || !selectedToken || tokenAmount <= 0) {
+      toast({
+        title: "Form Error",
+        description: "Please fill out all required fields and select a token amount",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setOverlayVisible(true);
+    try {
+      const tokenAddress = selectedToken;
+      setCurrentText("Planting roses link...");
+
+      const rose = await createRoseSubmission({
+        ...formData,
+        amount_roses: tokenAmount,
+      });
+
+      if (!rose) {
+        throw new Error("Failed to create rose submission");
+      }
+
+      const linkResponse = await createPayLink(
+        tokenAmount.toString(),
+        tokenAddress,
+        () => setCurrentText("Please be patient..."),
+        () => setCurrentText("Rose Bouquet Link created successfully"),
+        (error: Error) =>
+          setCurrentText(`${"Failed to create link"} ${error.message}`),
+      );
+      if (linkResponse) {
+        setTransactionDetails(linkResponse as TransactionDetails);
+
+        triggerConfetti("😍");
+      } else {
+        setOverlayVisible(false);
+      }
+    } catch (error: any) {
+      console.error("Error creating pay link:", error);
+      setOverlayVisible(false);
+      toast({
+        title: `Failed to create link`,
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setOverlayVisible(true);
+    }
+  };
+
+  const handleCloseOverlay = () => {
+    setOverlayVisible(false);
+  };
+
+  const handleValueChange = (usdAmount: number, tokenAmount: number) => {
+    setUsdAmount(usdAmount);
+    setTokenAmount(tokenAmount);
+  };
+
+  const handleShare = (platform: string) => {
+    const url = transactionDetails?.paymentLink;
+    if (typeof window === "undefined") return;
+
+    if (platform === "whatsapp") {
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(url || "")}`,
+        "_blank"
+      );
+    } else if (platform === "telegram") {
+      window.open(
+        `https://t.me/share/url?url=${encodeURIComponent(url || "")}`,
+        "_blank"
+      );
+    }
+  };
+
+  const handleCopy = (text: string, label: string) => {
+    copyToClipboard(text);
+    triggerConfetti("💸👻💸");
+
+    toast({
+      title: "Copied to clipboard",
+      description: `${label} copied to clipboard so you can share it with your Valentines`,
+    });
+  };
+
+  const triggerConfetti = (emoji: string) => {
+    const scalar = 4;
+    const confettiEmoji = confetti.shapeFromText({ text: emoji, scalar });
+
+    const defaults = {
+      spread: 360,
+      ticks: 60,
+      gravity: 0,
+      decay: 0.96,
+      startVelocity: 20,
+      shapes: [confettiEmoji],
+      scalar,
+    };
+
+    const shoot = () => {
+      confetti({ ...defaults, particleCount: 30 });
+      confetti({ ...defaults, particleCount: 5 });
+      confetti({
+        ...defaults,
+        particleCount: 15,
+        scalar: scalar / 2,
+        shapes: ["circle"],
+      });
+    };
+
+    setTimeout(shoot, 0);
+    setTimeout(shoot, 100);
+    setTimeout(shoot, 200);
+  };
+
+  return (
+    <section className="mx-auto h-full flex flex-col items-center">
+      <LinkUiForm
+        tokenAmount={tokenAmount}
+        handleValueChange={handleValueChange}
+        availableTokens={availableTokens as Token[]}
+        setSelectedToken={setSelectedToken}
+        chainId={chainId}
+        handleCreateLinkClick={onSubmitForm(handleSubmit)}
+        isPeanutLoading={isPeanutLoading}
+      />
+      {overlayVisible && (
+        <Overlay
+          handleCloseOverlay={handleCloseOverlay}
+          currentText={currentText}
+          transactionDetails={transactionDetails}
+          chainId={chainId}
+          handleCopy={handleCopy}
+          handleShare={handleShare}
+          truncateHash={truncateAddress}
+        />
+      )}
+    </section>
+  );
+}

@@ -1,3 +1,5 @@
+import { Dispatch } from "react";
+import { SetStateAction } from "react";
 import type { Abi, Address, Hex } from "viem";
 
 export interface IGetLinkDetailsResponse {
@@ -26,6 +28,7 @@ export interface IGetLinkDetailsResponse {
     secret_admirer_name: string;
     secret_question: string;
     secret_answer: string;
+    system_prompt: string;
     clue_1: string;
     clue_2?: string;
     clue_3?: string;
@@ -94,3 +97,89 @@ export interface IGetLinkDetailsResponse {
     depositDate: string;
     tokenURI: string;
   }
+
+  export interface TransactionDetails {
+    transactionHash: string;
+    peanutLink: string;
+    paymentLink: string;
+  }
+
+export type ChainList = 8453 | 84532  | undefined;
+export interface WriteButtonProps {
+  label: string;
+  contractAddress: string;
+  abi: any;
+  functionName: string;
+  args: any[];
+  isNative?: boolean;
+  nativeAmount?: string;
+}
+
+export interface TransactionDetailsDisplayProps {
+  transactionDetails: TransactionDetails;
+  chainId: number | undefined;
+  handleCopy: (text: string, label: string) => void;
+  handleShare: (platform: string) => void;
+  truncateHash: (hash: string) => string;
+}
+
+export interface LinkUiFormProps {
+  tokenAmount: number;
+  handleValueChange: (usdAmount: number, tokenAmount: number) => void;
+  availableTokens: Token[];
+  setSelectedToken: Dispatch<SetStateAction<string>>;
+  chainId: number | undefined;
+  handleCreateLinkClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  isPeanutLoading: boolean;
+}
+
+
+export interface Chain {
+  chainId: number;
+  isMainnet: boolean;
+  name: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+    iconUrls: string[];
+  };
+  rpcUrls: string[];
+  blockExplorerUrls: string[];
+  chainName: string;
+  vanityName: string;
+  networkId: number;
+  iconUrls: string[];
+}
+
+export interface CurrencyDisplayerProps {
+  onValueChange: (value: number, formattedValue: number) => void;
+  initialAmount?: number;
+  availableTokens: Token[];
+  onTokenSelect: (token: Token) => void;
+  currentNetwork: number;
+  tokenAmount?: number | string;
+  size?: "sm" | "base" | "lg";
+  action?: "default" | "pay";
+  defaultToken?: Token;
+}
+
+export interface UseTokenBalanceProps {
+  tokenAddress: Address;
+  chainId: ChainList;
+  address: Address;
+  decimals: number;
+  setBalance?: (balance: string) => void;
+}
+
+export interface FramedQRCodeProps {
+  image: string;
+  copyLink?: () => void;
+  link: string;
+  frameText?: string;
+}
+
+export interface ShareOptions {
+  link: string;
+  message: string;
+}

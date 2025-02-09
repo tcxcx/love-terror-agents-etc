@@ -31,7 +31,7 @@ const HeroSection = () => {
 
           </p>
           <p className="text-sm text-accent/60 italic">
-            (It&lsquo;s ok, we are all just trying our best...)
+            (FU Cupid, this is MY $LOVE quest...)
           </p>
         </div>
       </div>

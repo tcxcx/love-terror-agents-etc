@@ -11,3 +11,6 @@ if (!DYNAMIC_ENVIRONMENT_ID || !PEANUTAPIKEY) {
 
 export const IS_MAINNET =
   process.env.NEXT_PUBLIC_IS_MAINNET === "http://localhost:3000" ? false : true;
+
+
+export const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL;

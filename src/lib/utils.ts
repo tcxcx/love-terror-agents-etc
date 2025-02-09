@@ -15,6 +15,8 @@ export  const confettiLove = () => {
   const randomInRange = (min: number, max: number) =>
     Math.random() * (max - min) + min;
 
+  if (typeof window === "undefined") return;
+
   const interval = window.setInterval(() => {
     const timeLeft = animationEnd - Date.now();
 
@@ -63,3 +65,23 @@ export const VALENTINE_ASCII = `
 Te pido perdon por haberte llamado 'bruja', pero es que nunca he sentido tanta magia como la que siento cuando te veo. Tanto que me aterras.
 `;
 
+
+export const defaultQRSize = 150;
+
+export const sizeStyles = {
+  container: {
+    sm: 'w-48',
+    base: 'w-64',
+    lg: 'w-72'
+  },
+  input: {
+    sm: 'text-lg',
+    base: 'text-2xl',
+    lg: 'text-6xl'
+  },
+  balance: {
+    sm: 'text-xs',
+    base: 'text-sm',
+    lg: 'text-base'
+  }
+};

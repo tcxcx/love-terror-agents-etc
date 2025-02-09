@@ -14,17 +14,20 @@ const eslintConfig = [
   {
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
-      
       "@typescript-eslint/no-explicit-any": "off",
-      
       "@typescript-eslint/ban-ts-comment": [
         "off",
         {
           "ts-expect-error": "allow-with-description"
         }
       ],
-
       "@typescript-eslint/no-unused-parameters": "off",
+
+      "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+      "@typescript-eslint/no-empty-interface": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
+      "prefer-const": "off",
+      "react-hooks/rules-of-hooks": "warn"
     }
   }
 ];

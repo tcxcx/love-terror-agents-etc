@@ -23,7 +23,7 @@ const HowItWorksSection = () => {
             </div>
             <h3 className="text-xl font-bold mb-2">AI-Powered Mystery</h3>
             <p className="text-accent/70">
-              Our AI wingman creates puzzles even an autist can solve 🧩
+              Our AI wingman creates puzzles even your autist crush can solve 🧩
             </p>
           </div>
           <div className="retro-window p-6 hover:scale-105 transition-transform duration-300 group">

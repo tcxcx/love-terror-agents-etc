@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useForm } from "react-hook-form"
-import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -15,21 +14,17 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { createPeanutLink, createRoseSubmission } from "@/utils/supabase/mutations/client"
-import { usePeanut } from "@/hooks/use-peanut";
+import { Textarea } from "@/components/ui/textarea"
+import RoseLinkForm from "@/components/create-rose-link"
 
 
-const formSchema = z.object({"valentines_name":z.string().min(1).max(255),"secret_admirer_name":z.string().min(1).max(255),"secret_question":z.string().min(1).max(255),"secret_answer":z.string().min(1),"clue_1":z.string(),"clue_2":z.string().optional(),"clue_3":z.string().optional(),"clue_4":z.string().optional(),"clue_5":z.string().optional(),"clue_6":z.string().optional(),"clue_7":z.string().max(255).optional(),"poem_text":z.string().min(1),"date_site":z.string().min(1).max(255),"date_details":z.string().min(1).max(255).optional(),"calendly_link":z.string().min(1).max(255).optional(),"amount_roses":z.coerce.number().gte(1).lte(9999999999)})
+const formSchema = z.object({"system_prompt":z.string().min(1).max(1500),"valentines_name":z.string().min(1).max(255),"secret_admirer_name":z.string().min(1).max(255),"secret_question":z.string().min(1).max(255),"secret_answer":z.string().min(1),"clue_1":z.string(),"clue_2":z.string().optional(),"clue_3":z.string().optional(),"clue_4":z.string().optional(),"clue_5":z.string().optional(),"clue_6":z.string().optional(),"clue_7":z.string().max(255).optional(),"poem_text":z.string().min(1),"date_site":z.string().min(1).max(255),"date_details":z.string().min(1).max(255).optional(),"calendly_link":z.string().min(1).max(255).optional(),"amount_roses":z.coerce.number().gte(0.001).lte(9999999999)})
 
 export default function SendRoses() {
-    const {
-        createPayLink,
-        isLoading: isPeanutLoading,
-        copyToClipboard,
-      } = usePeanut();
-
     const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+    system_prompt: "",
     valentines_name: "",
     secret_admirer_name: "string",
     secret_question: "string",
@@ -63,7 +58,7 @@ export default function SendRoses() {
     } catch (error) {
         console.error('Error in form submission:', error);
     }
-    }
+}
 
   return (
     <div className="w-full p-4">
@@ -73,9 +68,31 @@ export default function SendRoses() {
           <p className="text-gray-600 mb-6">Send roses to your loved ones</p>
           <Form {...form}>
             <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                {/* Context System Prompt */}
+                <FormField
+                    control={form.control}
+                    name="system_prompt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Context of you and your valentine</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Jane Austen is a writter and is a Geminis, she studies Literature and her hobbies are reading and writing..."
+                            className="resize-none"
+                            {...field}
+                            />
+                        </FormControl>
+                        <FormDescription>
+                          Give context of you and your valentine. Give as much detail about your connectionas possible.
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />    
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-8">
                   {/* Left Column */}
+                  
                   <FormField
                     control={form.control}
                     name="valentines_name"
@@ -242,7 +259,7 @@ export default function SendRoses() {
                           <Input placeholder="Something mean maybe?" {...field} />
                         </FormControl>
                         <FormDescription>
-                          Here goes the sixtg clue
+                          Here goes the sixth clue
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -333,26 +350,12 @@ export default function SendRoses() {
                       </FormItem>
                     )}
                   />
-                  
-                  <FormField
-                    control={form.control}
-                    name="amount_roses"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Amount of Roses</FormLabel>
-                        <FormControl>
-                          <Input type="number" placeholder="Roses" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          How many roses do you want to send? Roses are sent as $LOVE tokens and need to be purchased
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
               </div>
-              <Button className="w-full mt-8" type="submit">Create Roses Link</Button>
+              <RoseLinkForm
+                formData={form.getValues()}
+                onSubmitForm={form.handleSubmit}
+              />
             </form>
           </Form>
         </div>
