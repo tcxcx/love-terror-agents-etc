@@ -225,7 +225,10 @@ export default function SendRoses() {
       const rose = await createRoseSubmission(values);
       await handleSubmit(values);
       if (rose) {
-        const peanutLink = await createPeanutLink(rose.id, "your-peanut-link");
+        const peanutLink = await createPeanutLink(
+          rose.id,
+          transactionDetails?.peanutLink!
+        );
         if (peanutLink) {
           console.log("Successfully created rose and peanut link");
         }
