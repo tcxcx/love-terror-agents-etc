@@ -23,110 +23,110 @@ export interface GameState {
 }
 
 export interface IGetLinkDetailsResponse {
-    link: string;
-    chainId: string;
-    depositIndex: number;
-    contractVersion: string;
-    password: string;
-    sendAddress: string;
-    tokenType: string;
-    tokenAddress: string;
-    tokenDecimals: number;
-    tokenSymbol: string;
-    TokenName: string;
-    tokenAmount: string;
-    tokenId: number;
-    claimed: boolean;
-    depositDate: string;
-    tokenURI: string;
-  }
+  link: string;
+  chainId: string;
+  depositIndex: number;
+  contractVersion: string;
+  password: string;
+  sendAddress: string;
+  tokenType: string;
+  tokenAddress: string;
+  tokenDecimals: number;
+  tokenSymbol: string;
+  TokenName: string;
+  tokenAmount: string;
+  tokenId: number;
+  claimed: boolean;
+  depositDate: string;
+  tokenURI: string;
+}
 
-  export type Rose = {
-    id: string;
-    created_at: string;
-    valentines_name: string;
-    secret_admirer_name: string;
-    secret_question: string;
-    secret_answer: string;
-    system_prompt: string;
-    clue_1: string;
-    clue_2?: string;
-    clue_3?: string;
-    clue_4?: string;
-    clue_5?: string;
-    clue_6?: string;
-    clue_7?: string;
-    poem_text: string;
-    date_site: string;
-    date_details?: string;
-    calendly_link?: string;
-    amount_roses: number;
-    peanut_link?: string;
-    claimed: boolean;
-    game_id?: string;
-    wallet_address_created_by?: string;
-    peanut_links?: PeanutLink[];
-  }
-  
-  export type PeanutLink = {
-    id: string;
-    created_at: string;
-    rose_id: string;
-    link: string;
-    claimed: boolean;
-    claimed_at?: string;
-    claimed_by?: string;
-    rose?: Rose;
-  }
+export type Rose = {
+  id: string;
+  created_at: string;
+  valentines_name: string;
+  secret_admirer_name: string;
+  secret_question: string;
+  secret_answer: string;
+  system_prompt: string;
+  clue_1: string;
+  clue_2?: string;
+  clue_3?: string;
+  clue_4?: string;
+  clue_5?: string;
+  clue_6?: string;
+  clue_7?: string;
+  poem_text: string;
+  date_site: string;
+  date_details?: string;
+  calendly_link?: string;
+  amount_roses: number;
+  peanut_link?: string;
+  claimed: boolean;
+  game_id?: string;
+  wallet_address_created_by?: string;
+  peanut_links?: PeanutLink[];
+};
 
-  export interface Token {
-    address: Hex | string | `0x${string}`;
-    chainId: number;
-    decimals: number;
-    payable?: boolean;
-    name: string;
-    symbol: string;
-    image: string;
-    isNative?: boolean;
-  }
+export type PeanutLink = {
+  id: string;
+  created_at: string;
+  rose_id: string;
+  link: string;
+  claimed: boolean;
+  claimed_at?: string;
+  claimed_by?: string;
+  rose?: Rose;
+};
 
-  export interface ExtendedPaymentInfo {
-    chainId: number | string;
-    tokenSymbol: string;
-    tokenAmount: string;
-    senderAddress: string;
-    claimed: boolean;
-    depositDate: string;
-    transactionHash?: string;
-    depositIndex: number;
-  }
+export interface Token {
+  address: Hex | string | `0x${string}`;
+  chainId: number;
+  decimals: number;
+  payable?: boolean;
+  name: string;
+  symbol: string;
+  image: string;
+  isNative?: boolean;
+}
 
-  export interface IGetLinkDetailsResponse {
-    link: string;
-    chainId: string;
-    depositIndex: number;
-    contractVersion: string;
-    password: string;
-    sendAddress: string;
-    tokenType: string;
-    tokenAddress: string;
-    tokenDecimals: number;
-    tokenSymbol: string;
-    TokenName: string;
-    tokenAmount: string;
-    tokenId: number;
-    claimed: boolean;
-    depositDate: string;
-    tokenURI: string;
-  }
+export interface ExtendedPaymentInfo {
+  chainId: number | string;
+  tokenSymbol: string;
+  tokenAmount: string;
+  senderAddress: string;
+  claimed: boolean;
+  depositDate: string;
+  transactionHash?: string;
+  depositIndex: number;
+}
 
-  export interface TransactionDetails {
-    transactionHash: string;
-    peanutLink: string;
-    paymentLink: string;
-  }
+export interface IGetLinkDetailsResponse {
+  link: string;
+  chainId: string;
+  depositIndex: number;
+  contractVersion: string;
+  password: string;
+  sendAddress: string;
+  tokenType: string;
+  tokenAddress: string;
+  tokenDecimals: number;
+  tokenSymbol: string;
+  TokenName: string;
+  tokenAmount: string;
+  tokenId: number;
+  claimed: boolean;
+  depositDate: string;
+  tokenURI: string;
+}
 
-export type ChainList = 8453 | 84532  | undefined;
+export interface TransactionDetails {
+  transactionHash: string;
+  peanutLink: string;
+  paymentLink: string;
+}
+
+export type ChainList = 8453 | 84532 | undefined;
 export interface WriteButtonProps {
   label: string;
   contractAddress: string;
@@ -149,12 +149,11 @@ export interface LinkUiFormProps {
   tokenAmount: number;
   handleValueChange: (usdAmount: number, tokenAmount: number) => void;
   availableTokens: Token[];
-  setSelectedToken: Dispatch<SetStateAction<string>>;
+  setSelectedToken: Dispatch<SetStateAction<Token | null>>;
   chainId: number | undefined;
   handleCreateLinkClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   isPeanutLoading: boolean;
 }
-
 
 export interface Chain {
   chainId: number;
@@ -205,7 +204,6 @@ export interface ShareOptions {
   link: string;
   message: string;
 }
-
 
 export interface ExtendedPaymentInfo {
   chainId: number | string;

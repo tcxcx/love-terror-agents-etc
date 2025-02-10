@@ -25,11 +25,6 @@ import { sizeStyles } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { getAllChains } from "@/utils/get-explorer";
 
-
-
-
-const MAX_DECIMALS = 18;
-
 const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   tokenAmount,
   onValueChange,
@@ -39,8 +34,8 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   currentNetwork,
   size = "base",
   action = "request",
-  defaultToken = undefined,
 }) => {
+  console.log(availableTokens, "availableTokens");
   const chainId = useChainId();
   const tokens =
     useGetTokensOrChain(currentNetwork, "tokens") || availableTokens;
@@ -61,6 +56,8 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
     }
   }, [availableTokens]);
 
+  console.log(selectedToken, "selectedToken");
+
   const balance = useTokenBalance({
     address: address || "0x0",
     chainId: chainId || undefined,
@@ -72,14 +69,6 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   const actualChain = getAllChains().find(
     (chain) => chain.chainId === currentNetwork
   );
-
-  // useEffect(() => {
-  //   if (ETH && !selectedToken && !defaultToken) {
-  //     setSelectedToken(ETH);
-  //   } else if (defaultToken) {
-  //     setSelectedToken(defaultToken);
-  //   }
-  // }, [ETH, defaultToken]);
 
   useEffect(() => {
     if (tokenAmount !== undefined) {
@@ -161,7 +150,6 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
       return;
     }
 
-    // Validar formato de número (incluyendo ceros iniciales y un punto decimal)
     if (/^\d*\.?\d*$/.test(value)) {
       setInputValue(value); // Actualizar el valor ingresado directamente
 
@@ -188,7 +176,6 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   };
 
   const getTokenValue = (token: Token) => token.address || token.symbol;
-
 
   return (
     <div
