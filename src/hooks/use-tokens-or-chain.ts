@@ -1,6 +1,6 @@
-import { BaseSepoliaTokens, BaseTokens } from "@/utils/constants/Tokens";
-import { Base, BaseSepolia } from "@/utils/constants/Chains";
-import { IS_MAINNET as isMainnet } from "@/utils/constants/Env";
+import { BaseSepoliaTokens, BaseTokens } from "@/constants/Tokens";
+import { Base, BaseSepolia } from "@/constants/Chains";
+import { IS_MAINNET as isMainnet } from "@/constants/Env";
 
 export const useGetTokensOrChain = (
   chainId: number,

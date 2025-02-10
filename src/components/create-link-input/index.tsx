@@ -4,12 +4,9 @@ import { LinkUiFormProps } from "@/types";
 
 export default function LinkUiForm({
   tokenAmount,
-  handleValueChange,
-  availableTokens,
-  setSelectedToken,
-  chainId,
   handleCreateLinkClick,
   isPeanutLoading,
+  handleValueChange,
 }: LinkUiFormProps) {
   return (
     <>
@@ -22,14 +19,12 @@ export default function LinkUiForm({
           <CurrencyDisplayer
             tokenAmount={tokenAmount}
             onValueChange={handleValueChange}
-            availableTokens={availableTokens}
-            onTokenSelect={setSelectedToken}
-            currentNetwork={chainId!}
             size="lg"
             action="default"
           />
         </div>
       </div>
+
       <div className="flex justify-between w-full space-x-2">
         <Button
           size={"lg"}

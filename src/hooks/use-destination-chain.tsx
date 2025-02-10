@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { NATIVE_TOKEN_ADDRESS } from "@/utils/constants/Tokens";
+import { NATIVE_TOKEN_ADDRESS } from "@/constants/Tokens";
 import { useGetTokensOrChain } from "@/hooks/use-tokens-or-chain";
 import { Token } from "@/types";
 

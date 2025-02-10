@@ -18,7 +18,18 @@ import {
   createRoseSubmission,
 } from "@/utils/supabase/mutations/client";
 import { Textarea } from "@/components/ui/textarea";
-import RoseLinkForm from "@/components/create-rose-link";
+import RoseLinkForm from "../create-rose-link";
+import CurrencyDisplayer from "../currency";
+import { Button } from "../ui/button";
+import confetti from "canvas-confetti";
+import { TransactionDetails } from "@/types";
+import { BaseSepoliaTokens } from "@/constants/Tokens";
+import { useState } from "react";
+import { usePeanut } from "@/hooks/use-peanut";
+import { useNetworkManager } from "@/hooks/use-dynamic-network";
+import { useAccount } from "wagmi";
+import { useToast } from "@/hooks/use-toast";
+// import RoseLinkForm from "@/components/create-rose-link";
 
 const formSchema = z.object({
   system_prompt: z.string().min(1).max(1500),
@@ -63,10 +74,153 @@ export default function SendRoses() {
       amount_roses: 1,
     },
   });
+  const { toast } = useToast();
+  const { address } = useAccount();
+  const currentChainId = useNetworkManager();
+  const chainId = currentChainId as number;
+
+  const {
+    createPayLink,
+    isLoading: isPeanutLoading,
+    copyToClipboard,
+  } = usePeanut();
+
+  const [overlayVisible, setOverlayVisible] = useState(false);
+  const [transactionDetails, setTransactionDetails] =
+    useState<TransactionDetails | null>(null);
+  const [currentText, setCurrentText] = useState<string>("");
+  const [tokenAmount, setTokenAmount] = useState<number>(0);
+  const onValueChange = (usdAmount: number, tokenAmount: number) => {
+    setTokenAmount(tokenAmount);
+  };
+
+  // RoseLinkForm.tsx
+  const handleSubmit = async (formData: any) => {
+    console.log(formData, "formData");
+
+    setOverlayVisible(true);
+    try {
+      const tokenAddress = BaseSepoliaTokens[0].address;
+      setCurrentText("Creating rose link...");
+
+      // Generate peanut link first
+      const linkResponse = await createPayLink(
+        tokenAmount.toString(),
+        tokenAddress,
+        () => setCurrentText("Please be patient..."),
+        () => setCurrentText("Rose link created successfully"),
+        (error: Error) =>
+          setCurrentText(`Failed to create link: ${error.message}`)
+      );
+
+      if (!linkResponse) {
+        throw new Error("Failed to create peanut link");
+      }
+
+      setTransactionDetails(linkResponse as TransactionDetails);
+
+      // Create rose submission with wallet address and peanut link
+      const rose = await createRoseSubmission({
+        ...formData,
+        amount_roses: tokenAmount.toString(),
+        wallet_address_created_by: address,
+        peanut_link: linkResponse.paymentLink,
+        claimed: false,
+      });
+
+      if (!rose) {
+        throw new Error("Failed to create rose submission");
+      }
+
+      const peanutLinkRecord = await createPeanutLink(
+        rose.id,
+        linkResponse.paymentLink
+      );
+
+      if (!peanutLinkRecord) {
+        throw new Error("Failed to record peanut link");
+      }
+
+      triggerConfetti("😍");
+    } catch (error: any) {
+      console.error("Error in submission process:", error);
+      setOverlayVisible(false);
+      toast({
+        title: "Failed to create rose",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setOverlayVisible(true);
+    }
+  };
+
+  const handleCloseOverlay = () => {
+    setOverlayVisible(false);
+  };
+
+  const handleShare = (platform: string) => {
+    const url = transactionDetails?.paymentLink;
+    if (typeof window === "undefined") return;
+
+    if (platform === "whatsapp") {
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(url || "")}`,
+        "_blank"
+      );
+    } else if (platform === "telegram") {
+      window.open(
+        `https://t.me/share/url?url=${encodeURIComponent(url || "")}`,
+        "_blank"
+      );
+    }
+  };
+
+  const handleCopy = (text: string, label: string) => {
+    copyToClipboard(text);
+    triggerConfetti("💸👻💸");
+
+    toast({
+      title: "Copied to clipboard",
+      description: `${label} copied to clipboard so you can share it with your Valentines`,
+    });
+  };
+
+  const triggerConfetti = (emoji: string) => {
+    const scalar = 4;
+    const confettiEmoji = confetti.shapeFromText({ text: emoji, scalar });
+
+    const defaults = {
+      spread: 360,
+      ticks: 60,
+      gravity: 0,
+      decay: 0.96,
+      startVelocity: 20,
+      shapes: [confettiEmoji],
+      scalar,
+    };
+
+    const shoot = () => {
+      confetti({ ...defaults, particleCount: 30 });
+      confetti({ ...defaults, particleCount: 5 });
+      confetti({
+        ...defaults,
+        particleCount: 15,
+        scalar: scalar / 2,
+        shapes: ["circle"],
+      });
+    };
+
+    setTimeout(shoot, 0);
+    setTimeout(shoot, 100);
+    setTimeout(shoot, 200);
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values, "values");
     try {
       const rose = await createRoseSubmission(values);
+      await handleSubmit(values);
       if (rose) {
         const peanutLink = await createPeanutLink(rose.id, "your-peanut-link");
         if (peanutLink) {
@@ -412,10 +566,36 @@ export default function SendRoses() {
                   />
                 </div>
               </div>
-              <RoseLinkForm
+
+              <div className="flex w-full md:h-[100px] lg:h-[200px] flex-col justify-between rounded-xl border">
+                <div className="px-4 pt-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-xl">💸💕💸</span>
+                    <span>Send $LOVE quest</span>
+                  </div>
+                  <CurrencyDisplayer
+                    tokenAmount={tokenAmount}
+                    onValueChange={onValueChange}
+                    size="lg"
+                    action="default"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-between w-full space-x-2">
+                <Button
+                  size={"lg"}
+                  type="submit"
+                  className="mt-5 flex items-center gap-2 self-end w-full"
+                  disabled={isPeanutLoading}
+                >
+                  <span>Create Link 🌹</span>
+                </Button>
+              </div>
+              {/* <RoseLinkForm
                 formData={form.getValues()}
                 onSubmitForm={form.handleSubmit}
-              />
+              /> */}
             </form>
           </Form>
         </div>

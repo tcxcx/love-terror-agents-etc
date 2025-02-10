@@ -146,13 +146,10 @@ export interface TransactionDetailsDisplayProps {
 }
 
 export interface LinkUiFormProps {
-  tokenAmount: number;
-  handleValueChange: (usdAmount: number, tokenAmount: number) => void;
-  availableTokens: Token[];
-  setSelectedToken: Dispatch<SetStateAction<Token | null>>;
-  chainId: number | undefined;
-  handleCreateLinkClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  isPeanutLoading: boolean;
+  tokenAmount?: number;
+  handleValueChange?: (usdAmount: number, tokenAmount: number) => void;
+  handleCreateLinkClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  isPeanutLoading?: boolean;
 }
 
 export interface Chain {
@@ -172,13 +169,10 @@ export interface Chain {
   networkId: number;
   iconUrls: string[];
 }
-
 export interface CurrencyDisplayerProps {
-  onValueChange: (value: number, formattedValue: number) => void;
+  onValueChange?: (value: number, formattedValue: number) => void;
   initialAmount?: number;
-  availableTokens: Token[];
-  onTokenSelect: (token: Token) => void;
-  currentNetwork: number;
+  token?: Token;
   tokenAmount?: number | string;
   size?: "sm" | "base" | "lg";
   action?: "default" | "pay";

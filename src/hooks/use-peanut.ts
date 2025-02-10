@@ -11,9 +11,9 @@ import { useTransactionStore } from "@/store";
 import { useToast } from "@/hooks/use-toast";
 import { useChainId } from "wagmi";
 import { useEthersSigner } from "@/lib/wagmi";
-import { NATIVE_TOKEN_ADDRESS } from "@/utils/constants/Tokens";
+import { NATIVE_TOKEN_ADDRESS } from "@/constants/Tokens";
 import { Token } from "@/types";
-import { PEANUTAPIKEY } from "@/utils/constants/Env";
+import { PEANUTAPIKEY } from "@/constants/Env";
 import { saveCreatedLinkToLocalStorage } from "@/utils/local-storage";
 import { playAudio } from "@/utils/audio/server";
 

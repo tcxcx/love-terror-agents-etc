@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
-import * as Chains from "@/utils/constants/Chains";
+import * as Chains from "@/constants/Chains";
 
 interface NetworkSelectorProps {
   currentChainId: string;

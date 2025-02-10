@@ -17,7 +17,7 @@ import { useGetTokensOrChain } from "@/hooks/use-tokens-or-chain";
 import { Chain } from "@/types";
 import Image from "next/image";
 import { TokenChip } from "@/components/token-chip";
-import { allTokens } from "@/utils/constants/Tokens";
+import { allTokens } from "@/constants/Tokens";
 import Link from "next/link";
 import {
   Tooltip,
@@ -77,9 +77,7 @@ export default function ClaimsDisplay() {
       const statuses: { [key: string]: string } = {};
       for (const claim of claims) {
         const data = await fetchLinkDetail(claim.link);
-        statuses[claim.link] = data?.claimed
-          ? "Claimed"
-          : "Unclaimed";
+        statuses[claim.link] = data?.claimed ? "Claimed" : "Unclaimed";
       }
       setClaimStatuses(statuses);
     };
@@ -91,9 +89,7 @@ export default function ClaimsDisplay() {
     return (
       <Card className="w-full h-[400px]">
         <CardContent className="pt-6">
-          <p className="text-center text-muted-foreground ">
-            👁️⃤  No data 👁️⃤
-          </p>
+          <p className="text-center text-muted-foreground ">👁️⃤ No data 👁️⃤</p>
         </CardContent>
       </Card>
     );
@@ -113,8 +109,8 @@ export default function ClaimsDisplay() {
     <div className="space-y-4">
       <div className="flex flex-col gap-1">
         <label className="text-xs font-semibold font-aeonik">
-          Claimed Roses 
-       </label>
+          Claimed Roses
+        </label>
       </div>
       <div className="rounded-md border h-[400px]">
         <Table className="justify-between items-center">
