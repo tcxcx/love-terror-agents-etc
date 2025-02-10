@@ -59,9 +59,9 @@ const HeaderFull: React.FC = () => {
 
           {/* Right-aligned Dynamic Widget */}
           <div className="w-[250px] flex justify-end">
-            <Suspense fallback={<Skeleton className="h-4 w-[250px]" />}>
+            {/* <Suspense fallback={<Skeleton className="h-4 w-[250px]" />}>
               <DynamicWidget />
-            </Suspense>
+            </Suspense> */}
           </div>
         </div>
       </div>
