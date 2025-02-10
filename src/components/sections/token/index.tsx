@@ -28,7 +28,7 @@ const TokenSection = () => {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-3 bg-secondary text-white rounded-lg font-medium hover:bg-secondary-darker transition-colors duration-300 shadow-lg"
           >
-            Buy $LOVE on SecretSwap <3 <Link className="w-4 h-4" />
+            Buy $LOVE on SecretSwap <Link className="w-4 h-4" />
           </a>
         </div>
       </div>
