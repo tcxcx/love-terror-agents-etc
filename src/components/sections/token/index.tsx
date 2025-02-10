@@ -12,7 +12,7 @@ const TokenSection = () => {
         <div className="retro-window p-8 bg-gradient-to-r from-secondary/5 to-primary/5">
           <h2 className="text-3xl font-bold mb-6">Get Your Love Tokens 💝</h2>
           <p className="text-lg mb-6">
-            Power your romantic journey with $LOVE tokens on Base blockchain
+            Power your romantic journey with $LOVE tokens on Secret blockchain
           </p>
           <div className="flex items-center justify-center gap-4 mb-8">
             <code className="bg-accent/5 p-2 rounded text-sm">{contractAddress}</code>
@@ -28,7 +28,7 @@ const TokenSection = () => {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-3 bg-secondary text-white rounded-lg font-medium hover:bg-secondary-darker transition-colors duration-300 shadow-lg"
           >
-            Buy $LOVE on Uniswap <Link className="w-4 h-4" />
+            Buy $LOVE on SecretSwap <3 <Link className="w-4 h-4" />
           </a>
         </div>
       </div>
