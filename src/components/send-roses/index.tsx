@@ -29,6 +29,9 @@ import { usePeanut } from "@/hooks/use-peanut";
 import { useNetworkManager } from "@/hooks/use-dynamic-network";
 import { useAccount } from "wagmi";
 import { useToast } from "@/hooks/use-toast";
+import Overlay from "../overlay";
+import { truncateAddress } from "@/utils/truncate-address";
+
 // import RoseLinkForm from "@/components/create-rose-link";
 
 const formSchema = z.object({
@@ -592,6 +595,17 @@ export default function SendRoses() {
                   <span>Create Link 🌹</span>
                 </Button>
               </div>
+              {overlayVisible && (
+                <Overlay
+                  handleCloseOverlay={handleCloseOverlay}
+                  currentText={currentText}
+                  transactionDetails={transactionDetails}
+                  chainId={chainId}
+                  handleCopy={handleCopy}
+                  handleShare={handleShare}
+                  truncateHash={truncateAddress}
+                />
+              )}
               {/* <RoseLinkForm
                 formData={form.getValues()}
                 onSubmitForm={form.handleSubmit}
