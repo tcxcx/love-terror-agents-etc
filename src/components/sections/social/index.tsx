@@ -19,7 +19,7 @@ const SocialSection = () => {
             >
               <div className="relative">
                 <Image 
-                  src="/x.png" 
+                  src="/social/X_logo.webp" 
                   alt="X" 
                   width={24} 
                   height={24}
@@ -28,24 +28,6 @@ const SocialSection = () => {
               </div>
               <span className="font-medium text-accent group-hover:text-secondary">
                 Follow @cringycupid69
-              </span>
-            </Link>
-            <Link 
-              href="https://discord.gg/" 
-              target="_blank"
-              className="group flex items-center gap-3 px-6 py-3 bg-secondary/10 rounded-full hover:bg-secondary/20 transition-all duration-300"
-            >
-              <div className="relative">
-                <Image 
-                  src="/discord.png" 
-                  alt="Discord" 
-                  width={24} 
-                  height={24}
-                  className="group-hover:scale-110 transition-transform duration-300"
-                />
-              </div>
-              <span className="font-medium text-accent group-hover:text-secondary">
-                Join our Discord
               </span>
             </Link>
           </div>
