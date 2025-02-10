@@ -16,7 +16,7 @@ import Image from "next/image";
 import { chainIdMapping, chainIcons } from "@/components/peanut/card/details";
 import { ExtendedPaymentInfo, IGetLinkDetailsResponse } from "@/types";
 import NetworkSelector from "@/components/network-selector";
-import * as Chains from "@/utils/constants/Chains";
+import * as Chains from "@/constants/Chains";
 import { useSwitchNetwork } from "@dynamic-labs/sdk-react-core";
 import { getBlockExplorerUrlByChainId } from "@/utils/get-explorer";
 import { fetchLinkDetails } from "@/utils/local-storage";
@@ -60,7 +60,9 @@ export default function ClaimForm({
   const getDestinationTokenAddress = useDestinationToken();
 
   const [inProgress, setInProgress] = useState(false);
-  const [currentText, setCurrentText] = useState("You can claim your roses 🌹🌹🌹");
+  const [currentText, setCurrentText] = useState(
+    "You can claim your roses 🌹🌹🌹"
+  );
   const chains = Object.values(Chains).map((chain) => ({
     chainId: chain.chainId,
   }));
@@ -72,11 +74,7 @@ export default function ClaimForm({
 
   useEffect(() => {
     if (initialClaimId) {
-      fetchLinkDetails(
-        initialClaimId,
-        setDetails,
-        setPaymentInfo,
-      );
+      fetchLinkDetails(initialClaimId, setDetails, setPaymentInfo);
     }
   }, [initialClaimId]);
 
@@ -103,11 +101,7 @@ export default function ClaimForm({
     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 
     if (inputLink) {
-      await fetchLinkDetails(
-        inputLink,
-        setDetails,
-        setPaymentInfo,
-      );
+      await fetchLinkDetails(inputLink, setDetails, setPaymentInfo);
     }
 
     setOverlayVisible(true);
@@ -130,7 +124,10 @@ export default function ClaimForm({
         setCurrentText("Claiming your roses 🌹🌹🌹");
         const txHash = await claimPayLink(
           details?.link || "",
-          () => setCurrentText("You will soon try to find who your secret admirer is 🌹🌹🌹"),
+          () =>
+            setCurrentText(
+              "You will soon try to find who your secret admirer is 🌹🌹🌹"
+            ),
           () => setCurrentText("Claiming your roses 🌹🌹🌹"),
           (error: Error) => setCurrentText(`Error: ${error.message}`),
           () => setCurrentText("Claiming your roses 🌹🌹🌹")
@@ -386,9 +383,7 @@ export default function ClaimForm({
                                               target="_blank"
                                               className="flex items-center"
                                             >
-                                              <span>
-                                                View in Explorer
-                                              </span>
+                                              <span>View in Explorer</span>
                                               <ChevronRightIcon className="size-4" />
                                             </Link>
                                           </p>

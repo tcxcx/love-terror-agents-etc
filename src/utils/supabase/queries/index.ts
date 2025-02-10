@@ -27,33 +27,29 @@ export async function getGameState(): Promise<GameState | null> {
     .single();
     
   if (error) {
-    console.error('Error fetching game state:', error);
+    console.error("Error fetching game state:", error);
     return null;
   }
-
   const gameState = {
     ...data,
-    claimed: data.roses?.length > 0 ? data.roses[0].claimed : false
+    claimed: data.roses?.length > 0 ? data.roses[0].claimed : false,
   };
-  
   return gameState;
 }
-
 export async function checkRoseClaimed(peanutLink: string): Promise<boolean> {
   const supabase = await createClient();
   
   // Check if rose with this peanut link exists and is claimed
+
   const { data, error } = await supabase
-    .from('roses')
-    .select('claimed')
-    .eq('peanut_link', peanutLink)
+    .from("roses")
+    .select("claimed")
+    .eq("peanut_link", peanutLink)
     .single();
-    
   if (error) {
-    console.error('Error checking rose claimed status:', error);
+    console.error("Error checking rose claimed status:", error);
     return false;
   }
-  
   return data?.claimed || false;
 }
 
@@ -99,15 +95,13 @@ export async function getGameStateByRoseId(roseId: string): Promise<GameState | 
     `)
     .eq('roses.id', roseId)
     .single();
-    
   if (error) {
-    console.error('Error fetching game state by rose:', error);
+    console.error("Error fetching game state by rose:", error);
     return null;
   }
-
   return {
     ...data,
-    claimed: data.roses[0].claimed
+    claimed: data.roses[0].claimed,
   };
 }
 

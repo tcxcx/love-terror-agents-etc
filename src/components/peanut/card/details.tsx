@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { PaymentInfoProps } from "@/types";
 import { getChainInfoByChainId } from "@/components/peanut/claim/claim-info";
-import * as chains from "@/utils/constants/Chains";
+import * as chains from "@/constants/Chains";
 
 export const chainIdMapping = Object.values(chains).reduce((map, chain) => {
   map[chain.chainId] = chain.vanityName || chain.name;

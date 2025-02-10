@@ -11,7 +11,7 @@ import { useDestinationToken } from "@/hooks/use-destination-chain";
 import { getChainInfoByChainId } from "@/components/peanut/claim/claim-info";
 import { toast } from "@/hooks/use-toast";
 import { ChainSelect } from "@/components/chain-select";
-import * as chains from "@/utils/constants/Chains";
+import * as chains from "@/constants/Chains";
 import { Input } from "@/components/ui/input";
 
 interface ClaimInfoProps {
@@ -31,7 +31,7 @@ export default function ClaimInfo({
   destinationChainId = "",
   setDestinationChainId,
   onClaimSuccess,
-  isClaimingLink
+  isClaimingLink,
 }: ClaimInfoProps) {
   const [inProgress, setInProgress] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
@@ -43,7 +43,7 @@ export default function ClaimInfo({
   const getDestinationTokenAddress = useDestinationToken();
   const [isMultiChain, setIsMultiChain] = useState(false);
   const [isOtherWallet, setIsOtherWallet] = useState(false);
-  
+
   const {
     isLoading: isPeanutLoading,
     claimPayLinkXChain,

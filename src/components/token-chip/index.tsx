@@ -1,4 +1,4 @@
-import { NATIVE_TOKEN_ADDRESS } from "@/utils/constants/Tokens";
+import { NATIVE_TOKEN_ADDRESS } from "@/constants/Tokens";
 import { Chain, Token } from "@/types";
 import { cn } from "@/lib/utils";
 import { pressable } from "@/utils/theme";
@@ -17,13 +17,7 @@ interface TokenChipProps {
   chain?: Chain;
 }
 
-export function TokenChip({
-  token,
-  onClick,
-  className,
-  amount,
-  chain,
-}: TokenChipProps) {
+export function TokenChip({ token, onClick, className }: TokenChipProps) {
   return (
     <button
       type="button"
@@ -36,22 +30,7 @@ export function TokenChip({
       )}
       onClick={() => onClick?.(token)}
     >
-      {token?.address !== NATIVE_TOKEN_ADDRESS ? (
-        <Image src={token?.image} alt={token?.symbol} width={24} height={24} />
-      ) : (
-        <Image
-          src={chain?.nativeCurrency?.iconUrls[0]!}
-          alt={token?.symbol}
-          width={24}
-          height={24}
-        />
-      )}
-      {amount && <span>{amount}</span>}
-      {token?.address === NATIVE_TOKEN_ADDRESS ? (
-        <>{chain! && <span>{chain.nativeCurrency.symbol!}</span>}</>
-      ) : (
-        <span>{token?.symbol}</span>
-      )}
+      <Image src={token?.image} alt={token?.symbol} width={24} height={24} />
     </button>
   );
 }

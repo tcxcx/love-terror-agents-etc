@@ -15,7 +15,7 @@ import {
   createRoseSubmission,
   createPeanutLink,
 } from "@/utils/supabase/mutations/client";
-import { BaseSepoliaTokens } from "@/utils/constants/Tokens";
+import { BaseSepoliaTokens } from "@/constants/Tokens";
 
 interface RoseLinkFormProps {
   formData: any;
@@ -32,10 +32,6 @@ export default function RoseLinkForm({
   const { address } = useAccount();
   const currentChainId = useNetworkManager();
   const chainId = currentChainId as number;
-  console.log(chainId, "chainId");
-  const availableTokens = BaseSepoliaTokens;
-
-  console.log(availableTokens, "availableTokens");
 
   const {
     createPayLink,
@@ -44,21 +40,19 @@ export default function RoseLinkForm({
   } = usePeanut();
 
   const [overlayVisible, setOverlayVisible] = useState(false);
-  const [usdAmount, setUsdAmount] = useState<number>(0);
-  const [tokenAmount, setTokenAmount] = useState<number>(0);
   const [transactionDetails, setTransactionDetails] =
     useState<TransactionDetails | null>(null);
-  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [currentText, setCurrentText] = useState<string>("");
+  const [tokenAmount, setTokenAmount] = useState<number>(0);
+  const onValueChange = (usdAmount: number, tokenAmount: number) => {
+    setTokenAmount(tokenAmount);
+  };
 
   // RoseLinkForm.tsx
+  console.log(tokenAmount, "tokenAmount");
   const handleSubmit = async (formData: any) => {
-    if (
-      !formData.formState.isValid ||
-      !selectedToken ||
-      tokenAmount <= 0 ||
-      !address
-    ) {
+    console.log(formData, "formData");
+    if (!formData.formState.isValid || !address) {
       toast({
         title: "Form Error",
         description:
@@ -70,7 +64,7 @@ export default function RoseLinkForm({
 
     setOverlayVisible(true);
     try {
-      const tokenAddress = selectedToken;
+      const tokenAddress = BaseSepoliaTokens[0].address;
       setCurrentText("Creating rose link...");
 
       // Generate peanut link first
@@ -92,7 +86,7 @@ export default function RoseLinkForm({
       // Create rose submission with wallet address and peanut link
       const rose = await createRoseSubmission({
         ...formData,
-        amount_roses: tokenAmount,
+        amount_roses: tokenAmount.toString(),
         wallet_address_created_by: address,
         peanut_link: linkResponse.paymentLink,
         claimed: false,
@@ -128,11 +122,6 @@ export default function RoseLinkForm({
 
   const handleCloseOverlay = () => {
     setOverlayVisible(false);
-  };
-
-  const handleValueChange = (usdAmount: number, tokenAmount: number) => {
-    setUsdAmount(usdAmount);
-    setTokenAmount(tokenAmount);
   };
 
   const handleShare = (platform: string) => {
@@ -195,11 +184,7 @@ export default function RoseLinkForm({
   return (
     <section className="mx-auto h-full flex flex-col items-center">
       <LinkUiForm
-        tokenAmount={tokenAmount}
-        handleValueChange={handleValueChange}
-        availableTokens={availableTokens as Token[]}
-        setSelectedToken={setSelectedToken}
-        chainId={chainId}
+        handleValueChange={onValueChange}
         handleCreateLinkClick={onSubmitForm(handleSubmit)}
         isPeanutLoading={isPeanutLoading}
       />
