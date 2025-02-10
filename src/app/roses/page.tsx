@@ -1,7 +1,12 @@
+'use client';
 
 import React from "react";
+import dynamic from 'next/dynamic';
 import Header from "@/components/header";
-import SendRoses from "@/components/send-roses";
+
+const SendRoses = dynamic(() => import('@/components/send-roses'), {
+  ssr: false
+});
 
 const RosesPage = () => {
   return (

@@ -7,6 +7,7 @@ import LinkUiForm from "@/components/create-link-input";
 import Overlay from "@/components/overlay";
 import { Token, TransactionDetails } from "@/types";
 import confetti from "canvas-confetti";
+import { useAccount } from "wagmi"; 
 import { useGetTokensOrChain } from "@/hooks/use-tokens-or-chain";
 import { useNetworkManager } from "@/hooks/use-dynamic-network";
 import { truncateAddress } from "@/utils/truncate-address";
@@ -19,6 +20,7 @@ interface RoseLinkFormProps {
   
   export default function RoseLinkForm({ formData, onSubmitForm }: RoseLinkFormProps) {
     const { toast } = useToast();
+    const { address } = useAccount();
   const currentChainId = useNetworkManager();
   const chainId = currentChainId as number;
   const availableTokens = useGetTokensOrChain(chainId, "tokens");
@@ -37,57 +39,73 @@ interface RoseLinkFormProps {
   const [selectedToken, setSelectedToken] = useState<string>("");
   const [currentText, setCurrentText] = useState<string>("");
 
-  const handleSubmit = async (formData: any) => {
-    if (!formData.formState.isValid || !selectedToken || tokenAmount <= 0) {
-      toast({
-        title: "Form Error",
-        description: "Please fill out all required fields and select a token amount",
-        variant: "destructive",
-      });
-      return;
+// RoseLinkForm.tsx
+const handleSubmit = async (formData: any) => {
+  if (!formData.formState.isValid || !selectedToken || tokenAmount <= 0 || !address) {
+    toast({
+      title: "Form Error",
+      description: "Please connect your wallet and fill out all required fields",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  setOverlayVisible(true);
+  try {
+    const tokenAddress = selectedToken;
+    setCurrentText("Creating rose link...");
+
+    // Generate peanut link first
+    const linkResponse = await createPayLink(
+      tokenAmount.toString(),
+      tokenAddress,
+      () => setCurrentText("Please be patient..."),
+      () => setCurrentText("Rose link created successfully"),
+      (error: Error) => setCurrentText(`Failed to create link: ${error.message}`),
+    );
+
+    if (!linkResponse) {
+      throw new Error("Failed to create peanut link");
     }
 
+    setTransactionDetails(linkResponse as TransactionDetails);
+
+    // Create rose submission with wallet address and peanut link
+    const rose = await createRoseSubmission({
+      ...formData,
+      amount_roses: tokenAmount,
+      wallet_address_created_by: address,
+      peanut_link: linkResponse.paymentLink,
+      claimed: false
+    });
+
+    if (!rose) {
+      throw new Error("Failed to create rose submission");
+    }
+
+    // Create peanut link record
+    const peanutLinkRecord = await createPeanutLink(
+      rose.id,
+      linkResponse.paymentLink
+    );
+
+    if (!peanutLinkRecord) {
+      throw new Error("Failed to record peanut link");
+    }
+
+    triggerConfetti("😍");
+  } catch (error: any) {
+    console.error("Error in submission process:", error);
+    setOverlayVisible(false);
+    toast({
+      title: "Failed to create rose",
+      description: error.message,
+      variant: "destructive",
+    });
+  } finally {
     setOverlayVisible(true);
-    try {
-      const tokenAddress = selectedToken;
-      setCurrentText("Planting roses link...");
-
-      const rose = await createRoseSubmission({
-        ...formData,
-        amount_roses: tokenAmount,
-      });
-
-      if (!rose) {
-        throw new Error("Failed to create rose submission");
-      }
-
-      const linkResponse = await createPayLink(
-        tokenAmount.toString(),
-        tokenAddress,
-        () => setCurrentText("Please be patient..."),
-        () => setCurrentText("Rose Bouquet Link created successfully"),
-        (error: Error) =>
-          setCurrentText(`${"Failed to create link"} ${error.message}`),
-      );
-      if (linkResponse) {
-        setTransactionDetails(linkResponse as TransactionDetails);
-
-        triggerConfetti("😍");
-      } else {
-        setOverlayVisible(false);
-      }
-    } catch (error: any) {
-      console.error("Error creating pay link:", error);
-      setOverlayVisible(false);
-      toast({
-        title: `Failed to create link`,
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setOverlayVisible(true);
-    }
-  };
+  }
+};
 
   const handleCloseOverlay = () => {
     setOverlayVisible(false);

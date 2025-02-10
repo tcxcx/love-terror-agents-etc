@@ -2,21 +2,23 @@ import React from "react";
 import { ToastAction } from "@/components/ui/toast";
 import Link from "next/link";
 import { ChevronRightIcon } from "lucide-react";
-import { getBlockExplorerUrlByChainId, playAudio } from "@/utils";
+import { playAudio } from "@/utils/audio";
+import { getBlockExplorerUrlByChainId } from "@/utils/get-explorer";
+
 import { motion } from "framer-motion";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { PaymentInfoProps } from "@/lib/types";
-import { getChainInfoByChainId } from "../claim";
-import * as Chains from "@/constants/Chains";
+import { PaymentInfoProps } from "@/types";
+import { getChainInfoByChainId } from "@/components/peanut/claim/claim-info";
+import * as chains from "@/utils/constants/Chains";
 
-export const chainIdMapping = Object.values(Chains).reduce((map, chain) => {
+export const chainIdMapping = Object.values(chains).reduce((map, chain) => {
   map[chain.chainId] = chain.vanityName || chain.name;
   return map;
 }, {} as Record<number, string>);
 
-export const chainIcons = Object.values(Chains).reduce((icons, chain) => {
+export const chainIcons = Object.values(chains).reduce((icons, chain) => {
   icons[chain.chainId] = chain.iconUrls[0];
   return icons;
 }, {} as Record<number, string>);

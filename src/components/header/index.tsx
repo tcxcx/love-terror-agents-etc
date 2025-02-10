@@ -4,16 +4,10 @@ import React, { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Skeleton } from "../ui/skeleton";
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { useHoverAudio } from "@/utils/audio";
-import { ActionBannerSkeleton } from "@/components/skeletons";
 import SparklesText from "@/components/magicui/sparkles-text";
-import dynamic from "next/dynamic";
-
-const ActionBanner = dynamic(() => import("@/components/action-banner"), {
-  loading: () => <ActionBannerSkeleton />,
-});
+import { Skeleton } from "@/components/ui/skeleton";
 
 const song = "/audio/saxophone.mp3";
 
@@ -23,7 +17,6 @@ const HeaderFull: React.FC = () => {
 
   return (
     <div className="bg-transparent">
-      <ActionBanner />
       <div className="container mx-auto px-4">
         <div className="relative flex items-center justify-between h-24">
           {/* Spacer div to help with centering */}

@@ -14,10 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, CopyIcon } from "lucide-react";
 import { useGetTokensOrChain } from "@/hooks/use-tokens-or-chain";
-import { Chain } from "@/lib/types";
+import { Chain } from "@/types";
 import Image from "next/image";
 import { TokenChip } from "@/components/token-chip";
-import { allTokens } from "@/constants/Tokens";
+import { allTokens } from "@/utils/constants/Tokens";
 import Link from "next/link";
 import {
   Tooltip,
@@ -25,11 +25,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { usePeanut } from "@/hooks/use-peanut";
-import { useAppTranslations } from "@/context/TranslationContext";
-import { fetchLinkDetail, triggerConfetti } from "@/utils";
+import { fetchLinkDetail } from "@/utils/local-storage";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { getAllChains } from "@/utils";
+import { getAllChains } from "@/utils/get-explorer";
 
 export interface ClaimData {
   link: string;
@@ -49,13 +48,11 @@ export default function ClaimsDisplay() {
   );
   const { primaryWallet } = useDynamicContext();
   const { copyToClipboard } = usePeanut();
-  const translations = useAppTranslations("HistoryTab");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 5;
 
   const handleCopy = (text: string, label: string) => {
     copyToClipboard(text);
-    triggerConfetti("💸👻💸");
   };
 
   useEffect(() => {
@@ -81,21 +78,21 @@ export default function ClaimsDisplay() {
       for (const claim of claims) {
         const data = await fetchLinkDetail(claim.link);
         statuses[claim.link] = data?.claimed
-          ? translations.tabClaimed
+          ? "Claimed"
           : "Unclaimed";
       }
       setClaimStatuses(statuses);
     };
 
     fetchClaimStatuses();
-  }, [claims, translations.tabClaimed]);
+  }, [claims]);
 
   if (claims?.length === 0) {
     return (
       <Card className="w-full h-[400px]">
         <CardContent className="pt-6">
           <p className="text-center text-muted-foreground ">
-            👁️⃤ {translations.noData} 👁️⃤
+            👁️⃤  No data 👁️⃤
           </p>
         </CardContent>
       </Card>
@@ -116,21 +113,21 @@ export default function ClaimsDisplay() {
     <div className="space-y-4">
       <div className="flex flex-col gap-1">
         <label className="text-xs font-semibold font-aeonik">
-          {translations.title}
-        </label>
+          Claimed Roses 
+       </label>
       </div>
       <div className="rounded-md border h-[400px]">
         <Table className="justify-between items-center">
           <TableHeader className="justify-between items-center">
             <TableRow>
               <TableHead className="w-[50px] hidden">#</TableHead>
-              <TableHead>{translations.tabLink}</TableHead>
-              <TableHead>{translations.tabDate}</TableHead>
-              <TableHead>{translations.tabHash}</TableHead>
-              <TableHead>{translations.tabChain}</TableHead>
+              <TableHead>Link</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Hash</TableHead>
+              <TableHead>Chain</TableHead>
 
-              <TableHead>{translations.tabToken}</TableHead>
-              <TableHead>{translations.tabClaimed}</TableHead>
+              <TableHead>Token</TableHead>
+              <TableHead>Claimed</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="justify-between items-center">

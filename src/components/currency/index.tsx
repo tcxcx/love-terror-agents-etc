@@ -25,6 +25,11 @@ import { sizeStyles } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { getAllChains } from "@/utils/get-explorer";
 
+
+
+
+const MAX_DECIMALS = 18;
+
 const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   tokenAmount,
   onValueChange,
@@ -65,7 +70,6 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   });
 
   const actualChain = getAllChains().find(
-    // @ts-ignore
     (chain) => chain.chainId === currentNetwork
   );
 
@@ -141,7 +145,6 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
           {displayBalance}{" "}
           {selectedToken
             ? selectedToken.symbol
-            // @ts-ignore
             : actualChain?.nativeCurrency.symbol}
         </Button>
       </>
@@ -185,6 +188,7 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   };
 
   const getTokenValue = (token: Token) => token.address || token.symbol;
+
 
   return (
     <div

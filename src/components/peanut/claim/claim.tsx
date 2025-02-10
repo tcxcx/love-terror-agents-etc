@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import PaymentDetails from "@/components/peanut/card/details";
 import { Switch } from "@/components/ui/switch";
@@ -13,28 +14,36 @@ import { ChainSelect } from "@/components/chain-select";
 import * as chains from "@/utils/constants/Chains";
 import { Input } from "@/components/ui/input";
 
-export default function ClaimInfo({
-  paymentInfo,
-  setPaymentInfo,
-  details,
-}: {
+interface ClaimInfoProps {
   paymentInfo: ExtendedPaymentInfo;
   setPaymentInfo: (paymentInfo: ExtendedPaymentInfo | null) => void;
   destinationChainId?: string;
   setDestinationChainId?: (destinationChainId: string) => void;
   details: IGetLinkDetailsResponse;
-}) {
+  onClaimSuccess: (txHash: string) => void;
+  isClaimingLink?: boolean;
+}
+
+export default function ClaimInfo({
+  paymentInfo,
+  setPaymentInfo,
+  details,
+  destinationChainId = "",
+  setDestinationChainId,
+  onClaimSuccess,
+  isClaimingLink
+}: ClaimInfoProps) {
   const [inProgress, setInProgress] = useState(false);
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [currentText, setCurrentText] = useState("");
   const [transactionDetails, setTransactionDetails] = useState<string | null>(
     null
   );
-  const [destinationChainId, setDestinationChainId] = useState<string>("");
   const [otherWalletAddress, setOtherWalletAddress] = useState<string>("");
   const getDestinationTokenAddress = useDestinationToken();
   const [isMultiChain, setIsMultiChain] = useState(false);
   const [isOtherWallet, setIsOtherWallet] = useState(false);
+  
   const {
     isLoading: isPeanutLoading,
     claimPayLinkXChain,
@@ -43,11 +52,10 @@ export default function ClaimInfo({
 
   if (!paymentInfo) return null;
 
-
   const handleClaim = async () => {
     setInProgress(true);
     setOverlayVisible(true);
-    setCurrentText("Starting Claiming your roses 🌹🌹🌹");
+    setCurrentText("Starting to claim your roses 🌹🌹🌹");
 
     if (paymentInfo?.claimed) {
       toast({
@@ -55,42 +63,21 @@ export default function ClaimInfo({
         description: "You have already claimed your roses 🌹🌹🌹",
       });
       setCurrentText("You have already claimed your roses 🌹🌹🌹");
-    } else if (paymentInfo && !destinationChainId) {
-      try {
-        setCurrentText("Claiming your roses 🌹🌹🌹");
-        const txHash = await claimPayLink(
-          details?.link || "",
-          () => setCurrentText("Claiming your roses 🌹🌹🌹"),
-          () => setCurrentText("Patiencie... Claiming your roses 🌹🌹🌹"),
-          (error: Error) => setCurrentText(`Error: ${error.message}`),
-          () => setCurrentText("Almost done 🌹🌹🌹"),
-          otherWalletAddress
-        );
-        setTransactionDetails(txHash);
-        setPaymentInfo({
-          ...paymentInfo,
-          transactionHash: txHash,
-          claimed: true,
-        });
-      } catch (error) {
-        console.error("Error claiming payment link:", error);
-        setInProgress(false);
-        setOverlayVisible(false);
-        setCurrentText("Error claiming your roses");
-      }
-    } else if (paymentInfo && destinationChainId) {
-      try {
+      return;
+    }
+
+    try {
+      let txHash;
+      if (destinationChainId) {
+        // Handle cross-chain claim
         const sourceChainInfo = getChainInfoByChainId(paymentInfo.chainId);
         const isMainnet = sourceChainInfo.isMainnet;
-
-        setCurrentText("Claiming your roses 🌹🌹🌹");
-
         const destinationToken = await getDestinationTokenAddress(
           paymentInfo.tokenSymbol,
           destinationChainId
         );
 
-        const txHash = await claimPayLinkXChain(
+        txHash = await claimPayLinkXChain(
           details?.link || "",
           destinationChainId,
           destinationToken,
@@ -100,18 +87,26 @@ export default function ClaimInfo({
           () => setCurrentText("Claiming your roses 🌹🌹🌹"),
           isMainnet
         );
-        setTransactionDetails(txHash);
-        setPaymentInfo({
-          ...paymentInfo,
-          transactionHash: txHash,
-          claimed: true,
-        });
-      } catch (error) {
-        console.error("Error claiming cross-chain payment link:", error);
-        setInProgress(false);
-        setOverlayVisible(false);
-        setCurrentText("Error claiming your roses");
+      } else {
+        // Handle regular claim
+        txHash = await claimPayLink(
+          details?.link || "",
+          () => setCurrentText("Claiming your roses 🌹🌹🌹"),
+          () => setCurrentText("Patience... Claiming your roses 🌹🌹🌹"),
+          (error: Error) => setCurrentText(`Error: ${error.message}`),
+          () => setCurrentText("Almost done 🌹🌹🌹"),
+          otherWalletAddress
+        );
       }
+
+      if (txHash) {
+        await onClaimSuccess(txHash);
+      }
+    } catch (error) {
+      console.error("Error claiming:", error);
+      setCurrentText("Error claiming your roses");
+    } finally {
+      setInProgress(false);
     }
   };
 

@@ -10,7 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { GameState } from "@/utils/supabase/types"
+import { GameState } from "@/types"
 import Link from "next/link"
 
 interface GiftItemProps {

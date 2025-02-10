@@ -2,6 +2,26 @@ import { Dispatch } from "react";
 import { SetStateAction } from "react";
 import type { Abi, Address, Hex } from "viem";
 
+export interface ValentinesUser {
+  id: number;
+  wallet_address: string;
+  name: string;
+  created_at?: string;
+}
+
+export interface GameState {
+  id: string;
+  created_at?: string;
+  roses_game: boolean;
+  ascii_game: boolean;
+  guess_game: boolean;
+  poem_game: boolean;
+  valentines_user_id?: number;
+  roses?: Rose[];
+  valentines_user?: ValentinesUser;
+  claimed?: boolean;
+}
+
 export interface IGetLinkDetailsResponse {
     link: string;
     chainId: string;
@@ -45,6 +65,7 @@ export interface IGetLinkDetailsResponse {
     claimed: boolean;
     game_id?: string;
     wallet_address_created_by?: string;
+    peanut_links?: PeanutLink[];
   }
   
   export type PeanutLink = {
@@ -55,6 +76,7 @@ export interface IGetLinkDetailsResponse {
     claimed: boolean;
     claimed_at?: string;
     claimed_by?: string;
+    rose?: Rose;
   }
 
   export interface Token {
@@ -222,4 +244,18 @@ export interface ChainSelectProps {
   label: string;
   chainId?: number | undefined | string;
   ccip?: boolean;
+}
+
+export interface PaymentInfoProps {
+  paymentInfo: {
+    chainId: number | string;
+    tokenSymbol: string;
+    tokenAmount: string;
+    senderAddress: string;
+    claimed: boolean;
+    depositDate: string;
+    transactionHash?: string;
+    destinationChainId?: number;
+    destinationChainName?: string;
+  };
 }
