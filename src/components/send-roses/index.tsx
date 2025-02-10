@@ -83,7 +83,7 @@ export default function SendRoses() {
                             />
                         </FormControl>
                         <FormDescription>
-                          Give context of you and your valentine. Give as much detail about your connectionas possible.
+                          Give context of you and your valentine. Give as much detail about your connections as possible.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

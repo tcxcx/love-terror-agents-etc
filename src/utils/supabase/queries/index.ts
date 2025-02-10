@@ -6,24 +6,27 @@ export async function getGameState(): Promise<GameState | null> {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
   
-  // Get the latest game state with related rose and claim information
-      // Add peanut_links to select
-    const { data, error } = await supabase
-      .from('games')
-      .select(`
-        *,
-        roses (
+  const { data, error } = await supabase
+    .from('games')
+    .select(`
+      *,
+      roses!roses_game_id_fkey (
+        id,
+        claimed,
+        peanut_link,
+        peanut_link!peanut_link_rose_id_fkey (
           id,
+          link,
           claimed,
-          peanut_link,
-          game_id,
-          peanut_links (*)
-        ),
-        valentines_user (*)
-      `)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+          claimed_at,
+          claimed_by
+        )
+      ),
+      valentines_user (*)
+    `)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
     
   if (error) {
     console.error('Error fetching game state:', error);
@@ -56,7 +59,6 @@ export async function checkRoseClaimed(peanutLink: string): Promise<boolean> {
   
   return data?.claimed || false;
 }
-
 export async function getGameStateByRoseId(roseId: string): Promise<GameState | null> {
   const cookieStore = cookies();
   const supabase = await createClient(cookieStore);
@@ -65,10 +67,17 @@ export async function getGameStateByRoseId(roseId: string): Promise<GameState | 
     .from('games')
     .select(`
       *,
-      roses!inner (
+      roses!roses_game_id_fkey (
         id,
         claimed,
-        peanut_link
+        peanut_link,
+        peanut_link!peanut_link_rose_id_fkey (
+          id,
+          link,
+          claimed,
+          claimed_at,
+          claimed_by
+        )
       )
     `)
     .eq('roses.id', roseId)
