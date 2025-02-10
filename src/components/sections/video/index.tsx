@@ -18,9 +18,6 @@ const InspirationVideo = () => {
               allowFullScreen
             ></iframe>
           </div>
-          <p className="text-md text-secondary-darker mb-6 italic">
-            Inspired by being stood up three times by a beautiful green/yellow-eyed <br/> Web3 girl from Buenos Aires 🇦🇷   at <a href="https://aleph.crecimiento.build/" target="_blank" className="text-secondary hover:underline">Aleph Hub</a> 🧉
-          </p>
         </div>
       </div>
     </section>

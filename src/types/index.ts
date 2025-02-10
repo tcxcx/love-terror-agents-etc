@@ -133,7 +133,6 @@ export interface LinkUiFormProps {
   isPeanutLoading: boolean;
 }
 
-
 export interface Chain {
   chainId: number;
   isMainnet: boolean;
