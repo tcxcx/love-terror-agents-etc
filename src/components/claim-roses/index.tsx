@@ -47,12 +47,12 @@ export default function ClaimRoses() {
           ...paymentInfo!,
           claimed: true,
           transactionHash: txHash,
-          chainId: paymentInfo?.chainId || '0',
-          tokenSymbol: paymentInfo?.tokenSymbol || '',
-          tokenAmount: paymentInfo?.tokenAmount || '',
-          senderAddress: paymentInfo?.senderAddress || '',
-          depositDate: paymentInfo?.depositDate || '',
-          depositIndex: paymentInfo?.depositIndex || 0
+          chainId: paymentInfo?.chainId || "0",
+          tokenSymbol: paymentInfo?.tokenSymbol || "",
+          tokenAmount: paymentInfo?.tokenAmount || "",
+          senderAddress: paymentInfo?.senderAddress || "",
+          depositDate: paymentInfo?.depositDate || "",
+          depositIndex: paymentInfo?.depositIndex || 0,
         });
       }
     } catch (error) {
@@ -69,14 +69,18 @@ export default function ClaimRoses() {
 
   return (
     <main className="flex-1 flex flex-col h-screen p-10">
-        <h1 className="text-2xl font-bold">Your secret is safe with us 🌹🌹🌹</h1>
-        <p className="text-sm text-gray-500"> Find out who your valentine&apos;s, claim four gifts to unlock a special date</p>
-        <Claim
+      <h1 className="text-2xl font-bold">Your secret is safe with us 🌹🌹🌹</h1>
+      <p className="text-sm text-gray-500">
+        {" "}
+        Find out who your valentine&apos;s, claim four gifts to unlock a special
+        date
+      </p>
+      <Claim
         details={details!}
         paymentInfo={paymentInfo!}
         setPaymentInfo={setPaymentInfo}
         setDestinationChainId={() => {
-        console.log("running");
+          console.log("running");
         }}
         onClaimSuccess={handleClaim}
         isClaimingLink={isClaimingLink}

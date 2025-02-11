@@ -8,14 +8,14 @@ export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
     {
       cookies: {
         async getAll() {
-          return (await cookieStore).getAll()
+          return (await cookieStore).getAll();
         },
         async setAll(cookiesToSet) {
           try {
-            const cookieStoreObject = await cookieStore
-            cookiesToSet.forEach(({ name, value, options }) => 
+            const cookieStoreObject = await cookieStore;
+            cookiesToSet.forEach(({ name, value, options }) =>
               cookieStoreObject.set(name, value, options)
-            )
+            );
           } catch {
             // The `setAll` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing
@@ -23,6 +23,6 @@ export const createClient = (cookieStore: ReturnType<typeof cookies>) => {
           }
         },
       },
-    },
+    }
   );
 };

@@ -5,18 +5,14 @@ import { usePeanut } from "@/hooks/use-peanut";
 import { useToast } from "@/hooks/use-toast";
 import LinkUiForm from "@/components/create-link-input";
 import Overlay from "@/components/overlay";
-import { Token, TransactionDetails } from "@/types";
+import { TransactionDetails } from "@/types";
 import confetti from "canvas-confetti";
 import { useAccount } from "wagmi";
-import { useGetTokensOrChain } from "@/hooks/use-tokens-or-chain";
 import { useNetworkManager } from "@/hooks/use-dynamic-network";
 import { truncateAddress } from "@/utils/truncate-address";
-import {
-  createRoseSubmission,
-  createPeanutLink,
-} from "@/utils/supabase/mutations/client";
-import { BaseSepoliaTokens } from "@/constants/Tokens";
 
+import { BaseSepoliaTokens } from "@/constants/Tokens";
+import { createClient } from "@/utils/supabase/client";
 interface RoseLinkFormProps {
   formData: any;
   onSubmitForm: (
@@ -38,6 +34,7 @@ export default function RoseLinkForm({
     isLoading: isPeanutLoading,
     copyToClipboard,
   } = usePeanut();
+  const supabase = createClient();
 
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [transactionDetails, setTransactionDetails] =
@@ -48,9 +45,7 @@ export default function RoseLinkForm({
     setTokenAmount(tokenAmount);
   };
 
-  console.log(tokenAmount, "tokenAmount");
   const handleSubmit = async (formData: any) => {
-    console.log(formData, "formData");
     if (!formData.formState.isValid || !address) {
       toast({
         title: "Form Error",
@@ -66,7 +61,6 @@ export default function RoseLinkForm({
       const tokenAddress = BaseSepoliaTokens[0].address;
       setCurrentText("Creating rose link...");
 
-      // Generate peanut link first
       const linkResponse = await createPayLink(
         tokenAmount.toString(),
         tokenAddress,
@@ -82,30 +76,50 @@ export default function RoseLinkForm({
 
       setTransactionDetails(linkResponse as TransactionDetails);
 
-      // Create rose submission with wallet address and peanut link
-      const rose = await createRoseSubmission({
-        ...formData,
-        amount_roses: tokenAmount.toString(),
-        wallet_address_created_by: address,
-        peanut_link: linkResponse.paymentLink,
-        claimed: false,
-      });
+      const { data: gameData, error: gameError } = await supabase
+        .from("games")
+        .insert([
+          {
+            roses_game: true,
+            ascii_game: false,
+            guess_game: false,
+            poem_game: false,
+          },
+        ])
+        .select()
+        .single();
 
-      if (!rose) {
-        throw new Error("Failed to create rose submission");
-      }
+      const { data: submittedRose, error: roseError } = await supabase
+        .from("roses")
+        .insert([
+          {
+            ...formData,
+            game_id: gameData.id,
+          },
+        ])
+        .select()
+        .single();
 
-      // Create peanut link record
-      const peanutLinkRecord = await createPeanutLink(
-        rose.id,
-        linkResponse.paymentLink,
-        address as string,
-        false
-      );
+      console.log(submittedRose, "submittedRose");
+      console.log(gameData, "gameData");
+      console.log(roseError, "roseError");
+      console.log(gameError, "gameError");
 
-      if (!peanutLinkRecord) {
-        throw new Error("Failed to record peanut link");
-      }
+      const { data, error } = await supabase
+        .from("peanut_link")
+        .insert([
+          {
+            rose_id: submittedRose.id,
+            link: linkResponse.paymentLink,
+            claim: false,
+            claim_wallet: address as string,
+            created_at: new Date().toISOString(),
+          },
+        ])
+        .select()
+        .single();
+      console.log(data, "data");
+      console.log(error, "error");
 
       triggerConfetti("😍");
     } catch (error: any) {

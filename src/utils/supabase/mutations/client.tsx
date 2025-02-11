@@ -1,10 +1,10 @@
 import { Rose, PeanutLink } from "@/types";
 
 export async function createRoseSubmission(
-  roseData: Omit<Rose, "id" | "created_at" | "claimed">
+  roseData: any
 ): Promise<Rose | null> {
   try {
-    // First create valentines_user if wallet provided
+    console.log(roseData, "roseData");
     const response = await fetch("/api/roses", {
       method: "POST",
       headers: {
@@ -55,10 +55,9 @@ export async function createPeanutLink(
   }
 }
 
-
 export async function updatePeanutLink(
   link: string,
-  claimWallet: string,
+  claimWallet: string
 ): Promise<PeanutLink | null> {
   try {
     const response = await fetch("/api/peanut-links", {
@@ -80,11 +79,6 @@ export async function updatePeanutLink(
     return null;
   }
 }
-
-
-
-
-
 
 export async function claimPeanutLink(
   linkId: string,

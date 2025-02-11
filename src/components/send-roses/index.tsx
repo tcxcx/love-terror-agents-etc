@@ -83,7 +83,6 @@ export default function SendRoses() {
   const currentChainId = useNetworkManager();
   const chainId = currentChainId as number;
 
-
   const {
     createPayLink,
     isLoading: isPeanutLoading,
@@ -98,6 +97,8 @@ export default function SendRoses() {
   const onValueChange = (usdAmount: number, tokenAmount: number) => {
     setTokenAmount(tokenAmount);
   };
+
+  const supabase = createClient();
 
   // RoseLinkForm.tsx
   const handleSubmit = async (formData: any) => {
@@ -121,34 +122,73 @@ export default function SendRoses() {
       if (!linkResponse) {
         throw new Error("Failed to create peanut link");
       }
-
+      console.log(linkResponse, "linkResponse");
       setTransactionDetails(linkResponse as TransactionDetails);
-
-      // Create rose submission with wallet address and peanut link
-      const rose = await createRoseSubmission({
-        ...formData,
-        amount_roses: tokenAmount.toString(),
-        wallet_address_created_by: address,
-        peanut_link: linkResponse.paymentLink,
-        claimed: false,
-      });
-
-
-      if (!rose) {
-        throw new Error("Failed to create rose submission");
-      }
-
-
-      const peanutLinkRecord = await createPeanutLink(
-        rose.id,
-        linkResponse.paymentLink,
-        address as string,
-        false,
+      console.log(
+        linkResponse.paymentLink[0],
+        "linkResponse.paymentLink[0]ddasdas"
       );
 
-      if (!peanutLinkRecord) {
-        throw new Error("Failed to record peanut link");
-      }
+      // const rose = await createRoseSubmission({
+      //   ...formData,
+      //   amount_roses: tokenAmount.toString(),
+      //   wallet_address_created_by: address,
+      //   peanut_link: linkResponse.paymentLink[0],
+      //   claimed: false,
+      // });
+
+      // if (!rose) {
+      //   throw new Error("Failed to create rose submission");
+      // }
+      console.log(formData, "formData");
+      console.log(tokenAmount.toString(), "tokenAmount");
+      console.log(address, "address");
+      console.log(linkResponse.paymentLink[0], "linkResponse.paymentLink[0]");
+      const { data: submittedRose, error: roseError } = await supabase
+        .from("roses")
+        .insert([
+          {
+            ...formData,
+            amount_roses: tokenAmount.toString(),
+            wallet_address_created_by: address,
+            peanut_link: linkResponse.paymentLink[0],
+            claimed: false,
+          },
+        ])
+        .select()
+        .single();
+      console.log(submittedRose, "submittedRose");
+      console.log(roseError, "roseError");
+
+      const { data, error } = await supabase
+        .from("peanut_link")
+        .insert([
+          {
+            rose_id: submittedRose?.id,
+            link: linkResponse.paymentLink[0],
+            claimed: false,
+            claim_wallet: address as string,
+            created_at: new Date().toISOString(),
+          },
+        ])
+        .select()
+        .single();
+      console.log(data, "data");
+      console.log(error, "error");
+
+      // Update the rose record with the peanut link
+      const { error: roseError2 } = await supabase
+        .from("roses")
+        .update({ peanut_link: linkResponse.paymentLink[0] })
+        .eq("id", submittedRose?.id);
+      console.log(roseError, "roseError");
+
+      // const peanutLinkRecord = await createPeanutLink(
+      //   rose.id,
+      //   linkResponse.paymentLink[0],
+      //   address as string,
+      //   false
+      // );
 
       triggerConfetti("😍");
     } catch (error: any) {
@@ -226,19 +266,8 @@ export default function SendRoses() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values, "values");
     try {
-      const rose = await createRoseSubmission(values);
       await handleSubmit(values);
-      if (rose) {
-        const peanutLink = await createPeanutLink(
-          rose.id,
-          transactionDetails?.peanutLink!
-        );
-        if (peanutLink) {
-          console.log("Successfully created rose and peanut link");
-        }
-      }
     } catch (error) {
       console.error("Error in form submission:", error);
     }
@@ -251,28 +280,33 @@ export default function SendRoses() {
           <h1 className="text-2xl font-bold mb-2">Send Roses Form</h1>
           <p className="text-gray-600 mb-6">Send roses to your loved ones</p>
           <Form {...form}>
-            <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                {/* Context System Prompt */}
-                <FormField
-                    control={form.control}
-                    name="system_prompt"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Context of you and your valentine</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Jane Austen is a writter and is a Geminis, she studies Literature and her hobbies are reading and writing..."
-                            className="resize-none"
-                            {...field}
-                            />
-                        </FormControl>
-                        <FormDescription>
-                          Give context of you and your valentine. Give as much detail about your connections as possible.
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />    
+            <form
+              noValidate
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8"
+            >
+              {/* Context System Prompt */}
+              <FormField
+                control={form.control}
+                name="system_prompt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Context of you and your valentine</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Jane Austen is a writter and is a Geminis, she studies Literature and her hobbies are reading and writing..."
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Give context of you and your valentine. Give as much
+                      detail about your connections as possible.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-8">
                   {/* Left Column */}

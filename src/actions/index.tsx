@@ -9,23 +9,23 @@ import { AsciiArt } from "@/components/games/ascii";
 import { GuessingGame } from "@/components/games/guessing-game";
 import { PoemDisplay } from "@/components/games/poem-display";
 import { DateScheduler } from "@/components/games/date-scheduler";
-import {handleAsciiArtComplete} from '@/hooks/game-functions';
-import { 
+import { handleAsciiArtComplete } from "@/hooks/game-functions";
+import {
   asciiArtTool,
   guessingGameTool,
   poemRevealTool,
   dateLocationTool,
   gameProgressTool,
-  validateSecretAnswerTool
+  validateSecretAnswerTool,
 } from "@/components/ai/tools";
-import { 
+import {
   initializeGame,
   completeAsciiGame,
   completeGuessingGame,
   completePoemGame,
   completeRosesGame,
-} from '@/actions/supabase/game';
-import { getGameState } from '@/utils/supabase/queries';
+} from "@/actions/supabase/game";
+import { getGameState } from "@/utils/supabase/queries";
 
 export interface ServerMessage {
   role: "user" | "assistant";
@@ -39,12 +39,15 @@ export interface ClientMessage {
   gameId: string;
 }
 
-export async function continueConversation(input: string, gameId: string): Promise<ClientMessage> {
+export async function continueConversation(
+  input: string,
+  gameId: string
+): Promise<ClientMessage> {
   "use server";
 
   const history = getMutableAIState();
   let gameState = await getGameState(gameId);
-  
+
   if (!gameState) {
     gameState = await initializeGame(gameId);
   }
@@ -70,16 +73,24 @@ export async function continueConversation(input: string, gameId: string): Promi
           if (gameState && !gameState.ascii_game) {
             await completeAsciiGame(gameState.id);
           }
-          return <AsciiArt onComplete={() => completeAsciiGame(gameState!.id)} />;
+          return (
+            <AsciiArt onComplete={() => completeAsciiGame(gameState!.id)} />
+          );
         },
       },
 
       // Guessing Game with 7 Clues
       playGuessingGame: {
         ...guessingGameTool,
-        generate: async function* ({ clueNumber, guess }: { clueNumber: number; guess: string }) {
+        generate: async function* ({
+          clueNumber,
+          guess,
+        }: {
+          clueNumber: number;
+          guess: string;
+        }) {
           yield <div>Loading clue {clueNumber}...</div>;
-          
+
           const clues = {
             clue_1: gameState?.roses?.[0]?.clue_1,
             clue_2: gameState?.roses?.[0]?.clue_2,
@@ -90,20 +101,20 @@ export async function continueConversation(input: string, gameId: string): Promi
             clue_7: gameState?.roses?.[0]?.clue_7,
           };
 
-
           if (guess) {
-            const isCorrect = guess.toLowerCase().trim() === 
-              (gameState?.roses?.[0]?.secret_answer || '').toLowerCase().trim();
+            const isCorrect =
+              guess.toLowerCase().trim() ===
+              (gameState?.roses?.[0]?.secret_answer || "").toLowerCase().trim();
 
             if (isCorrect) {
               await completeGuessingGame(gameState!.id);
             }
 
-            yield <div>{isCorrect ? '🎉 Correct!' : 'Try again...'}</div>;
+            yield <div>{isCorrect ? "🎉 Correct!" : "Try again..."}</div>;
           }
 
           return (
-            <GuessingGame 
+            <GuessingGame
               clues={clues}
               currentClue={clueNumber}
               secretAnswer={gameState?.roses?.[0]?.secret_answer}
@@ -119,10 +130,10 @@ export async function continueConversation(input: string, gameId: string): Promi
         ...poemRevealTool,
         generate: async function* ({ poem, action }) {
           yield <div>Preparing your special poem...</div>;
-          
-          if (action === 'view') {
+
+          if (action === "view") {
             return (
-              <PoemDisplay 
+              <PoemDisplay
                 poem={gameState?.roses?.[0]?.poem_text}
                 onComplete={() => completePoemGame(gameState!.id)}
               />
@@ -137,9 +148,9 @@ export async function continueConversation(input: string, gameId: string): Promi
         ...dateLocationTool,
         generate: async function* ({ location, details }) {
           yield <div>Preparing your special date details...</div>;
-                    
+
           return (
-            <DateScheduler 
+            <DateScheduler
               location={gameState?.roses?.[0]?.date_site}
               details={gameState?.roses?.[0]?.date_details}
               calendlyLink={gameState?.roses?.[0]?.calendly_link}
@@ -153,7 +164,7 @@ export async function continueConversation(input: string, gameId: string): Promi
         ...gameProgressTool,
         generate: async function* ({ checkType }) {
           yield <div>Checking game progress...</div>;
-          
+
           const progress = {
             ascii: gameState?.ascii_game,
             guessing: gameState?.guess_game,
@@ -165,10 +176,10 @@ export async function continueConversation(input: string, gameId: string): Promi
             <div className="p-4 bg-pink-500/10 rounded-lg">
               <h3 className="text-lg font-bold mb-2">Your Progress</h3>
               <ul className="space-y-2">
-                <li>ASCII Art: {progress.ascii ? '✅' : '⏳'}</li>
-                <li>Guessing Game: {progress.guessing ? '✅' : '⏳'}</li>
-                <li>Secret Poem: {progress.poem ? '✅' : '⏳'}</li>
-                <li>Roses Claimed: {progress.roses ? '✅' : '⏳'}</li>
+                <li>ASCII Art: {progress.ascii ? "✅" : "⏳"}</li>
+                <li>Guessing Game: {progress.guessing ? "✅" : "⏳"}</li>
+                <li>Secret Poem: {progress.poem ? "✅" : "⏳"}</li>
+                <li>Roses Claimed: {progress.roses ? "✅" : "⏳"}</li>
               </ul>
             </div>
           );

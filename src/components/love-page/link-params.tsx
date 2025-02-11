@@ -15,60 +15,59 @@ interface LinkState {
 }
 
 export function LoveLink() {
-    const searchParams = useSearchParams();
-    const claimId = searchParams?.toString() || '';
+  const searchParams = useSearchParams();
+  const claimId = searchParams?.toString() || "";
 
-    const [state, setState] = useState<LinkState>({
+  const [state, setState] = useState<LinkState>({
     peanutLink: null,
     isLoading: true,
     isValidLink: false,
     isClaimed: false,
     details: null,
-    paymentInfo: null
+    paymentInfo: null,
   });
 
   useEffect(() => {
     async function getLinkDetails() {
       try {
-        
         if (!claimId) {
-          setState(prev => ({ 
-            ...prev, 
+          setState((prev) => ({
+            ...prev,
             isLoading: false,
-            isValidLink: false 
+            isValidLink: false,
           }));
           return;
         }
 
-        const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
         const fullUrl = `${baseUrl}/love?${claimId}`;
 
         await fetchLinkDetails(
           fullUrl,
           (linkDetails) => {
-            setState(prev => ({
+            setState((prev) => ({
               ...prev,
               details: linkDetails,
               isValidLink: true,
-              peanutLink: fullUrl
+              peanutLink: fullUrl,
             }));
           },
           (paymentInfo) => {
-            setState(prev => ({
+            setState((prev) => ({
               ...prev,
               paymentInfo,
-              isClaimed: Boolean(paymentInfo?.claimed)
+              isClaimed: Boolean(paymentInfo?.claimed),
             }));
           }
         );
       } catch (error) {
-        console.error('Error fetching link details:', error);
-        setState(prev => ({
+        console.error("Error fetching link details:", error);
+        setState((prev) => ({
           ...prev,
-          isValidLink: false
+          isValidLink: false,
         }));
       } finally {
-        setState(prev => ({ ...prev, isLoading: false }));
+        setState((prev) => ({ ...prev, isLoading: false }));
       }
     }
 
@@ -81,6 +80,6 @@ export function LoveLink() {
     isValidLink: state.isValidLink,
     isClaimed: state.isClaimed,
     details: state.details,
-    paymentInfo: state.paymentInfo
+    paymentInfo: state.paymentInfo,
   };
 }
