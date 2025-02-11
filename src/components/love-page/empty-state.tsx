@@ -15,6 +15,8 @@ type EmptyStateProps = {
     return (
       <div className="text-center">
         <p>No valentine found. Create one to get started!</p>
+        <ClaimForm />
+      
       </div>
     );
   }
