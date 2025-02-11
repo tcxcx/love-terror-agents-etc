@@ -37,8 +37,7 @@ export const BaseSepoliaTokens: Token[] = [
     name: "LOVE",
     payable: true,
     symbol: "LOVE",
-    image:
-      "/images/pixel-roses.png",
+    image: "/images/pixel-roses.png",
   },
 ];
 ////////////////////////////// TOKEN ORDER IS IMPORTANT //////////////////////////////
@@ -71,12 +70,8 @@ export const BaseTokens: Token[] = [
     name: "LOVE",
     payable: true,
     symbol: "LOVE",
-    image:
-      "/images/pixel-roses.png",
+    image: "/images/pixel-roses.png",
   },
 ];
 
-export const allTokens = [
-  ...BaseSepoliaTokens,
-  ...BaseTokens,
-];
+export const allTokens = [...BaseSepoliaTokens, ...BaseTokens];

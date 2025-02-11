@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { usePeanut } from "@/hooks/use-peanut";
@@ -7,23 +7,35 @@ import LinkUiForm from "@/components/create-link-input";
 import Overlay from "@/components/overlay";
 import { Token, TransactionDetails } from "@/types";
 import confetti from "canvas-confetti";
-import { useAccount } from "wagmi"; 
+import { useAccount } from "wagmi";
 import { useGetTokensOrChain } from "@/hooks/use-tokens-or-chain";
 import { useNetworkManager } from "@/hooks/use-dynamic-network";
 import { truncateAddress } from "@/utils/truncate-address";
-import { createRoseSubmission, createPeanutLink } from "@/utils/supabase/mutations/client";
+import {
+  createRoseSubmission,
+  createPeanutLink,
+} from "@/utils/supabase/mutations/client";
+import { BaseSepoliaTokens } from "@/utils/constants/Tokens";
 
 interface RoseLinkFormProps {
-    formData: any;
-    onSubmitForm: (handler: (data: any) => Promise<void>) => (e: React.BaseSyntheticEvent) => Promise<void>;
-  }
-  
-  export default function RoseLinkForm({ formData, onSubmitForm }: RoseLinkFormProps) {
-    const { toast } = useToast();
-    const { address } = useAccount();
+  formData: any;
+  onSubmitForm: (
+    handler: (data: any) => Promise<void>
+  ) => (e: React.BaseSyntheticEvent) => Promise<void>;
+}
+
+export default function RoseLinkForm({
+  formData,
+  onSubmitForm,
+}: RoseLinkFormProps) {
+  const { toast } = useToast();
+  const { address } = useAccount();
   const currentChainId = useNetworkManager();
   const chainId = currentChainId as number;
-  const availableTokens = useGetTokensOrChain(chainId, "tokens");
+  console.log(chainId, "chainId");
+  const availableTokens = BaseSepoliaTokens;
+
+  console.log(availableTokens, "availableTokens");
 
   const {
     createPayLink,
@@ -36,76 +48,83 @@ interface RoseLinkFormProps {
   const [tokenAmount, setTokenAmount] = useState<number>(0);
   const [transactionDetails, setTransactionDetails] =
     useState<TransactionDetails | null>(null);
-  const [selectedToken, setSelectedToken] = useState<string>("");
+  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [currentText, setCurrentText] = useState<string>("");
 
-// RoseLinkForm.tsx
-const handleSubmit = async (formData: any) => {
-  if (!selectedToken || tokenAmount <= 0 || !address) {
-    toast({
-      title: "Form Error",
-      description: "Please connect your wallet and fill out all required fields",
-      variant: "destructive",
-    });
-    return;
-  }
-
-  setOverlayVisible(true);
-  try {
-    const tokenAddress = selectedToken;
-    setCurrentText("Creating rose link...");
-
-    // Generate peanut link first
-    const linkResponse = await createPayLink(
-      tokenAmount.toString(),
-      tokenAddress,
-      () => setCurrentText("Please be patient..."),
-      () => setCurrentText("Rose link created successfully"),
-      (error: Error) => setCurrentText(`Failed to create link: ${error.message}`),
-    );
-
-    if (!linkResponse) {
-      throw new Error("Failed to create peanut link");
+  // RoseLinkForm.tsx
+  const handleSubmit = async (formData: any) => {
+    if (
+      !formData.formState.isValid ||
+      !selectedToken ||
+      tokenAmount <= 0 ||
+      !address
+    ) {
+      toast({
+        title: "Form Error",
+        description:
+          "Please connect your wallet and fill out all required fields",
+        variant: "destructive",
+      });
+      return;
     }
 
-    setTransactionDetails(linkResponse as TransactionDetails);
-
-    // Create rose submission with wallet address and peanut link
-    const rose = await createRoseSubmission({
-      ...formData,
-      amount_roses: tokenAmount,
-      wallet_address_created_by: address,
-      peanut_link: linkResponse.paymentLink,
-      claimed: false
-    });
-
-    if (!rose) {
-      throw new Error("Failed to create rose submission");
-    }
-
-    // Create peanut link record
-    const peanutLinkRecord = await createPeanutLink(
-      rose.id,
-      linkResponse.paymentLink
-    );
-
-    if (!peanutLinkRecord) {
-      throw new Error("Failed to record peanut link");
-    }
-
-    triggerConfetti("😍");
-  } catch (error: any) {
-    console.error("Error in submission process:", error);
-    setOverlayVisible(false);
-    toast({
-      title: "Failed to create rose",
-      description: error.message,
-      variant: "destructive",
-    });
-  } finally {
     setOverlayVisible(true);
-  }
-};
+    try {
+      const tokenAddress = selectedToken;
+      setCurrentText("Creating rose link...");
+
+      // Generate peanut link first
+      const linkResponse = await createPayLink(
+        tokenAmount.toString(),
+        tokenAddress,
+        () => setCurrentText("Please be patient..."),
+        () => setCurrentText("Rose link created successfully"),
+        (error: Error) =>
+          setCurrentText(`Failed to create link: ${error.message}`)
+      );
+
+      if (!linkResponse) {
+        throw new Error("Failed to create peanut link");
+      }
+
+      setTransactionDetails(linkResponse as TransactionDetails);
+
+      // Create rose submission with wallet address and peanut link
+      const rose = await createRoseSubmission({
+        ...formData,
+        amount_roses: tokenAmount,
+        wallet_address_created_by: address,
+        peanut_link: linkResponse.paymentLink,
+        claimed: false,
+      });
+
+      if (!rose) {
+        throw new Error("Failed to create rose submission");
+      }
+
+      // Create peanut link record
+      const peanutLinkRecord = await createPeanutLink(
+        rose.id,
+        linkResponse.paymentLink
+      );
+
+      if (!peanutLinkRecord) {
+        throw new Error("Failed to record peanut link");
+      }
+
+      triggerConfetti("😍");
+    } catch (error: any) {
+      console.error("Error in submission process:", error);
+      setOverlayVisible(false);
+      toast({
+        title: "Failed to create rose",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setOverlayVisible(true);
+    }
+  };
 
   const handleCloseOverlay = () => {
     setOverlayVisible(false);

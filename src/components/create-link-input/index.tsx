@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import CurrencyDisplayer from "@/components/currency";
 import { LinkUiFormProps } from "@/types";
 
-
 export default function LinkUiForm({
   tokenAmount,
   handleValueChange,
@@ -12,7 +11,6 @@ export default function LinkUiForm({
   handleCreateLinkClick,
   isPeanutLoading,
 }: LinkUiFormProps) {
-
   return (
     <>
       <div className="flex w-full md:h-[100px] lg:h-[200px] flex-col justify-between rounded-xl border">
@@ -25,9 +23,8 @@ export default function LinkUiForm({
             tokenAmount={tokenAmount}
             onValueChange={handleValueChange}
             availableTokens={availableTokens}
-            // @ts-ignore
             onTokenSelect={setSelectedToken}
-            currentNetwork={chainId || 1}
+            currentNetwork={chainId!}
             size="lg"
             action="default"
           />

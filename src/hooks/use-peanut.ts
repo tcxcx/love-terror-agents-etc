@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useCallback, useState } from "react";
 import peanut, {
@@ -8,7 +8,7 @@ import peanut, {
 } from "@squirrel-labs/peanut-sdk";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useTransactionStore } from "@/store";
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
 import { useChainId } from "wagmi";
 import { useEthersSigner } from "@/lib/wagmi";
 import { NATIVE_TOKEN_ADDRESS } from "@/utils/constants/Tokens";
