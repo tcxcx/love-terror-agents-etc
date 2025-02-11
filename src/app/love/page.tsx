@@ -9,12 +9,13 @@ import { Rose, GameState } from '@/types';
 import ClaimForm from '@/components/peanut/claim/claim-info';
 
 interface PageProps {
-  searchParams: { claimId: string }
+  searchParams: { [key: string]: string | string[] | undefined }
 }
 
 export default async function Page({ searchParams }: PageProps) {
   const gameState = await getGameState();
-  const claimId = await searchParams?.claimId as string || '';
+  // Fix 1: Handle searchParams properly
+  const claimId = searchParams?.claimId?.toString() || '';
 
   if (!gameState) {
     await createGameState();
@@ -39,8 +40,10 @@ export default async function Page({ searchParams }: PageProps) {
     calendlyLink: gameState.roses?.[0]?.calendly_link || ''
   };
 
-  const isLinkClaimed = gameState.roses?.some((rose: Rose) => rose.claimed) || false;
-  const hasLink = gameState.roses?.length! > 0;
+  // Fix 2: Check if roses is an array before using array methods
+  const roses = Array.isArray(gameState.roses) ? gameState.roses : [];
+  const isLinkClaimed = roses.some((rose: Rose) => rose.claimed) || false;
+  const hasLink = roses.length > 0;
 
   const renderMainContent = () => {
     if (!hasLink) {
