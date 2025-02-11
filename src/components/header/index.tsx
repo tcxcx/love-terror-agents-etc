@@ -8,12 +8,18 @@ import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { useHoverAudio } from "@/utils/audio";
 import SparklesText from "@/components/magicui/sparkles-text";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GoogleSignin } from "@/components/google-auth";
+import { SignOut } from "@/components/sign-out";
+import { getUser } from "@/hooks/use-user-supabase";
 
 const song = "/audio/saxophone.mp3";
 
 const HeaderFull: React.FC = () => {
   const MotionLink = motion(Link);
   const { playHoverSound, resetHoverSound } = useHoverAudio(song);
+
+  const userLoggedIn = getUser();
+  console.log(userLoggedIn);
 
   return (
     <div className="bg-transparent">
@@ -53,7 +59,14 @@ const HeaderFull: React.FC = () => {
           {/* Right-aligned Dynamic Widget */}
           <div className="w-[250px] flex justify-end">
             <Suspense fallback={<Skeleton className="h-4 w-[250px]" />}>
-              <DynamicWidget />
+              {!userLoggedIn ? (
+                  <GoogleSignin />
+                  ) : (
+                  <>
+                    {/* <SignOut /> */}
+                    <DynamicWidget />
+                  </>
+                  )}
             </Suspense>
           </div>
         </div>
