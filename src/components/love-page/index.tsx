@@ -17,7 +17,6 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
   useEffect(() => {
     async function initializeGame() {
       try {
-        // First, get the rose details using the peanut link
         const rose = await getRoseByPeanutLink(peanutLink);
 
         if (!rose) {
@@ -25,7 +24,6 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
           return;
         }
 
-        // Get or create game state
         let currentGameState = await getGameState(rose?.game_id!);
 
         if (!currentGameState) {

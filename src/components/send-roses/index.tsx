@@ -159,6 +159,21 @@ export default function SendRoses() {
         .single();
       console.log(submittedRose, "submittedRose");
       console.log(roseError, "roseError");
+      const { data: gameData, error: gameError } = await supabase
+        .from("games")
+        .insert([
+          {
+            roses_game: true,
+            ascii_game: false,
+            guess_game: false,
+            poem_game: false,
+            peanut_link: linkResponse.paymentLink[0],
+          },
+        ])
+        .select()
+        .single();
+      console.log(gameData, "gameData");
+      console.log(gameError, "gameError");
 
       const { data, error } = await supabase
         .from("peanut_link")
@@ -167,7 +182,7 @@ export default function SendRoses() {
             rose_id: submittedRose?.id,
             link: linkResponse.paymentLink[0],
             claimed: false,
-            claim_wallet: address as string,
+            wallet_created: address as string,
             created_at: new Date().toISOString(),
           },
         ])
@@ -176,12 +191,10 @@ export default function SendRoses() {
       console.log(data, "data");
       console.log(error, "error");
 
-      // Update the rose record with the peanut link
       const { error: roseError2 } = await supabase
         .from("roses")
         .update({ peanut_link: linkResponse.paymentLink[0] })
         .eq("id", submittedRose?.id);
-      console.log(roseError, "roseError");
 
       // const peanutLinkRecord = await createPeanutLink(
       //   rose.id,
