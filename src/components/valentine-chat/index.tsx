@@ -8,10 +8,8 @@ import { AnimatedSpan, Terminal, TypingAnimation } from "@/components/ui/termina
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef } from 'react';
 import { ScrollAreaViewport } from '@radix-ui/react-scroll-area';
-import { getGameStateWithValentineInfo } from '@/utils/supabase/queries';
 import { useQuery } from '@tanstack/react-query';
 // import { useActions, useUIState } from "ai/rsc";
-
 
 interface ValentineChatProps {
   gameInfo: {

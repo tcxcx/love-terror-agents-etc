@@ -48,7 +48,6 @@ export default function RoseLinkForm({
     setTokenAmount(tokenAmount);
   };
 
-  // RoseLinkForm.tsx
   console.log(tokenAmount, "tokenAmount");
   const handleSubmit = async (formData: any) => {
     console.log(formData, "formData");
@@ -99,7 +98,9 @@ export default function RoseLinkForm({
       // Create peanut link record
       const peanutLinkRecord = await createPeanutLink(
         rose.id,
-        linkResponse.paymentLink
+        linkResponse.paymentLink,
+        address as string,
+        false
       );
 
       if (!peanutLinkRecord) {

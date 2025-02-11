@@ -30,7 +30,9 @@ export async function createRoseSubmission(
 
 export async function createPeanutLink(
   roseId: string,
-  link: string
+  link: string,
+  claimWallet: string,
+  claimStatus: boolean
 ): Promise<PeanutLink | null> {
   try {
     const response = await fetch("/api/peanut-links", {
@@ -38,7 +40,7 @@ export async function createPeanutLink(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ roseId, link }),
+      body: JSON.stringify({ roseId, link, claimWallet, claimStatus }),
     });
 
     if (!response.ok) {
@@ -52,6 +54,37 @@ export async function createPeanutLink(
     return null;
   }
 }
+
+
+export async function updatePeanutLink(
+  link: string,
+  claimWallet: string,
+): Promise<PeanutLink | null> {
+  try {
+    const response = await fetch("/api/peanut-links", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ link, claimWallet }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message);
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error creating peanut link:", error);
+    return null;
+  }
+}
+
+
+
+
+
 
 export async function claimPeanutLink(
   linkId: string,

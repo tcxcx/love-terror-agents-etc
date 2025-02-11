@@ -1,123 +1,14 @@
 import { createClient } from '@/utils/supabase/client';
-import { GameState } from '@/types';
+import { GameState, Rose } from '@/types';
 
-export async function getGameState(): Promise<GameState | null> {
+export async function getGameState(gameId: string): Promise<GameState | null> {
   const supabase = await createClient();
   
   const { data, error } = await supabase
     .from('games')
     .select(`
       *,
-      roses!roses_game_id_fkey (
-        id,
-        claimed,
-        peanut_link,
-        peanut_link!peanut_link_rose_id_fkey (
-          id,
-          link,
-          claimed,
-          claimed_at,
-          claimed_by
-        )
-      ),
-      valentines_user (*)
-    `)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
-    
-  if (error) {
-    console.error("Error fetching game state:", error);
-    return null;
-  }
-  const gameState = {
-    ...data,
-    claimed: data.roses?.length > 0 ? data.roses[0].claimed : false,
-  };
-  return gameState;
-}
-export async function checkRoseClaimed(peanutLink: string): Promise<boolean> {
-  const supabase = await createClient();
-  
-  // Check if rose with this peanut link exists and is claimed
-
-  const { data, error } = await supabase
-    .from("roses")
-    .select("claimed")
-    .eq("peanut_link", peanutLink)
-    .single();
-  if (error) {
-    console.error("Error checking rose claimed status:", error);
-    return false;
-  }
-  return data?.claimed || false;
-}
-
-
-export async function getRoseAiGame(peanutLink: string): Promise<boolean> {
-  const supabase = await createClient();
-  
-  // Check if rose with this peanut link exists and is claimed
-  const { data, error } = await supabase
-    .from('roses')
-    .select('claimed')
-    .eq('peanut_link', peanutLink)
-    .single();
-    
-  if (error) {
-    console.error('Error checking rose claimed status:', error);
-    return false;
-  }
-  
-  return data?.claimed || false;
-}
-
-
-export async function getGameStateByRoseId(roseId: string): Promise<GameState | null> {
-  const supabase = await createClient();
-  
-  const { data, error } = await supabase
-    .from('games')
-    .select(`
-      *,
-      roses!roses_game_id_fkey (
-        id,
-        claimed,
-        peanut_link,
-        peanut_link!peanut_link_rose_id_fkey (
-          id,
-          link,
-          claimed,
-          claimed_at,
-          claimed_by
-        )
-      )
-    `)
-    .eq('roses.id', roseId)
-    .single();
-  if (error) {
-    console.error("Error fetching game state by rose:", error);
-    return null;
-  }
-  return {
-    ...data,
-    claimed: data.roses[0].claimed,
-  };
-}
-
-export async function getGameStateWithValentineInfo(): Promise<GameState | null> {
-  const supabase = await createClient();
-  
-  const { data, error } = await supabase
-    .from('games')
-    .select(`
-      *,
-      valentines_user (
-        id,
-        name,
-        wallet_address
-      ),
-      roses!roses_game_id_fkey (
+      roses (
         id,
         claimed,
         valentines_name,
@@ -136,28 +27,103 @@ export async function getGameStateWithValentineInfo(): Promise<GameState | null>
         date_details,
         calendly_link,
         system_prompt,
-        peanut_link!peanut_link_rose_id_fkey (
-          id,
-          link,
-          claimed,
-          claimed_at,
-          claimed_by
-        )
+        amount_roses,
+        wallet_address_created_by,
+        valentines_user_id,
+        peanut_link
       )
     `)
-    .order('created_at', { ascending: false })
-    .limit(1)
+    .eq('id', gameId)
     .single();
     
   if (error) {
-    console.error('Error fetching game state:', error);
+    console.error("Error fetching game state:", error);
     return null;
   }
 
-  return {
-    ...data,
-    claimed: data.roses?.[0]?.claimed || false,
-    valentineName: data.valentines_user?.name || '',
-    systemPrompt: data.roses?.[0]?.system_prompt || ''
-  };
+  return data;
+}
+
+export async function checkRoseClaimed(roseId: string): Promise<boolean> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from("roses")
+    .select("claimed")
+    .eq("id", roseId)
+    .single();
+
+  if (error) {
+    console.error("Error checking rose claimed status:", error);
+    return false;
+  }
+
+  return data?.claimed || false;
+}
+
+export async function getPeanutLinkStatus(link: string): Promise<boolean> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('peanut_link')
+    .select('claimed')
+    .eq('link', link)
+    .single();
+    
+  if (error) {
+    console.error('Error checking peanut link status:', error);
+    return false;
+  }
+  
+  return data?.claimed || false;
+}
+
+export async function getRoseByPeanutLink(peanutLink: string): Promise<Rose | null> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('roses')
+    .select(`
+      *,
+      game: game_id (
+        id,
+        ascii_game,
+        guess_game,
+        poem_game,
+        roses_game
+      )
+    `)
+    .eq('peanut_link', peanutLink)
+    .single();
+
+  if (error) {
+    console.error("Error fetching rose:", error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getGameProgress(gameId: string): Promise<number> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('games')
+    .select('ascii_game, guess_game, poem_game, roses_game')
+    .eq('id', gameId)
+    .single();
+
+  if (error) {
+    console.error("Error fetching game progress:", error);
+    return 0;
+  }
+
+  const completedSteps = [
+    data.ascii_game,
+    data.guess_game,
+    data.poem_game,
+    data.roses_game
+  ].filter(Boolean).length;
+
+  return completedSteps;
 }

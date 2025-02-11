@@ -26,14 +26,14 @@ export const formatCurrency = (
   
   export const fetchLinkDetails = async (
     link: string,
-    setDetails: (details: IGetLinkDetailsResponse) => void,
-    setPaymentInfo: (paymentInfo: ExtendedPaymentInfo) => void,
+    setDetails?: (details: IGetLinkDetailsResponse) => void,
+    setPaymentInfo?: (paymentInfo: ExtendedPaymentInfo) => void,
   ) => {
     try {
       const details = (await getLinkDetails({
         link,
       })) as unknown as IGetLinkDetailsResponse;
-      setDetails(details);
+      setDetails && setDetails(details);
       const extendedPaymentInfo: ExtendedPaymentInfo = {
         chainId: details.chainId,
         tokenSymbol: details.tokenSymbol,
@@ -43,7 +43,7 @@ export const formatCurrency = (
         depositDate: details.depositDate,
         depositIndex: details.depositIndex,
       };
-      setPaymentInfo(extendedPaymentInfo);
+      setPaymentInfo && setPaymentInfo(extendedPaymentInfo);
     } catch (error: any) {
       console.error("Error fetching link details:", error.message);
     }

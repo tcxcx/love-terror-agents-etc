@@ -1,74 +1,39 @@
+"use client";
+
 import { Suspense } from 'react';
-import ValentineChat from '@/components/valentine-chat';
-import { getGameState } from '@/utils/supabase/queries';
-import { createGameState } from '@/utils/supabase/mutations';
-import GiftCounter from '@/components/gift-counter';
-import ClaimRoses from '@/components/claim-roses';
-import DateComponent from '@/components/date-component';
-import { Rose, GameState } from '@/types';
-import ClaimForm from '@/components/peanut/claim/claim-info';
+import { EmptyState } from '@/components/love-page/empty-state';
+import LovePage from '@/components/love-page';
+import { LoveLink } from '@/components/love-page/link-params';
+import { checkRoseClaimed, getRoseByPeanutLink } from '@/utils/supabase/queries';
 
-interface PageProps {
-  searchParams: { [key: string]: string | string[] | undefined }
-}
+export default function Page() {
+  const { peanutLink, isLoading, isValidLink, isClaimed } = LoveLink();
 
-export default async function Page({ searchParams }: PageProps) {
-  const gameState = await getGameState();
-  // Fix 1: Handle searchParams properly
-  const claimId = searchParams?.claimId?.toString() || '';
-
-  if (!gameState) {
-    await createGameState();
-    return null;
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <span className="loading loading-dots loading-lg"></span>
+      </div>
+    );
   }
 
-  const allGiftsUnlocked = 
-    gameState.roses_game && 
-    gameState.ascii_game && 
-    gameState.guess_game && 
-    gameState.poem_game;
+  // Show empty state for invalid or non-existent links
+  if (!isValidLink) {
+    return <EmptyState />;
+  }
 
-  const gameInfo = {
-    valentineName: gameState.valentines_user?.name || 'there',
-    systemPrompt: gameState.roses?.[0]?.system_prompt || '',
-    clues: [
-      gameState.roses?.[0]?.clue_1,
-      gameState.roses?.[0]?.clue_2,
-    ].filter(Boolean) as string[],
-    poemText: gameState.roses?.[0]?.poem_text || '',
-    dateDetails: gameState.roses?.[0]?.date_details || '',
-    calendlyLink: gameState.roses?.[0]?.calendly_link || ''
-  };
+  // Show empty state for unclaimed links
+  if (!isClaimed) {
+    return <EmptyState type="unclaimed" peanutLink={peanutLink as string} />;
+  }
 
-  // Fix 2: Check if roses is an array before using array methods
-  const roses = Array.isArray(gameState.roses) ? gameState.roses : [];
-  const isLinkClaimed = roses.some((rose: Rose) => rose.claimed) || false;
-  const hasLink = roses.length > 0;
 
-  const renderMainContent = () => {
-    if (!hasLink) {
-      return <ClaimForm claimId={claimId} />;
-    }
-
-    if (!isLinkClaimed) {
-      return <ClaimRoses />;
-    }
-
-    if (allGiftsUnlocked) {
-      return <DateComponent />;
-    }
-
-    return (
-      <Suspense fallback={<div>Loading chat...</div>}>
-        <ValentineChat gameInfo={gameInfo} />
-      </Suspense>
-    );
-  };
-
+  // Show the love page for valid, claimed links
+  if (isClaimed) {
   return (
-    <div className="flex flex-col min-h-screen">
-      <GiftCounter gameState={gameState as GameState} />
-      {renderMainContent()}
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <LovePage peanutLink={peanutLink as string} />
+    </Suspense>
   );
-}
+}  }

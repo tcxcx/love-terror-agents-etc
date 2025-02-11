@@ -4,10 +4,10 @@
 import {createGameState, updateGameState } from '@/utils/supabase/mutations';
 import { getGameState } from '@/utils/supabase/queries';
 
-export async function initializeGame() {
-  const existingGame = await getGameState();
+export async function initializeGame(gameId: string, peanutLink?: string) {
+  const existingGame = await getGameState(gameId);
   if (!existingGame) {
-    return createGameState();
+    return createGameState(gameId);
   }
   return existingGame;
 }

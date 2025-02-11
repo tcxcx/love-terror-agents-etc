@@ -24,8 +24,6 @@ export default function ClaimRoses() {
     fetchLinkDetails(queryString, setDetails, setPaymentInfo);
   }, [queryString]);
 
-
-
   const handleClaim = async (txHash: string) => {
     if (!address || !details?.link) {
       toast({

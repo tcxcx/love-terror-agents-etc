@@ -25,7 +25,7 @@ import {
   completePoemGame,
   completeRosesGame,
 } from '@/actions/supabase/game';
-import { getGameStateWithValentineInfo } from '@/utils/supabase/queries';
+import { getGameState } from '@/utils/supabase/queries';
 
 export interface ServerMessage {
   role: "user" | "assistant";
@@ -36,16 +36,17 @@ export interface ClientMessage {
   id: string;
   role: "user" | "assistant";
   display: ReactNode;
+  gameId: string;
 }
 
-export async function continueConversation(input: string): Promise<ClientMessage> {
+export async function continueConversation(input: string, gameId: string): Promise<ClientMessage> {
   "use server";
 
   const history = getMutableAIState();
-  let gameState = await getGameStateWithValentineInfo();
+  let gameState = await getGameState(gameId);
   
   if (!gameState) {
-    gameState = await initializeGame();
+    gameState = await initializeGame(gameId);
   }
 
   const result = await streamUI({
@@ -180,6 +181,7 @@ export async function continueConversation(input: string): Promise<ClientMessage
     id: nanoid(),
     role: "assistant",
     display: result.value,
+    gameId: gameId,
   };
 }
 

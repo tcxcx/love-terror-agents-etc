@@ -21,11 +21,23 @@ import { useSwitchNetwork } from "@dynamic-labs/sdk-react-core";
 import { getBlockExplorerUrlByChainId } from "@/utils/get-explorer";
 import { fetchLinkDetails } from "@/utils/local-storage";
 import { useDestinationToken } from "@/hooks/use-destination-chain";
+import { useAccount } from "wagmi";
+import {
+  updatePeanutLink,
+} from "@/utils/supabase/mutations/client";
+
+  // Fix 1: Handle searchParams properly
+  import { useSearchParams } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
+import { triggerConfetti } from "@/utils";
+
+
 
 export function getChainInfoByChainId(chainId: number | string) {
   const id = Number(chainId);
   const chainName = chainIdMapping[id] || `Chain ${id}`;
   const chainIcon = chainIcons[id] || "";
+
 
   const isMainnet = Object.values(Chains).find(
     (chain) => chain.chainId === id
@@ -37,16 +49,14 @@ export function getChainInfoByChainId(chainId: number | string) {
   };
 }
 
-export default function ClaimForm({
-  claimId: initialClaimId,
-}: {
-  claimId: string | undefined;
-}) {
+export default function ClaimForm() {
   const {
     claimPayLink,
     claimPayLinkXChain,
     isLoading: isPeanutLoading,
   } = usePeanut();
+
+  const { address } = useAccount();
 
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState<string | null>(
@@ -57,12 +67,21 @@ export default function ClaimForm({
     null
   );
 
+  const searchParams = useSearchParams();
+
+
+  const initialClaimId = searchParams?.toString() || '';
+
+
+  console.log(initialClaimId, "initialClaimId");
+
   const getDestinationTokenAddress = useDestinationToken();
 
   const [inProgress, setInProgress] = useState(false);
   const [currentText, setCurrentText] = useState(
     "You can claim your roses 🌹🌹🌹"
   );
+
   const chains = Object.values(Chains).map((chain) => ({
     chainId: chain.chainId,
   }));
@@ -76,6 +95,12 @@ export default function ClaimForm({
     if (initialClaimId) {
       fetchLinkDetails(initialClaimId, setDetails, setPaymentInfo);
     }
+    console.log(initialClaimId, "initialClaimId");
+    
+    
+    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+    const fullUrl = `${baseUrl}/love?${initialClaimId}`;
+    setInputLink(fullUrl);
   }, [initialClaimId]);
 
   useEffect(() => {
@@ -113,6 +138,16 @@ export default function ClaimForm({
     setOverlayVisible(true);
     setCurrentText("Beginning claim 🌹🌹🌹");
 
+    if (!address || !details?.link) {
+      toast({
+        title: "Error",
+        description: "Please connect your wallet first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+
     if (paymentInfo?.claimed) {
       toast({
         title: "You already claimed your roses 🌹🌹🌹",
@@ -133,11 +168,28 @@ export default function ClaimForm({
           () => setCurrentText("Claiming your roses 🌹🌹🌹")
         );
         setTransactionDetails(txHash);
+        
+  
+
+      // Update peanut link record
+      const peanutLinkRecord = await updatePeanutLink(
+        details?.link || "",
+        address as string,
+      );
+
+
+      if (!peanutLinkRecord) {
+        throw new Error("Failed to record peanut link");
+      }
+
         setPaymentInfo((prevInfo) =>
           prevInfo
             ? { ...prevInfo, transactionHash: txHash, claimed: true }
             : null
         );
+
+        triggerConfetti("😍");
+
       } catch (error) {
         console.error("Error claiming payment link:", error);
         setInProgress(false);
@@ -251,7 +303,7 @@ export default function ClaimForm({
             className="mt-1 rounded border px-3 py-2 flex-grow"
           />
           <Button onClick={handlePasteClick} className="ml-2">
-            Add link
+            Paste
           </Button>
         </div>
       </div>

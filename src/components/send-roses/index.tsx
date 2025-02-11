@@ -31,6 +31,7 @@ import { useAccount } from "wagmi";
 import { useToast } from "@/hooks/use-toast";
 import Overlay from "../overlay";
 import { truncateAddress } from "@/utils/truncate-address";
+import { createClient } from "@/utils/supabase/client";
 
 // import RoseLinkForm from "@/components/create-rose-link";
 
@@ -82,6 +83,7 @@ export default function SendRoses() {
   const currentChainId = useNetworkManager();
   const chainId = currentChainId as number;
 
+
   const {
     createPayLink,
     isLoading: isPeanutLoading,
@@ -131,13 +133,17 @@ export default function SendRoses() {
         claimed: false,
       });
 
+
       if (!rose) {
         throw new Error("Failed to create rose submission");
       }
 
+
       const peanutLinkRecord = await createPeanutLink(
         rose.id,
-        linkResponse.paymentLink
+        linkResponse.paymentLink,
+        address as string,
+        false,
       );
 
       if (!peanutLinkRecord) {
