@@ -41,7 +41,7 @@ interface RoseLinkFormProps {
 
 // RoseLinkForm.tsx
 const handleSubmit = async (formData: any) => {
-  if (!formData.formState.isValid || !selectedToken || tokenAmount <= 0 || !address) {
+  if (!selectedToken || tokenAmount <= 0 || !address) {
     toast({
       title: "Form Error",
       description: "Please connect your wallet and fill out all required fields",

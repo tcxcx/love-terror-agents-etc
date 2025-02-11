@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { usePeanut } from "@/hooks/use-peanut";
@@ -22,9 +24,7 @@ import { useDestinationToken } from "@/hooks/use-destination-chain";
 
 export function getChainInfoByChainId(chainId: number | string) {
   const id = Number(chainId);
-  // @ts-ignore
   const chainName = chainIdMapping[id] || `Chain ${id}`;
-  // @ts-ignore
   const chainIcon = chainIcons[id] || "";
 
   const isMainnet = Object.values(Chains).find(

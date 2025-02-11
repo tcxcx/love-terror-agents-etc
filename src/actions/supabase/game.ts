@@ -18,38 +18,20 @@ export async function completeAsciiGame(gameId: string) {
   });
 }
 
-export async function completePasswordAuth(gameId: string) {
+export async function completeGuessingGame(gameId: string) {
   return updateGameState(gameId, {
     guess_game: true
   });
 }
 
-export async function completePoem(gameId: string) {
+export async function completePoemGame(gameId: string) {
   return updateGameState(gameId, {
     poem_game: true
   });
 }
 
-export async function completeRoses(gameId: string) {
+export async function completeRosesGame(gameId: string) {
   return updateGameState(gameId, {
     roses_game: true
   });
 }
-
-// export async function completeNFT(gameId: string) {
-//   return updateGameState(gameId, {
-//     nft_minted: true
-//   });
-// }
-
-// export async function completeLocation(gameId: string) {
-//   return updateGameState(gameId, {
-//     location_revealed: true
-//   });
-// }
-
-// export async function completeScheduling(gameId: string) {
-//   return updateGameState(gameId, {
-//     date_scheduled: true
-//   });
-// }

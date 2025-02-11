@@ -8,19 +8,37 @@ import { AnimatedSpan, Terminal, TypingAnimation } from "@/components/ui/termina
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef } from 'react';
 import { ScrollAreaViewport } from '@radix-ui/react-scroll-area';
+import { getGameStateWithValentineInfo } from '@/utils/supabase/queries';
+import { useQuery } from '@tanstack/react-query';
 // import { useActions, useUIState } from "ai/rsc";
 
 
-export default function ValentineChat() {
+interface ValentineChatProps {
+  gameInfo: {
+    valentineName: string;
+    systemPrompt: string;
+    clues: string[];
+    poemText: string;
+    dateDetails: string;
+    calendlyLink: string;
+  };
+}
+
+export default function ValentineChat({ gameInfo }: ValentineChatProps) {
+  
   const { messages, input, handleInputChange, handleSubmit, isLoading, stop } = useChat({
     initialMessages: [
       {
         id: 'initial',
         role: 'assistant',
-        content: "🌹 ¡Hola Sofia! Bienvenida a una nueva aventura. ¿Quién podrá ser tu admirador no tan secreto? 💫. Con lo hermosa que eres, este juego seguro sera muy dificl y no podras adivinarlo a la primera. Pero no te preocupes, te ayudare a descubrirlo. ¿Estas lista?"
+        content: `🌹 Hi there ${gameInfo.valentineName}! Welcome to this Valentine's game. You just got some $LOVE tokens. A secret admirer is trying to ask you out. You must unlock all four gift's to find out the details of all this. Are you a romantic? ¿Who might be your secret Valentine? 💫. I am an AI but my guess is you are quite beautiful. Now, let's see if you're smart. This game won't be difficult, but that depends on how easy your valentine made it for you. Is your Valentine worth it? 💝 Find out what the four games are, get the gifts and find out who your secret Valentine is. Good luck! 💝`
       }
-    ]
+    ],
+    body: {
+      systemPrompt: gameInfo.systemPrompt
+    }
   });
+  
 
   // const [conversation, setConversation] = useUIState();
   // const { continueConversation } = useActions();
@@ -72,7 +90,7 @@ export default function ValentineChat() {
             "text-xs mb-1 font-medium",
             isUser ? "text-pink-400/70" : "text-purple-400/70"
           )}>
-            {isUser ? 'Sofia' : 'Admirador Secreto'}
+            {isUser ? gameInfo.valentineName : 'Secret Admirer'}
           </div>
 
           {/* Message Content */}

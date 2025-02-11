@@ -4,20 +4,28 @@ import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { openai } from "@ai-sdk/openai";
 import { ReactNode } from "react";
 import { nanoid } from "nanoid";
-import { AsciiArt } from "@/components/ascii";
-import { asciiArtTool } from "@/components/ai/tools";
-import { createGameState } from '@/utils/supabase/mutations';
-import { getGameState } from '@/utils/supabase/queries';
-import {completeAsciiGame} from '@/actions/supabase/game';
+
+import { AsciiArt } from "@/components/games/ascii";
+import { GuessingGame } from "@/components/games/guessing-game";
+import { PoemDisplay } from "@/components/games/poem-display";
+import { DateScheduler } from "@/components/games/date-scheduler";
 import {handleAsciiArtComplete} from '@/hooks/game-functions';
-// import {checkGameProgress} from '@/hooks/game-functions';
-
-
-// import { PasswordAuth } from "@/components/auth";
-// import { CalendarScheduler } from "@/components/calendar";
-// import { LocationReveal } from "@/components/location";
-// import { PoemDisplay } from "@/components/poem";
-// import { BlockchainNFT } from "@/components/blockchain";
+import { 
+  asciiArtTool,
+  guessingGameTool,
+  poemRevealTool,
+  dateLocationTool,
+  gameProgressTool,
+  validateSecretAnswerTool
+} from "@/components/ai/tools";
+import { 
+  initializeGame,
+  completeAsciiGame,
+  completeGuessingGame,
+  completePoemGame,
+  completeRosesGame,
+} from '@/actions/supabase/game';
+import { getGameStateWithValentineInfo } from '@/utils/supabase/queries';
 
 export interface ServerMessage {
   role: "user" | "assistant";
@@ -28,19 +36,16 @@ export interface ClientMessage {
   id: string;
   role: "user" | "assistant";
   display: ReactNode;
-
 }
 
-export async function continueConversation(
-  input: string,
-): Promise<ClientMessage> {
+export async function continueConversation(input: string): Promise<ClientMessage> {
   "use server";
 
   const history = getMutableAIState();
-
-  let gameState = await getGameState();
+  let gameState = await getGameStateWithValentineInfo();
+  
   if (!gameState) {
-    gameState = await createGameState();
+    gameState = await initializeGame();
   }
 
   const result = await streamUI({
@@ -56,67 +61,118 @@ export async function continueConversation(
       return <div>{content}</div>;
     },
     tools: {
+      // ASCII Art Game
       displayAsciiArt: {
         ...asciiArtTool,
         generate: async function* () {
-          yield <div>Generando arte ASCII...</div>;
-
+          yield <div>Generating your special ASCII art...</div>;
           if (gameState && !gameState.ascii_game) {
             await completeAsciiGame(gameState.id);
           }
-          return <AsciiArt onComplete={handleAsciiArtComplete} />;
+          return <AsciiArt onComplete={() => completeAsciiGame(gameState!.id)} />;
         },
       },
-      // passwordAuth: {
-      //   description: "Authenticate with password",
-      //   parameters: z.object({
-      //     password: z.string().describe("I have created a secret only you and I know about - you have 7 clues to decipher it"),
-      //   }),
-      //   generate: async function* ({ password }) {
-      //     yield <div>Verifying password...</div>;
-      //     return <PasswordAuth password={password} />;
-      //   },
-      // },
-      // scheduleDate: {
-      //   description: "Schedule a date",
-      //   parameters: z.object({
-      //     date: z.string().describe("date to schedule"),
-      //   }),
-      //   generate: async function* ({ date }) {
-      //     yield <div>Setting up calendar...</div>;
-      //     return <CalendarScheduler date={date} />;
-      //   },
-      // },
-      // revealLocation: {
-      //   description: "Reveal meeting location",
-      //   parameters: z.object({
-      //     location: z.string().describe("location to reveal"),
-      //   }),
-      //   generate: async function* ({ location }) {
-      //     yield <div>Revealing location...</div>;
-      //     return <LocationReveal location={location} />;
-      //   },
-      // },
-      // displayPoem: {
-      //   description: "Display a poem",
-      //   parameters: z.object({
-      //     poem: z.string().describe("poem to display"),
-      //   }),
-      //   generate: async function* ({ poem }) {
-      //     yield <div>Preparing poem...</div>;
-      //     return <PoemDisplay poem={poem} />;
-      //   },
-      // },
-      // createNFT: {
-      //   description: "Create blockchain NFT",
-      //   parameters: z.object({
-      //     content: z.string().describe("content to mint as NFT"),
-      //   }),
-      //   generate: async function* ({ content }) {
-      //     yield <div>Minting NFT...</div>;
-      //     return <BlockchainNFT content={content} />;
-      //   },
-      // },
+
+      // Guessing Game with 7 Clues
+      playGuessingGame: {
+        ...guessingGameTool,
+        generate: async function* ({ clueNumber, guess }: { clueNumber: number; guess: string }) {
+          yield <div>Loading clue {clueNumber}...</div>;
+          
+          const clues = {
+            clue_1: gameState?.roses?.[0]?.clue_1,
+            clue_2: gameState?.roses?.[0]?.clue_2,
+            clue_3: gameState?.roses?.[0]?.clue_3,
+            clue_4: gameState?.roses?.[0]?.clue_4,
+            clue_5: gameState?.roses?.[0]?.clue_5,
+            clue_6: gameState?.roses?.[0]?.clue_6,
+            clue_7: gameState?.roses?.[0]?.clue_7,
+          };
+
+
+          if (guess) {
+            const isCorrect = guess.toLowerCase().trim() === 
+              (gameState?.roses?.[0]?.secret_answer || '').toLowerCase().trim();
+
+            if (isCorrect) {
+              await completeGuessingGame(gameState!.id);
+            }
+
+            yield <div>{isCorrect ? '🎉 Correct!' : 'Try again...'}</div>;
+          }
+
+          return (
+            <GuessingGame 
+              clues={clues}
+              currentClue={clueNumber}
+              secretAnswer={gameState?.roses?.[0]?.secret_answer}
+              onComplete={() => completeGuessingGame(gameState!.id)}
+              guess={guess}
+            />
+          );
+        },
+      },
+
+      // Poem Game
+      handlePoem: {
+        ...poemRevealTool,
+        generate: async function* ({ poem, action }) {
+          yield <div>Preparing your special poem...</div>;
+          
+          if (action === 'view') {
+            return (
+              <PoemDisplay 
+                poem={gameState?.roses?.[0]?.poem_text}
+                onComplete={() => completePoemGame(gameState!.id)}
+              />
+            );
+          }
+          return null;
+        },
+      },
+
+      // Date Location & Scheduling
+      handleDate: {
+        ...dateLocationTool,
+        generate: async function* ({ location, details }) {
+          yield <div>Preparing your special date details...</div>;
+                    
+          return (
+            <DateScheduler 
+              location={gameState?.roses?.[0]?.date_site}
+              details={gameState?.roses?.[0]?.date_details}
+              calendlyLink={gameState?.roses?.[0]?.calendly_link}
+            />
+          );
+        },
+      },
+
+      // Game Progress Checking
+      checkProgress: {
+        ...gameProgressTool,
+        generate: async function* ({ checkType }) {
+          yield <div>Checking game progress...</div>;
+          
+          const progress = {
+            ascii: gameState?.ascii_game,
+            guessing: gameState?.guess_game,
+            poem: gameState?.poem_game,
+            roses: gameState?.roses_game,
+          };
+
+          return (
+            <div className="p-4 bg-pink-500/10 rounded-lg">
+              <h3 className="text-lg font-bold mb-2">Your Progress</h3>
+              <ul className="space-y-2">
+                <li>ASCII Art: {progress.ascii ? '✅' : '⏳'}</li>
+                <li>Guessing Game: {progress.guessing ? '✅' : '⏳'}</li>
+                <li>Secret Poem: {progress.poem ? '✅' : '⏳'}</li>
+                <li>Roses Claimed: {progress.roses ? '✅' : '⏳'}</li>
+              </ul>
+            </div>
+          );
+        },
+      },
     },
   });
 

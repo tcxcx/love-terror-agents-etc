@@ -62,8 +62,8 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   }, [availableTokens]);
 
   const balance = useTokenBalance({
-    address: address || "0x0",
-    chainId: chainId || undefined,
+    address: address!,
+    chainId: chainId!,
     tokenAddress:
       (selectedToken?.address as `0x${string}`) || NATIVE_TOKEN_ADDRESS,
     decimals: selectedToken?.decimals ?? 18,
