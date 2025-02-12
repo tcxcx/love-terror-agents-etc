@@ -1,10 +1,10 @@
 import { cookies } from 'next/headers';
 import { GameState } from '@/types';
-import { createClient } from '@/utils/supabase/server';
+import createSuperbaseServerClient from '@/utils/supabase/server';
 
 export async function getGameStateServer(peanutLink: string): Promise<GameState | null> {
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = await createSuperbaseServerClient();
   
   const { data: rose, error: roseError } = await supabase
     .from('roses')

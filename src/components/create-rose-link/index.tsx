@@ -12,7 +12,8 @@ import { useNetworkManager } from "@/hooks/use-dynamic-network";
 import { truncateAddress } from "@/utils/truncate-address";
 
 import { BaseSepoliaTokens } from "@/constants/Tokens";
-import { createClient } from "@/utils/supabase/client";
+import supabase from "@/utils/supabase/client";
+
 interface RoseLinkFormProps {
   formData: any;
   onSubmitForm: (
@@ -34,7 +35,6 @@ export default function RoseLinkForm({
     isLoading: isPeanutLoading,
     copyToClipboard,
   } = usePeanut();
-  const supabase = createClient();
 
   const [overlayVisible, setOverlayVisible] = useState(false);
   const [transactionDetails, setTransactionDetails] =

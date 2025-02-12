@@ -6,7 +6,7 @@ export default function SendRoses() {
 
   return (
     <div className="w-full p-4">
-          <CupidForm />
+      <CupidForm />
     </div>
   );
 }

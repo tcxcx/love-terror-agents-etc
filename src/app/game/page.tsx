@@ -1,20 +1,27 @@
-"use client";
+'use client';
 
-import { Suspense, useState } from 'react';
-import { EmptyState } from '@/components/love-page/empty-state';
+import { Suspense } from 'react';
 import LovePage from '@/components/love-page';
-import { LoveLink } from '@/components/love-page/link-params';
 import { LoadingOverview } from '@/components/loading-overview';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
-export default function Page() {
+export default function GamePage() {
+  const searchParams = useSearchParams();
   
-    const peanutLink = "https://peanut.fun/love?1234567890";
+  // Get all parameters
+  const params = new URLSearchParams(searchParams);
+  
+  // Construct base URL
+  const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+  
+  // Create love URL with all parameters
+  const loveUrl = `${baseUrl}/love?${params.toString()}`;
+  
+  console.log('Love URL:', loveUrl);
 
-  // Show the love page for valid, claimed links
   return (
     <Suspense fallback={<LoadingOverview />}>
-      <LovePage peanutLink={peanutLink as string} />
+      <LovePage peanutLink={loveUrl} />
     </Suspense>
   );
-}  
+}

@@ -1,11 +1,9 @@
-import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
+import createSuperbaseServerClient from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = await createSuperbaseServerClient();
     const roseData = await request.json();
 
     // First create the game state

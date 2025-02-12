@@ -1,12 +1,11 @@
 "use client";
 
-import { createClient } from "@/utils/supabase/client";
+import supabase from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { AlertCircle } from "lucide-react";
 
 export function SignOut() {
-  const supabase = createClient();
   const router = useRouter();
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
