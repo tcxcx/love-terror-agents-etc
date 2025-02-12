@@ -4,16 +4,18 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import supabase from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export function GoogleSignin() {
-  const supabase = createClient();
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("return_to");
-  const baseUrl = process.env.NEXT_PUBLIC_TESTNET_URL || window.location.origin || "http://localhost:3000";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_TESTNET_URL ||
+    window.location.origin ||
+    "http://localhost:3000";
 
   const handleSignIn = async () => {
     try {
@@ -22,7 +24,7 @@ export function GoogleSignin() {
 
       const redirectTo = new URL(
         "/api/auth/callback",
-        window.location.origin || baseUrl,
+        window.location.origin || baseUrl
       );
       if (returnTo) {
         redirectTo.searchParams.append("return_to", returnTo);
@@ -51,11 +53,10 @@ export function GoogleSignin() {
         setError(signInError.message);
         return;
       }
-
     } catch (err) {
       console.error("Unexpected error during sign-in:", err);
       setError(
-        err instanceof Error ? err.message : "An unexpected error occurred",
+        err instanceof Error ? err.message : "An unexpected error occurred"
       );
     } finally {
       setLoading(false);

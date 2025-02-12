@@ -1,12 +1,11 @@
-import { createClient } from '@/utils/supabase/client';
-import { GameState, Rose } from '@/types';
+import supabase from "@/utils/supabase/client";
+import { GameState, Rose } from "@/types";
 
 export async function getGameState(gameId: string): Promise<GameState | null> {
-  const supabase = await createClient();
-  
   const { data, error } = await supabase
-    .from('games')
-    .select(`
+    .from("games")
+    .select(
+      `
       *,
       roses (
         id,
@@ -32,10 +31,11 @@ export async function getGameState(gameId: string): Promise<GameState | null> {
         valentines_user_id,
         peanut_link
       )
-    `)
-    .eq('id', gameId)
+    `
+    )
+    .eq("id", gameId)
     .single();
-    
+
   if (error) {
     console.error("Error fetching game state:", error);
     return null;
@@ -45,8 +45,6 @@ export async function getGameState(gameId: string): Promise<GameState | null> {
 }
 
 export async function checkRoseClaimed(roseId: string): Promise<boolean> {
-  const supabase = await createClient();
-  
   const { data, error } = await supabase
     .from("roses")
     .select("claimed")
@@ -62,28 +60,27 @@ export async function checkRoseClaimed(roseId: string): Promise<boolean> {
 }
 
 export async function getPeanutLinkStatus(link: string): Promise<boolean> {
-  const supabase = await createClient();
-  
   const { data, error } = await supabase
-    .from('peanut_link')
-    .select('claimed')
-    .eq('link', link)
+    .from("peanut_link")
+    .select("claimed")
+    .eq("link", link)
     .single();
-    
+
   if (error) {
-    console.error('Error checking peanut link status:', error);
+    console.error("Error checking peanut link status:", error);
     return false;
   }
-  
+
   return data?.claimed || false;
 }
 
-export async function getRoseByPeanutLink(peanutLink: string): Promise<Rose | null> {
-  const supabase = await createClient();
-  
+export async function getRoseByPeanutLink(
+  peanutLink: string
+): Promise<Rose | null> {
   const { data, error } = await supabase
-    .from('roses')
-    .select(`
+    .from("roses")
+    .select(
+      `
       *,
       game: game_id (
         id,
@@ -92,8 +89,9 @@ export async function getRoseByPeanutLink(peanutLink: string): Promise<Rose | nu
         poem_game,
         roses_game
       )
-    `)
-    .eq('peanut_link', peanutLink)
+    `
+    )
+    .eq("peanut_link", peanutLink)
     .single();
 
   if (error) {
@@ -105,12 +103,10 @@ export async function getRoseByPeanutLink(peanutLink: string): Promise<Rose | nu
 }
 
 export async function getGameProgress(gameId: string): Promise<number> {
-  const supabase = await createClient();
-  
   const { data, error } = await supabase
-    .from('games')
-    .select('ascii_game, guess_game, poem_game, roses_game')
-    .eq('id', gameId)
+    .from("games")
+    .select("ascii_game, guess_game, poem_game, roses_game")
+    .eq("id", gameId)
     .single();
 
   if (error) {
@@ -122,7 +118,7 @@ export async function getGameProgress(gameId: string): Promise<number> {
     data.ascii_game,
     data.guess_game,
     data.poem_game,
-    data.roses_game
+    data.roses_game,
   ].filter(Boolean).length;
 
   return completedSteps;
