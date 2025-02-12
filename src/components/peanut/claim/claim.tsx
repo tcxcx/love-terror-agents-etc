@@ -24,6 +24,7 @@ import { useAccount } from "wagmi";
 import {
   updatePeanutLink,
 } from "@/utils/supabase/mutations/client";
+import GameButton from "@/components/game-button";
 
   // Fix 1: Handle searchParams properly
 import { useSearchParams } from "next/navigation";
@@ -46,7 +47,7 @@ export function getChainInfoByChainId(chainId: number | string) {
   };
 }
 
-export default function Claim() {
+export default function Claim({peanutLink}: {peanutLink: string}) {
   const {
     claimPayLink,
     isLoading: isPeanutLoading,
@@ -228,8 +229,9 @@ export default function Claim() {
             onClick={handleClaim}
             disabled={paymentInfo.claimed || isPeanutLoading}
           >
-            Claim <span className="text-xl">❤️</span>
+            Claim is here <span className="text-xl">❤️</span>
           </Button>
+          {paymentInfo.claimed && <GameButton peanutLink={peanutLink} />}
         </>
       )}
       {overlayVisible && (

@@ -1,40 +1,50 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import { useQueryState } from "nuqs";
 import ValentineChat from "@/components/valentine-chat";
 import { getGameState, getRoseByPeanutLink } from "@/utils/supabase/queries";
 import GiftCounter from "@/components/gift-counter";
-import ClaimRoses from "@/components/claim-roses";
 import DateComponent from "@/components/date-component";
-import { Rose, GameState } from "@/types";
+import { GameState } from "@/types";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { LoadingOverview } from "@/components/loading-overview";
 
 export default function LovePage({ peanutLink }: { peanutLink: string }) {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [gameId] = useQueryState('gameId');
   const supabase = createClient();
-  
   
   useEffect(() => {
     async function initializeGame() {
       try {
-        const rose = await getRoseByPeanutLink(peanutLink);
+        // If we already have the gameId from the URL state, use it
+        if (gameId) {
+          const currentGameState = await getGameState(gameId);
+          if (currentGameState) {
+            setGameState(currentGameState);
+            return;
+          }
+        }
 
-        if (!rose) {
+        // Otherwise get it from the rose
+        const rose = await getRoseByPeanutLink(peanutLink);
+        if (!rose?.game_id) {
           console.error("No rose found for this peanut link");
           return;
         }
 
-        let currentGameState = await getGameState(rose?.game_id!);
+        let currentGameState = await getGameState(rose.game_id);
 
         if (!currentGameState) {
-          // Create new game state if none exists
-          const { data: currentGameState, error: gameError } = await supabase
+          const { data: newGameState, error: gameError } = await supabase
             .from("games")
             .select("*")
-            .eq("id", rose?.game_id!)
+            .eq("id", rose.game_id)
             .single();
+
           if (gameError) {
             console.error("Failed to create game state");
             toast({
@@ -44,11 +54,17 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
             });
             return;
           }
+          currentGameState = newGameState;
         }
 
         setGameState(currentGameState);
       } catch (error) {
         console.error("Error initializing game:", error);
+        toast({
+          title: "Error",
+          description: "Failed to initialize game",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -57,14 +73,10 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
     if (peanutLink) {
       initializeGame();
     }
-  }, [peanutLink]);
+  }, [peanutLink, gameId]);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <span className="loading loading-dots loading-lg"></span>
-      </div>
-    );
+    return <LoadingOverview />;
   }
 
   if (!gameState) {
@@ -98,17 +110,10 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
     calendlyLink: gameState.roses?.[0]?.calendly_link || "",
   };
 
-
-  
-
   const renderMainContent = () => {
-    // if (!gameState.roses_game) {
-    //     // TO DO: adapt so claim form takes peanutLink as a prop
-    //   return <ClaimRoses />;
-    // }
-
     if (allGiftsUnlocked) {
-      // TO DO: pass gameInfo as a prop
+
+        // TODO: Add GameInfo={gameInfo} as
       return <DateComponent />;
     }
 

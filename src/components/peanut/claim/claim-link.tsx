@@ -1,32 +1,28 @@
 "use client";
 
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { usePeanut } from "@/hooks/use-peanut";
 import PaymentDetails from "@/components/peanut/card/details";
 import confetti from "canvas-confetti";
 import { toast } from "@/hooks/use-toast";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { AnimatePresence, motion } from "framer-motion";
 import { FadeText } from "@/components/magicui/fade-text";
-import { ChevronRightIcon, XIcon } from "lucide-react";
+import { ChevronRightIcon, ClipboardPasteIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { chainIdMapping, chainIcons } from "@/components/peanut/card/details";
 import { ExtendedPaymentInfo, IGetLinkDetailsResponse } from "@/types";
 import * as Chains from "@/constants/Chains";
-import { useSwitchNetwork } from "@dynamic-labs/sdk-react-core";
 import { getBlockExplorerUrlByChainId } from "@/utils/get-explorer";
 import { fetchLinkDetails } from "@/utils/local-storage";
 import { useDestinationToken } from "@/hooks/use-destination-chain";
 import { useAccount } from "wagmi";
+import GameButton from "@/components/game-button";
 import {
   updatePeanutLink,
 } from "@/utils/supabase/mutations/client";
 
-  // Fix 1: Handle searchParams properly
-import { useSearchParams } from "next/navigation";
 import { triggerConfetti } from "@/utils";
 
 
@@ -46,7 +42,16 @@ export function getChainInfoByChainId(chainId: number | string) {
   };
 }
 
-export default function ClaimLink({peanutLink}: {peanutLink: string}) {
+interface BaseClaimProps {
+  peanutLink: string;
+  onClaimSuccess?: () => void;
+}
+
+interface ClaimLinkProps extends BaseClaimProps {
+  text?: string;
+}
+
+export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
   const {
     claimPayLink,
     isLoading: isPeanutLoading,
@@ -63,7 +68,6 @@ export default function ClaimLink({peanutLink}: {peanutLink: string}) {
     null
   );
 
-  const getDestinationTokenAddress = useDestinationToken();
 
   const [inProgress, setInProgress] = useState(false);
   const [currentText, setCurrentText] = useState(
@@ -124,7 +128,7 @@ export default function ClaimLink({peanutLink}: {peanutLink: string}) {
       setCurrentText("You have already claimed your roses 🌹🌹🌹");
     } else if (paymentInfo && !destinationChainId) {
       try {
-        setCurrentText("Claiming your roses harddddd 🌹🌹🌹");
+        setCurrentText("Claiming $LOVE started ");
         const txHash = await claimPayLink(
           details?.link || "",
           () => setCurrentText("Claiming your roses 🌹🌹🌹"),
@@ -167,7 +171,7 @@ export default function ClaimLink({peanutLink}: {peanutLink: string}) {
     setInProgress(false);
   };
 
-  const renderClaimInfo = () => (
+  const renderClaimInfo = (peanutLink: string) => (
     <section className="flex w-full h-auto flex-col justify-between rounded-2xl border bg-background p-5">
       <div className="flex w-full md:h-[200px] lg:h-[300px] flex-col justify-between rounded-2xl">
         <div className="p-5">
@@ -182,12 +186,16 @@ export default function ClaimLink({peanutLink}: {peanutLink: string}) {
               </>
             )}
           </div>
+
         </div>
       </div>
+        {paymentInfo?.claimed! && (
+            <GameButton peanutLink={details?.link!} />
+          )}
     </section>
   );
 
-  const renderInputForm = () => (
+  const renderInputForm = (peanutLink: string) => (
     <div className="flex w-full h-auto flex-col justify-between rounded-2xl border bg-background p-5">
       <div className="flex w-full md:h-[200px] lg:h-[300px] flex-col mb-5">
         <label
@@ -204,8 +212,8 @@ export default function ClaimLink({peanutLink}: {peanutLink: string}) {
             onChange={handleInputChange}
             className="mt-1 rounded border px-3 py-2 flex-grow"
           />
-          <Button onClick={handlePasteClick} className="ml-2">
-            Paste
+          <Button onClick={handlePasteClick} className="ml-1">
+          <ClipboardPasteIcon className="size-6" />
           </Button>
         </div>
       </div>
@@ -221,7 +229,15 @@ export default function ClaimLink({peanutLink}: {peanutLink: string}) {
 
   return (
     <section className="mx-auto h-full flex flex-col items-center">
-      {paymentInfo ? renderClaimInfo() : renderInputForm()}
+      <div className="flex flex-col items-center justify-center py-4">
+        <h1 className="text-3xl font-bold text-accent">
+          {text}
+        </h1>
+        <h2 className="text-xl font-bold text-accent">
+          You can begin the game and claim roses after claiming.
+        </h2>
+      </div>
+      {paymentInfo ? renderClaimInfo(peanutLink) : renderInputForm(peanutLink)}
       {paymentInfo && (
         <>
           <Button
@@ -230,7 +246,7 @@ export default function ClaimLink({peanutLink}: {peanutLink: string}) {
             onClick={handleClaim}
             disabled={paymentInfo.claimed || isPeanutLoading}
           >
-            Claim <span className="text-xl">❤️</span>
+            Claim is here <span className="text-xl">❤️</span>
           </Button>
         </>
       )}

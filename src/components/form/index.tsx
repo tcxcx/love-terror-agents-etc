@@ -243,7 +243,7 @@ export function CupidForm() {
     return (
       <div>
         <Form {...formData}>
-          <form noValidate onSubmit={formData.handleSubmit(onSubmit)} className="flex flex-col p-2 md:p-5 w-full mx-auto rounded-md max-w-3xl gap-2 border">
+          <form noValidate onSubmit={formData.handleSubmit(onSubmit)} className="flex flex-col p-2 md:p-5 w-full mx-auto rounded-md max-w-3xl gap-2 border bg-white">
             <MultiStepViewer formData={formData} loading={isPeanutLoading} onSubmit={onSubmit} tokenAmount={tokenAmount} setTokenAmount={function (amount: number): void {
                 throw new Error("Function not implemented.");
             } }/>

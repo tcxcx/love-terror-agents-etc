@@ -72,7 +72,7 @@ const PaymentDetails: React.FC<PaymentInfoProps> = ({ paymentInfo }) => {
             </p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold">{paymentInfo.tokenAmount} 👻</p>
+            <p className="text-2xl font-bold">{paymentInfo.tokenAmount} 😍</p>
           </div>
         </div>
 

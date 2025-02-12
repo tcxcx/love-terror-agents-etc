@@ -11,10 +11,8 @@ const SendRoses = dynamic(() => import("@/components/send-roses"), {
 const RosesPage = () => {
   return (
     <div className="min-h-screen max-w-4xl mx-auto">
-  
-          <div className="z-10">
-            <SendRoses />
-  
+      <div className="z-10">
+        <SendRoses />
       </div>
     </div>
   );
