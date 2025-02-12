@@ -23,7 +23,7 @@ const HeroSection = () => {
           </AnimatedShinyText>         
            </div>
           <h1 className="text-5xl font-bold text-accent">
-            Valentine&lsquo;s Day 2025: 
+            <span className="text-red-500">Valentine&lsquo;s</span> Day 2025: 
             <span className="text-secondary animate-pulse"> autists unite!</span>
           </h1>
           <p className="text-lg text-accent/80 mt-6 font-mono">

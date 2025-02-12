@@ -233,7 +233,7 @@ export default function Claim() {
         </>
       )}
       {overlayVisible && (
-        <div className="animate-in fade-in-0 fixed inset-0 z-40 bg-white/90 absolute top-0 left-0 right-0 bottom-0 backdrop-blur-sm blur-sm min-h-screen">
+        <div className="animate-in fade-in-0 fixed inset-0 z-40 bg-white/90">
           <div className="relative flex size-full items-center justify-center">
             <button
               className="absolute right-4 top-4"

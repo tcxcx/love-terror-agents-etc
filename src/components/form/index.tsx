@@ -1,13 +1,12 @@
 
+
 import {
 useForm
 } from "react-hook-form"
 import {
 zodResolver
 } from "@hookform/resolvers/zod"
-import {
-formSchema
-} from './form-schema'
+import { formSchema, defaultValues, FormSchemaType } from './form-schema';
 import { Form } from "@/components/ui/form"
 import { MultiStepViewer } from "./multi-step-form"
 import * as z from "zod";
@@ -40,6 +39,7 @@ export function CupidForm() {
     const { address } = useAccount();
     const currentChainId = useNetworkManager();
     const chainId = currentChainId as number;
+    
     const { toast } = useToast();
 
   
@@ -107,13 +107,18 @@ export function CupidForm() {
       };
 
 
-    const form = useForm < z.infer < typeof formSchema >> ({
-      resolver: zodResolver(formSchema),
-      defaultValues: {},
-    })
+    const formData = useForm<FormSchemaType>({
+        resolver: zodResolver(formSchema),
+        defaultValues,
+    });
+
+    const onValueChange = (tokenAmount: number) => {
+        setTokenAmount(tokenAmount);
+      };
 
     const handleSubmit = async (formData: any) => {
-        console.log(formData, "formData");
+        console.log("Handle submit called with:", formData);
+        
     
         setOverlayVisible(true);
         try {
@@ -122,7 +127,7 @@ export function CupidForm() {
     
           // Generate peanut link first
           const linkResponse = await createPayLink(
-            tokenAmount.toString(),
+            formData.amount_roses.toString(),
             tokenAddress,
             () => setCurrentText("Please be patient..."),
             () => setCurrentText("Rose link created successfully"),
@@ -151,16 +156,16 @@ export function CupidForm() {
           // if (!rose) {
           //   throw new Error("Failed to create rose submission");
           // }
-          console.log(formData, "formData");
-          console.log(tokenAmount.toString(), "tokenAmount");
-          console.log(address, "address");
-          console.log(linkResponse.paymentLink[0], "linkResponse.paymentLink[0]");
+          console.log(formData, "formData in HandleSubmit");
+          console.log(formData.amount_roses.toString(), "tokenAmount in HandleSubmit");
+          console.log(address, "address in HandleSubmit");
+          console.log(linkResponse.paymentLink[0], "linkResponse.paymentLink[0] in HandleSubmit");
           const { data: submittedRose, error: roseError } = await supabase
             .from("roses")
             .insert([
               {
                 ...formData,
-                amount_roses: tokenAmount.toString(),
+                amount_roses: formData.amount_roses.toString(),
                 wallet_address_created_by: address,
                 peanut_link: linkResponse.paymentLink[0],
                 claimed: false,
@@ -168,8 +173,8 @@ export function CupidForm() {
             ])
             .select()
             .single();
-          console.log(submittedRose, "submittedRose");
-          console.log(roseError, "roseError");
+          console.log(submittedRose, "submittedRose in HandleSubmit");
+          console.log(roseError, "roseError in HandleSubmit");
           const { data: gameData, error: gameError } = await supabase
             .from("games")
             .insert([
@@ -183,8 +188,8 @@ export function CupidForm() {
             ])
             .select()
             .single();
-          console.log(gameData, "gameData");
-          console.log(gameError, "gameError");
+          console.log(gameData, "gameData in HandleSubmit");
+          console.log(gameError, "gameError in HandleSubmit");
     
           const { data, error } = await supabase
             .from("peanut_link")
@@ -237,9 +242,11 @@ export function CupidForm() {
       }  
     return (
       <div>
-        <Form {...form}>
-          <form noValidate onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col p-2 md:p-5 w-full mx-auto rounded-md max-w-3xl gap-2 border">
-            <MultiStepViewer form={form} loading={isPeanutLoading}/>
+        <Form {...formData}>
+          <form noValidate onSubmit={formData.handleSubmit(onSubmit)} className="flex flex-col p-2 md:p-5 w-full mx-auto rounded-md max-w-3xl gap-2 border">
+            <MultiStepViewer formData={formData} loading={isPeanutLoading} onSubmit={onSubmit} tokenAmount={tokenAmount} setTokenAmount={function (amount: number): void {
+                throw new Error("Function not implemented.");
+            } }/>
           </form>
         </Form>
         {overlayVisible && (

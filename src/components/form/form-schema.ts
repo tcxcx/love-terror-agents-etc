@@ -17,5 +17,27 @@ export const formSchema = z.object({
     date_site: z.string().min(1).max(255),
     date_details: z.string().min(1).max(255).optional(),
     calendly_link: z.string().min(1).max(255).optional(),
-    amount_roses: z.coerce.number().gte(0.001).lte(9999999999),
-  });
+    amount_roses: z.number().min(1, "Amount must be greater than 1 $LOVE").max(9999999999),
+});
+
+export type FormSchemaType = z.infer<typeof formSchema>;
+
+export const defaultValues: Partial<FormSchemaType> = {
+    system_prompt: "",
+    valentines_name: "",
+    secret_admirer_name: "",
+    secret_question: "",
+    secret_answer: "",
+    clue_1: "",
+    clue_2: "",
+    clue_3: "",
+    clue_4: "",
+    clue_5: "",
+    clue_6: "",
+    clue_7: "",
+    poem_text: "",
+    date_site: "",
+    date_details: "",
+    calendly_link: "",
+    amount_roses: 0,
+};

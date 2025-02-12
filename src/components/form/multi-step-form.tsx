@@ -11,39 +11,42 @@ import {
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
-import { Input } from '@/components/ui/input'
+import { Input, InputMoney } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useMultiStepForm } from '@/hooks/use-multi-step-form'
-import { JSX, useState } from "react"
+import { JSX } from "react"
+import React, { useState } from 'react';
+import { TokenChip } from '@/components/token-chip';
+import { BaseSepoliaTokens } from '@/constants/Tokens';
 //------------------------------ peanut link imports ------------------------------
-import CurrencyDisplayer from "../currency";
-import Overlay from "../overlay";
-import { truncateAddress } from "@/utils/truncate-address";
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
-import { usePeanut } from "@/hooks/use-peanut";
 import { useAccount } from "wagmi";
-import { useToast } from "@/hooks/use-toast";
 
-const [tokenAmount, setTokenAmount] = useState<number>(0);
-const onValueChange = (usdAmount: number, tokenAmount: number) => {
-    setTokenAmount(tokenAmount);
-  };
-  const { address } = useAccount();
-  const { toast } = useToast();
-
+interface MultiStepViewerProps {
+  formData: any;
+  loading: boolean;
+  tokenAmount: number;
+  setTokenAmount: (amount: number) => void;
+  onSubmit: (values: any, amount: number) => Promise<void>;
+}
 
 //------------------------------
 /**
  * Used to render a multi-step form in preview mode
  */
-export function MultiStepViewer({
-  form,
-  loading
-}: {
-  form: any;
-  loading: boolean;
-}) {
+
+export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount, onSubmit }: MultiStepViewerProps) {
+    
+
+    const { address } = useAccount();
+    
+    
+    const handleFormSubmit = async () => {
+    await onSubmit(formData.getValues(), tokenAmount);
+    };
+
+
   const stepFormElements: {
     [key: number]: JSX.Element
   } = {
@@ -55,7 +58,7 @@ export function MultiStepViewer({
           Welcome! Here you must create an AI agent that will interact with your Valentine's through a bunch of games. <br /> Give as much context as possible to make it more personal and create a closer connection.
         </p>
         <FormField
-          control={form.control}
+          control={formData.control}
           name="system_prompt"
           render={({ field }) => (
             <FormItem>
@@ -81,7 +84,7 @@ export function MultiStepViewer({
 
         <div className="flex items-center justify-between flex-wrap sm:flex-nowrap w-full gap-2">
           <FormField
-            control={form.control}
+            control={formData.control}
             name="valentines_name"
             render={({ field }) => (
               <FormItem className="w-full">
@@ -103,7 +106,7 @@ export function MultiStepViewer({
             )}
           />
           <FormField
-            control={form.control}
+            control={formData.control}
             name="secret_admirer_name"
             render={({ field }) => (
               <FormItem className="w-full">
@@ -133,7 +136,7 @@ export function MultiStepViewer({
         <p className="text-base">Ask a fun secret question for your Valentine to guess. Provide up to 7 clues to help them. In order to win this gift your valentine's must explicitly state the two words.</p>
 
         <FormField
-          control={form.control}
+          control={formData.control}
           name="secret_question"
           render={({ field }) => (
             <FormItem>
@@ -152,7 +155,7 @@ export function MultiStepViewer({
         />
 
         <FormField
-          control={form.control}
+          control={formData.control}
           name="secret_answer"
           render={({ field }) => (
             <FormItem className="w-full">
@@ -178,7 +181,7 @@ export function MultiStepViewer({
 
         <div className="flex items-center justify-between flex-wrap sm:flex-nowrap w-full gap-2">
           <FormField
-            control={form.control}
+            control={formData.control}
             name="clue_1"
             render={({ field }) => (
               <FormItem className="w-full">
@@ -200,7 +203,7 @@ export function MultiStepViewer({
             )}
           />
           <FormField
-            control={form.control}
+            control={formData.control}
             name="clue_2"
             render={({ field }) => (
               <FormItem className="w-full">
@@ -225,7 +228,7 @@ export function MultiStepViewer({
 
         <div className="flex items-center justify-between flex-wrap sm:flex-nowrap w-full gap-2">
           <FormField
-            control={form.control}
+            control={formData.control}
             name="clue_3"
             render={({ field }) => (
               <FormItem className="w-full">
@@ -247,7 +250,7 @@ export function MultiStepViewer({
             )}
           />
           <FormField
-            control={form.control}
+            control={formData.control}
             name="clue_4"
             render={({ field }) => (
               <FormItem className="w-full">
@@ -272,7 +275,7 @@ export function MultiStepViewer({
 
         <div className="flex items-center justify-between flex-wrap sm:flex-nowrap w-full gap-2">
           <FormField
-            control={form.control}
+            control={formData.control}
             name="clue_5"
             render={({ field }) => (
               <FormItem className="w-full">
@@ -294,7 +297,7 @@ export function MultiStepViewer({
             )}
           />
           <FormField
-            control={form.control}
+            control={formData.control}
             name="clue_6"
             render={({ field }) => (
               <FormItem className="w-full">
@@ -317,7 +320,7 @@ export function MultiStepViewer({
           />
         </div>
         <FormField
-          control={form.control}
+          control={formData.control}
           name="clue_6"
           render={({ field }) => (
             <FormItem className="w-full">
@@ -346,7 +349,7 @@ export function MultiStepViewer({
         <p className="text-base">Write a poem that will be revealed to your Valentine. This poem will be revealed as a lovely surprise. Write a poem here and express your feelings. Haiku, Jane Austen, Shakespeare or Bukowski style. Or create your own cheesy version of a poem.</p>
 
         <FormField
-          control={form.control}
+          control={formData.control}
           name="poem_text"
           render={({ field }) => (
             <FormItem>
@@ -355,7 +358,7 @@ export function MultiStepViewer({
                 <Textarea
                   {...field}
                   placeholder="Violets are red.... max 1000 wordsEnter your text"
-                  className="resize-none"
+                  className="resize-none min-h-[300px]"
                 />
               </FormControl>
               <FormDescription>Express your feelings. This is required for Cringy Cupid to work.</FormDescription>
@@ -367,10 +370,10 @@ export function MultiStepViewer({
     ),
     4: (
       <div>
-        <h2 className="text-2xl font-bold">Get a date 💖</h2>
+        <h2 className="text-2xl font-bold">Risky Game: Get a date 💖</h2>
         <h3 className="text-xl font-bold">If your valentine solves all games, she will be able to reveal a date site and book the date and time via Calendly.</h3>
         <FormField
-          control={form.control}
+          control={formData.control}
           name="date_site"
           render={({ field }) => (
             <FormItem className="w-full">
@@ -392,7 +395,7 @@ export function MultiStepViewer({
           )}
         />
         <FormField
-          control={form.control}
+          control={formData.control}
           name="date_details"
           render={({ field }) => (
             <FormItem className="w-full">
@@ -414,7 +417,7 @@ export function MultiStepViewer({
           )}
         />
         <FormField
-          control={form.control}
+          control={formData.control}
           name="calendly_link"
           render={({ field }) => (
             <FormItem className="w-full">
@@ -438,38 +441,58 @@ export function MultiStepViewer({
       </div>
     ),
     5: (
-      <div>
-        <h1 className="text-3xl font-bold">Send $LOVE quest 🌹</h1>
-        <h2 className="text-2xl font-bold">This is a gift</h2>
-        <p className="text-base">$LOVE are tokens that unlock a given amount of roses and are the first gift the user receives during the game. You will receive a shareable link you can send to a user or embedd or download as a QR so that you can gift $LOVE to your Valentine's.</p>
-            <div className="px-4 pt-2">
-                <div className="flex items-center justify-between text-xs">
-                    <span className="text-xl">💸💕💸</span>
-                </div>
-                <CurrencyDisplayer
-                    tokenAmount={tokenAmount}
-                    onValueChange={onValueChange}
-                    size="lg"
-                    action="default"
-                />
+        <div>
+          <h1 className="text-3xl font-bold">Send $LOVE quest 🌹</h1>
+          <h2 className="text-2xl font-bold">This is a gift</h2>
+          <p className="text-base">$LOVE are tokens that unlock a given amount of roses and are the first gift the user receives during the game. You will receive a shareable link you can send to a user or embedd or download as a QR so that you can gift $LOVE to your Valentine's.</p>
+          <div className="px-4 pt-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-xl">💸💕💸</span>
             </div>
-      </div>
-    )
+            <FormField
+              control={formData.control}
+              name="amount_roses"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Amount of Roses ($LOVE)</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <InputMoney
+                        placeholder="0.0000"
+                        value={field.value?.toString() || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          const value = e.target.value;
+                          if (value === "" || /^\d*\.?\d*$/.test(value)) {
+                            const numericValue = parseFloat(value) || 0;
+                            field.onChange(numericValue);
+                            setTokenAmount(numericValue); // Update parent state for peanut
+                          }
+                        }}
+                        className="text-center w-full text-7xl "
+                      />
+                      <div className="w-full flex justify-center mt-2">
+                        <TokenChip token={BaseSepoliaTokens[0]} />
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormDescription>Enter the amount of $LOVE tokens</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+      )
   };
 
   const steps = Object.keys(stepFormElements).map(Number);
   const { currentStep, isLastStep, goToNext, goToPrevious } = useMultiStepForm({
     initialSteps: steps,
-    onStepValidation: () => {
-      /**
-       * TODO: handle step validation
-       */
-      return true;
-    },
+    onStepValidation: () => true,
   });
 
-  const current = stepFormElements[currentStep - 1];
-  const { formState: { isSubmitting } } = form;
+  const current = stepFormElements[currentStep];
+  const { formState: { isSubmitting } } = formData;
 
   return (
     <div className="flex flex-col gap-2 pt-3">
@@ -503,6 +526,8 @@ export function MultiStepViewer({
             type="submit"
             className="mt-5 flex items-center gap-2 self-end w-full"
             disabled={loading}
+            onClick={handleFormSubmit}
+
           >
             <span>Create Quest Link 🌹</span>
           </Button>
@@ -521,3 +546,5 @@ export function MultiStepViewer({
     </div>
   );
 }
+
+export default MultiStepViewer;
