@@ -331,7 +331,7 @@ export const getAllLinksFromLocalStorage = ({
           !key.includes("- raffle -") &&
           !key.includes("saving giga-link for address:") &&
           !key.includes("saving temp") &&
-          value.includes("/claim")
+          value.includes("/love")
         ) {
           const x = {
             address: key.split("-")[0].trim(),

@@ -24,7 +24,7 @@ export default function Overlay({
   truncateHash,
 }: OverlayProps) {
   return (
-    <div className="animate-in fade-in-0 fixed inset-0 z-40 bg-white/90">
+    <div className="animate-in fade-in-0 fixed inset-0 z-40 bg-white/90 absolute top-0 left-0 right-0 bottom-0">
       <div className="relative flex size-full items-center justify-center">
         <button className="absolute right-4 top-4" onClick={handleCloseOverlay}>
           <XIcon className="size-6" />

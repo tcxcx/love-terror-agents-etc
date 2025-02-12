@@ -4,6 +4,7 @@ import { Heart } from "lucide-react";
 
 const DevStorySection = () => {
   return (
+    <div className=" inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]">
     <section className="container px-4 py-16">
       <div className="max-w-4xl mx-auto">
         <div className="retro-window p-8 bg-white/80">
@@ -29,6 +30,7 @@ const DevStorySection = () => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
 

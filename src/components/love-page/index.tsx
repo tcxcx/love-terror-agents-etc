@@ -14,6 +14,8 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
+  
+  
   useEffect(() => {
     async function initializeGame() {
       try {
@@ -96,11 +98,14 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
     calendlyLink: gameState.roses?.[0]?.calendly_link || "",
   };
 
+
+  
+
   const renderMainContent = () => {
-    if (!gameState.roses_game) {
-      // TO DO: adapt so claim form takes peanutLink as a prop
-      return <ClaimRoses />;
-    }
+    // if (!gameState.roses_game) {
+    //     // TO DO: adapt so claim form takes peanutLink as a prop
+    //   return <ClaimRoses />;
+    // }
 
     if (allGiftsUnlocked) {
       // TO DO: pass gameInfo as a prop

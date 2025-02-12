@@ -289,7 +289,7 @@ export default function SendRoses() {
 
   return (
     <div className="w-full p-4">
-      <div className="relative min-h-screen glassmorphism bg-no-repeat mx-auto w-full lg:max-w-7xl border border-black rounded-lg overflow-hidden p-6">
+      <div className="relative min-h-screen bg-white mx-auto w-full lg:max-w-7xl border border-black rounded-lg overflow-hidden p-6">
         <div className="flex flex-col items-left justify-start w-full">
           <h1 className="text-2xl font-bold mb-2">Send Roses Form</h1>
           <p className="text-gray-600 mb-6">Send roses to your loved ones</p>
@@ -638,18 +638,15 @@ export default function SendRoses() {
               </div>
 
               <div className="flex justify-between w-full space-x-2">
-                {!address ? (
-                  <DynamicWidget />
-                ) : (
-                  <Button
-                    size={"lg"}
-                    type="submit"
-                    className="mt-5 flex items-center gap-2 self-end w-full"
-                    disabled={isPeanutLoading}
-                  >
-                    <span>Create Link 🌹</span>
-                  </Button>
-                )}
+                {!address && <DynamicWidget />} ?? else
+                <Button
+                  size={"lg"}
+                  type="submit"
+                  className="mt-5 flex items-center gap-2 self-end w-full"
+                  disabled={isPeanutLoading}
+                >
+                  <span>Create Link 🌹</span>
+                </Button>
               </div>
               {overlayVisible && (
                 <Overlay

@@ -10,7 +10,7 @@ const TerminalWindow = () => {
   const navigate = useRouter();
 
   return (
-    <div className="retro-window mt-12 max-w-2xl mx-auto crt-effect">
+    <div className="retro-window max-w-2xl mx-auto crt-effect">
       <div className="bg-accent p-2 flex items-center gap-2 rounded-t">
         <div className="flex gap-1.5">
           <div className="w-3 h-3 rounded-full bg-primary animate-pulse"></div>

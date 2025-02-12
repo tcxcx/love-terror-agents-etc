@@ -65,8 +65,6 @@ export const VALENTINE_ASCII = `
  ╚████╔╝ ██║  ██║███████╗███████╗██║ ╚████║   ██║   ██║██║ ╚████║
   ╚═══╝  ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝╚═╝  ╚═══╝
                                                      
-💝 Para la más hermosa Géminis de ojos verdes 💝
-Te pido perdon por haberte llamado 'bruja', pero es que nunca he sentido tanta magia como la que siento cuando te veo. Tanto que me aterras.
 `;
 
 export const defaultQRSize = 150;

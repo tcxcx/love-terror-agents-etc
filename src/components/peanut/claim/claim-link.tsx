@@ -46,7 +46,7 @@ export function getChainInfoByChainId(chainId: number | string) {
   };
 }
 
-export default function Claim() {
+export default function ClaimLink({peanutLink}: {peanutLink: string}) {
   const {
     claimPayLink,
     isLoading: isPeanutLoading,
@@ -58,7 +58,7 @@ export default function Claim() {
   const [transactionDetails, setTransactionDetails] = useState<string | null>(
     null
   );
-  const [inputLink, setInputLink] = useState<string>();
+  const [inputLink, setInputLink] = useState<string>(peanutLink);
   const [paymentInfo, setPaymentInfo] = useState<ExtendedPaymentInfo | null>(
     null
   );
@@ -88,16 +88,18 @@ export default function Claim() {
   };
 
   const handleVerify = () => {
+    fetchLinkDetails(inputLink, setDetails, setPaymentInfo);
+  };
+
+  const handleSuccess = async () => {
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
     if (inputLink) {
-      fetchLinkDetails(inputLink, setDetails, setPaymentInfo);
+      await fetchLinkDetails(inputLink, setDetails, setPaymentInfo);
     }
-    else {
-      toast({
-        title: "Error",
-        description: "Please paste a link first",
-        variant: "destructive",
-      });
-    }
+
+    setOverlayVisible(true);
+    setInProgress(false);
   };
 
   const handleClaim = async () => {
@@ -233,7 +235,7 @@ export default function Claim() {
         </>
       )}
       {overlayVisible && (
-        <div className="animate-in fade-in-0 fixed inset-0 z-40 bg-white/90 absolute top-0 left-0 right-0 bottom-0 backdrop-blur-sm blur-sm min-h-screen">
+        <div className="animate-in fade-in-0 fixed inset-0 z-40 bg-white/90">
           <div className="relative flex size-full items-center justify-center">
             <button
               className="absolute right-4 top-4"

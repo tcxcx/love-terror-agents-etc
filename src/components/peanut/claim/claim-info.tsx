@@ -15,22 +15,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { chainIdMapping, chainIcons } from "@/components/peanut/card/details";
 import { ExtendedPaymentInfo, IGetLinkDetailsResponse } from "@/types";
-import NetworkSelector from "@/components/network-selector";
 import * as Chains from "@/constants/Chains";
 import { useSwitchNetwork } from "@dynamic-labs/sdk-react-core";
 import { getBlockExplorerUrlByChainId } from "@/utils/get-explorer";
 import { fetchLinkDetails } from "@/utils/local-storage";
 import { useDestinationToken } from "@/hooks/use-destination-chain";
 import { useAccount } from "wagmi";
-import {
-  updatePeanutLink,
-} from "@/utils/supabase/mutations/client";
+
 
   // Fix 1: Handle searchParams properly
-  import { useSearchParams } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
+import { useSearchParams } from "next/navigation";
 import { triggerConfetti } from "@/utils";
-
 
 
 export function getChainInfoByChainId(chainId: number | string) {
@@ -75,6 +70,10 @@ export default function ClaimForm() {
 
   console.log(initialClaimId, "initialClaimId");
 
+  const baseUrl = process.env.NEXT_PUBLIC_TESTNET_URL || 'http://localhost:3000';
+
+  const fullUrl = `${baseUrl}/love?${initialClaimId}`;
+
   const getDestinationTokenAddress = useDestinationToken();
 
   const [inProgress, setInProgress] = useState(false);
@@ -88,18 +87,13 @@ export default function ClaimForm() {
 
   const [destinationChainId, setDestinationChainId] = useState<string>("");
   const [details, setDetails] = useState<IGetLinkDetailsResponse | null>(null);
-  const [isMultiChain, setIsMultiChain] = useState(false);
-  const switchNetwork = useSwitchNetwork();
 
   useEffect(() => {
     if (initialClaimId) {
       fetchLinkDetails(initialClaimId, setDetails, setPaymentInfo);
     }
     console.log(initialClaimId, "initialClaimId");
-    
-    
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
-    const fullUrl = `${baseUrl}/love?${initialClaimId}`;
+    console.log(fullUrl, "fullUrl");
     setInputLink(fullUrl);
   }, [initialClaimId]);
 
@@ -138,22 +132,22 @@ export default function ClaimForm() {
     setOverlayVisible(true);
     setCurrentText("Beginning claim 🌹🌹🌹");
 
-    if (!address || !details?.link) {
-      toast({
-        title: "Error",
-        description: "Please connect your wallet first",
-        variant: "destructive",
-      });
-      return;
-    }
+    // if (!address || !details?.link) {
+    //   toast({
+    //     title: "Error",
+    //     description: "Please connect your wallet first",
+    //     variant: "destructive",
+    //   });
+    //   return;
+    // }
 
 
     if (paymentInfo?.claimed) {
       toast({
-        title: "You already claimed your roses 🌹🌹🌹",
+        title: "You have already claimed your roses 🌹🌹🌹",
         description: "You have already claimed your roses 🌹🌹🌹",
       });
-      setCurrentText("You already claimed your roses 🌹🌹🌹");
+      setCurrentText("You have already claimed your roses 🌹🌹🌹");
     } else if (paymentInfo && !destinationChainId) {
       try {
         setCurrentText("Claiming your roses 🌹🌹🌹");
@@ -169,18 +163,16 @@ export default function ClaimForm() {
         );
         setTransactionDetails(txHash);
         
-  
-
-      // Update peanut link record
-      const peanutLinkRecord = await updatePeanutLink(
-        details?.link || "",
-        address as string,
-      );
+      // // Update peanut link record
+      // const peanutLinkRecord = await updatePeanutLink(
+      //   details?.link || "",
+      //   address as string,
+      // );
 
 
-      if (!peanutLinkRecord) {
-        throw new Error("Failed to record peanut link");
-      }
+      // if (!peanutLinkRecord) {
+      //   throw new Error("Failed to record peanut link");
+      // }
 
         setPaymentInfo((prevInfo) =>
           prevInfo
@@ -254,33 +246,6 @@ export default function ClaimForm() {
             )}
           </div>
         </div>
-      </div>
-
-      {!paymentInfo?.claimed && (
-        <div className="flex items-center justify-end p-4 space-x-2">
-          <Switch
-            id="multi-chain-link"
-            checked={isMultiChain}
-            onCheckedChange={() => setIsMultiChain(!isMultiChain)}
-          />
-          <Label htmlFor="multi-chain-link" className="text-xs">
-            Multi-Chain
-          </Label>
-          {/* //add info icon explaining what this is */}
-        </div>
-      )}
-      <div className="flex items-center justify-center p-4 space-x-2">
-        {isMultiChain && !paymentInfo?.claimed && (
-          <NetworkSelector
-            currentChainId={paymentInfo?.chainId.toString() || ""}
-            destinationChainId={destinationChainId}
-            onSelect={(selectedChainId: string) => {
-              const numericChainId = Number(selectedChainId);
-              if (isNaN(numericChainId)) return;
-              setDestinationChainId(selectedChainId);
-            }}
-          />
-        )}
       </div>
     </section>
   );
@@ -390,7 +355,7 @@ export default function ClaimForm() {
                             <PaymentDetails paymentInfo={paymentInfo} />
                             <div className="mt-5 flex h-16 items-center border-t text-xs">
                               <div className="flex w-full items-center justify-between mt-5 ">
-                                {isMultiChain && destinationChainId && (
+                                {destinationChainId && (
                                   <div className="flex flex-row">
                                     {destinationChainId && (
                                       <div className="flex items-center gap-4">

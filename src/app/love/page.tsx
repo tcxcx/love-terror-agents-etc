@@ -9,13 +9,9 @@ import { checkRoseClaimed, getRoseByPeanutLink } from '@/utils/supabase/queries'
 export default function Page() {
   const { peanutLink, isLoading, isValidLink, isClaimed } = LoveLink();
 
-  // Show loading state
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <span className="loading loading-dots loading-lg"></span>
-      </div>
-    );
+  // Show empty state when no link is present
+  if (!peanutLink) {
+    return <EmptyState type="no-link" />;
   }
 
   // Show empty state for invalid or non-existent links
@@ -28,12 +24,12 @@ export default function Page() {
     return <EmptyState type="unclaimed" peanutLink={peanutLink as string} />;
   }
 
-
   // Show the love page for valid, claimed links
   if (isClaimed) {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <LovePage peanutLink={peanutLink as string} />
-    </Suspense>
-  );
-}  }
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <LovePage peanutLink={peanutLink as string} />
+      </Suspense>
+    );
+  }
+}

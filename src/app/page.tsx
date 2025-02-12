@@ -13,14 +13,15 @@ import Header from "@/components/header";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-lighter to-white">
-      <Header />
+    <div className="min-h-screen">
       <HeroSection />
       <TerminalWindow />
       <TokenSection />
       <DevStorySection />
+      <div>
       <HowItWorksSection />
       <FeatureGrid />
+      </div>
       <InspirationVideo />
       <DisclaimerSection />
       <CTASection />

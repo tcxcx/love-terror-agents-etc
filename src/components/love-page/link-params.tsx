@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { parseAsBoolean, parseAsString, useQueryState } from "nuqs";
 import { fetchLinkDetails } from "@/utils/local-storage";
 import { IGetLinkDetailsResponse, ExtendedPaymentInfo } from "@/types";
 
@@ -15,71 +15,65 @@ interface LinkState {
 }
 
 export function LoveLink() {
-  const searchParams = useSearchParams();
-  const claimId = searchParams?.toString() || "";
-
-  const [state, setState] = useState<LinkState>({
-    peanutLink: null,
-    isLoading: true,
-    isValidLink: false,
-    isClaimed: false,
-    details: null,
-    paymentInfo: null,
+  const [claimId] = useQueryState("love");
+  const [peanutLink, setPeanutLink] = useQueryState("peanutLink");
+  const [isLoading, setIsLoading] = useQueryState("isLoading", parseAsBoolean);
+  const [isValidLink, setIsValidLink] = useQueryState("isValidLink", parseAsBoolean);
+  const [isClaimed, setIsClaimed] = useQueryState("isClaimed", parseAsBoolean);
+  const [details, setDetails] = useQueryState("details", {
+    defaultValue: null,
+    parse: (value: string | null) => (value === "null" ? null : JSON.parse(value ?? "null")),
+    serialize: (value: IGetLinkDetailsResponse | null) => 
+      value === null ? "null" : JSON.stringify(value),
+  });
+  const [paymentInfo, setPaymentInfo] = useQueryState("paymentInfo", {
+    defaultValue: null,
+    parse: (value: string | null) => (value === "null" ? null : JSON.parse(value ?? "null")),
+    serialize: (value: ExtendedPaymentInfo | null) => 
+      value === null ? "null" : JSON.stringify(value),
   });
 
   useEffect(() => {
     async function getLinkDetails() {
       try {
         if (!claimId) {
-          setState((prev) => ({
-            ...prev,
-            isLoading: false,
-            isValidLink: false,
-          }));
+          setIsLoading(false);
+          setIsValidLink(false);
           return;
         }
 
         const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
-        const fullUrl = `${baseUrl}/love?${claimId}`;
+        const fullUrl = `${baseUrl}/love?claimId=${claimId}`;
 
         await fetchLinkDetails(
           fullUrl,
           (linkDetails) => {
-            setState((prev) => ({
-              ...prev,
-              details: linkDetails,
-              isValidLink: true,
-              peanutLink: fullUrl,
-            }));
+            setDetails(linkDetails);
+            setIsValidLink(true);
+            setPeanutLink(fullUrl);
           },
-          (paymentInfo) => {
-            setState((prev) => ({
-              ...prev,
-              paymentInfo,
-              isClaimed: Boolean(paymentInfo?.claimed),
-            }));
+          (paymentInfoData) => {
+            setPaymentInfo(paymentInfoData);
+            setIsClaimed(Boolean(paymentInfoData?.claimed));
           }
         );
       } catch (error) {
         console.error("Error fetching link details:", error);
-        setState((prev) => ({
-          ...prev,
-          isValidLink: false,
-        }));
+        setIsValidLink(false);
       } finally {
-        setState((prev) => ({ ...prev, isLoading: false }));
+        setIsLoading(false);
       }
     }
 
     getLinkDetails();
-  }, [searchParams]);
+  }, [claimId, setDetails, setIsLoading, setIsValidLink, setPeanutLink, setPaymentInfo, setIsClaimed]);
 
   return {
-    peanutLink: state.peanutLink,
-    isLoading: state.isLoading,
-    isValidLink: state.isValidLink,
-    isClaimed: state.isClaimed,
-    details: state.details,
-    paymentInfo: state.paymentInfo,
+    peanutLink,
+    isLoading: Boolean(isLoading),
+    isValidLink: Boolean(isValidLink),
+    isClaimed: Boolean(isClaimed),
+    details,
+    paymentInfo,
   };
 }
