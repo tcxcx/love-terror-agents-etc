@@ -8,8 +8,7 @@ import { AnimatedSpan, Terminal, TypingAnimation } from "@/components/ui/termina
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect, useRef } from 'react';
 import { ScrollAreaViewport } from '@radix-ui/react-scroll-area';
-import { useQuery } from '@tanstack/react-query';
-// import { useActions, useUIState } from "ai/rsc";
+import { useRoseStore } from '@/store/useRoseStore';
 
 interface ValentineChatProps {
   gameInfo: {
@@ -23,23 +22,53 @@ interface ValentineChatProps {
 }
 
 export default function ValentineChat({ gameInfo }: ValentineChatProps) {
-  console.log('gameInfo in ValentineChat', gameInfo);
+  const { getCurrentRose } = useRoseStore();
+  const currentRose = getCurrentRose();
+
+  const systemMessage = `You are a playful and romantic AI assistant managing a Valentine's Day game experience. 
+Your role is to guide ${gameInfo.valentineName} through a series of fun challenges to discover their secret admirer.
+
+Game Context:
+- Secret Admirer: ${currentRose?.secret_admirer_name}
+- Valentine's Name: ${currentRose?.valentines_name}
+- Custom Message: ${currentRose?.system_prompt}
+- Secret Question: ${currentRose?.secret_question}
+- Secret Answer: ${currentRose?.secret_answer}
+- Available Clues: ${currentRose?.clue_1}, ${currentRose?.clue_2}, ${currentRose?.clue_3}
+- Date Location: ${currentRose?.date_site}
+- Date Details: ${currentRose?.date_details}
+- Calendly Link: ${currentRose?.calendly_link}
+- Custom Poem: ${currentRose?.poem_text}
+
+Your personality should be:
+- Playful and flirtatious but respectful
+- Encouraging and supportive
+- Mysterious about the secret admirer's identity
+- Helpful in providing guidance without giving away answers
+- Responsive to the user's emotional state
+
+Game Rules:
+1. Players must complete all challenges to unlock the date details
+2. Give hints strategically but never reveal answers directly
+3. Maintain the mystery and excitement throughout the experience
+4. Use emojis and playful language to keep the mood light and fun
+5. Celebrate each achievement as players progress through the games`;
+
   const { messages, input, handleInputChange, handleSubmit, isLoading, stop } = useChat({
     initialMessages: [
+      {
+        id: 'system-1',
+        role: 'system',
+        content: systemMessage
+      },
       {
         id: 'initial',
         role: 'assistant',
         content: `🌹 Hi there ${gameInfo.valentineName}! Welcome to this Valentine's game. You just got some $LOVE tokens. A secret admirer is trying to ask you out. You must unlock all four gift's to find out the details of all this. Are you a romantic? ¿Who might be your secret Valentine? 💫. I am an AI but my guess is you are quite beautiful. Now, let's see if you're smart. This game won't be difficult, but that depends on how easy your Valentine made it for you. Is your Valentine worth it? 💝 Find out what the four games are, get the gifts and find out who your secret Valentine is. There is a surprise by the end of it all so make sure you get all the gifts. Good luck! 💝`
       }
     ],
-    body: {
-      systemPrompt: gameInfo.systemPrompt
-    }
+    api: '/api/chat',
   });
-  
-
-  // const [conversation, setConversation] = useUIState();
-  // const { continueConversation } = useActions();
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -51,13 +80,13 @@ export default function ValentineChat({ gameInfo }: ValentineChatProps) {
         messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
       }
     };
-
-    // Small delay to ensure content is rendered
     const timeoutId = setTimeout(scrollToBottom, 100);
     return () => clearTimeout(timeoutId);
   }, [messages]);
 
   const renderMessage = (message: any) => {
+    if (message.role === 'system') return null;
+    
     const isUser = message.role === 'user';
     
     return (
@@ -68,7 +97,6 @@ export default function ValentineChat({ gameInfo }: ValentineChatProps) {
           isUser ? "flex-row-reverse" : "flex-row"
         )}
       >
-        {/* Avatar */}
         <div className={cn(
           "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center",
           isUser ? "bg-pink-600" : "bg-purple-500"
@@ -76,22 +104,19 @@ export default function ValentineChat({ gameInfo }: ValentineChatProps) {
           {isUser ? '🫰🏻✨' : '🧛‍♂️'}
         </div>
 
-        {/* Message Bubble */}
         <div className={cn(
           "relative p-4 rounded-2xl max-w-[80%]",
           isUser 
             ? "bg-pink-500/10 border border-pink-500/20 text-pink-400"
             : "bg-purple-500/10 border border-purple-500/20 text-purple-400"
         )}>
-          {/* Name */}
           <div className={cn(
             "text-xs mb-1 font-medium",
             isUser ? "text-pink-400/70" : "text-purple-400/70"
           )}>
-            {isUser ? gameInfo.valentineName : 'Secret Admirer'}
+            {isUser ? gameInfo.valentineName : 'Secret Valentine AI'}
           </div>
 
-          {/* Message Content */}
           <AnimatedSpan
             delay={100}
             className="whitespace-pre-wrap break-words text-sm"
@@ -105,20 +130,17 @@ export default function ValentineChat({ gameInfo }: ValentineChatProps) {
 
   return (
     <Terminal className="relative flex flex-col h-screen">
-      {/* Main content area with messages */}
       <div className="flex-1" ref={scrollAreaRef}>
         <ScrollArea className="h-full relative">
           <ScrollAreaViewport className="h-full pb-36">
             <div className="flex flex-col p-4 space-y-4">
               {messages.map(renderMessage)}
-              {/* Invisible element for scrolling */}
               <div ref={messagesEndRef} />
             </div>
           </ScrollAreaViewport>
         </ScrollArea>
       </div>
 
-      {/* Input Form - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 p-4 border-t border-border bg-background">
         <form 
           onSubmit={handleSubmit}
@@ -127,7 +149,7 @@ export default function ValentineChat({ gameInfo }: ValentineChatProps) {
           <Input
             value={input}
             onChange={handleInputChange}
-            placeholder="Escribe tu mensaje..."
+            placeholder="Write your message..."
             disabled={isLoading}
             className="flex-1 bg-transparent border-pink-400/30 focus:border-pink-400 text-pink-400 placeholder-pink-400/50"
           />
@@ -157,7 +179,7 @@ export default function ValentineChat({ gameInfo }: ValentineChatProps) {
               {isLoading ? (
                 <span className="animate-pulse">...</span>
               ) : (
-                '💝 Enviar'
+                '💝 Send'
               )}
             </Button>
           </div>

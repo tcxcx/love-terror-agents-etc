@@ -1,9 +1,11 @@
 import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { CoreMessage, streamText } from 'ai';
 import { tools } from '@/components/ai/tools';
 
 export async function POST(request: Request) {
-  const { messages, systemPrompt } = await request.json();
+  
+  const { messages, systemPrompt }: { messages: CoreMessage[], systemPrompt: string } = await request.json();
+
 
   const stream = await streamText({
     model: openai('gpt-4o'),

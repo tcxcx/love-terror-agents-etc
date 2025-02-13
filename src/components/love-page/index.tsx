@@ -10,10 +10,12 @@ import { GameState } from "@/types";
 import supabase from "@/utils/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { LoadingOverview } from "@/components/loading-overview";
+import { useRoseStore } from '@/store/useRoseStore';
 
 export default function LovePage({ peanutLink }: { peanutLink: string }) {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { setGameState: setZustandGameState, updateGame } = useRoseStore();
 
   useEffect(() => {
     async function initializeGame() {
@@ -47,8 +49,9 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
           }
           currentGameState = newGameState;
         }
-        // Include the rose data in the game state
-        setGameState({
+
+        // Create the complete game state
+        const completeGameState = {
           id: currentGameState?.id!,
           created_at: currentGameState?.created_at!,
           roses_game: currentGameState?.roses_game!,
@@ -59,7 +62,12 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
           valentines_user: currentGameState?.valentines_user!,
           claimed: currentGameState?.claimed,
           roses: [rose]
-        });
+        };
+
+        // Set both local and Zustand state
+        setGameState(completeGameState);
+        setZustandGameState(completeGameState);
+
       } catch (error) {
         console.error("Error initializing game:", error);
         toast({
@@ -75,7 +83,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
     if (peanutLink) {
       initializeGame();
     }
-  }, [peanutLink]);
+  }, [peanutLink, setZustandGameState]);
 
   if (isLoading) {
     return <LoadingOverview />;
@@ -99,7 +107,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
 
   const gameInfo = {
     valentineName: gameState.roses?.[0]?.valentines_name || "there",
-    systemPrompt: gameState.roses?.[0]?.system_prompt || "",
+    systemPrompt: gameState.roses?.[0]?.system_prompt || "you are a wingman for a secret admirer",
     clues: [
       gameState.roses?.[0]?.clue_1,
       gameState.roses?.[0]?.clue_2,
@@ -109,14 +117,15 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
       gameState.roses?.[0]?.clue_6,
       gameState.roses?.[0]?.clue_7,
     ].filter(Boolean) as string[],
-    poemText: gameState.roses?.[0]?.poem_text || "",
-    dateDetails: gameState.roses?.[0]?.date_details || "",
-    calendlyLink: gameState.roses?.[0]?.calendly_link || "",
+    poemText: gameState.roses?.[0]?.poem_text!,
+    dateDetails: gameState.roses?.[0]?.date_details!,
+    calendlyLink: gameState.roses?.[0]?.calendly_link!,
+    roses: gameState.roses!,
   };
 
   const renderMainContent = () => {
     if (allGiftsUnlocked) {
-      return <DateComponent gameInfo={gameInfo} />;
+      return <DateComponent />;
     }
 
     return (
