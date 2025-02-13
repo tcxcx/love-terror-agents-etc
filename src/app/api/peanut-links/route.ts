@@ -1,12 +1,10 @@
-import { createClient } from "@/utils/supabase/server";
-import { cookies } from "next/headers";
+import createSuperbaseServerClient from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = await createSuperbaseServerClient();
     const { roseId, link, claimWallet, claimStatus } = await request.json();
     console.log(
       roseId,
@@ -62,8 +60,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+    const supabase = await createSuperbaseServerClient();
     const { link, claimWallet } = await request.json();
 
     // Generate a new game ID that will be shared between roses and games tables

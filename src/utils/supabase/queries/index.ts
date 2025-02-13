@@ -2,39 +2,15 @@
 import supabase from "@/utils/supabase/client";
 import { GameState, Rose } from "@/types";
 
-export async function getGameState(gameId: string): Promise<GameState | null> {
+export async function getGameState(peanut_link: string): Promise<GameState | null> {
   const { data, error } = await supabase
     .from("games")
     .select(
       `
-      *,
-      roses (
-        id,
-        claimed,
-        valentines_name,
-        secret_admirer_name,
-        secret_question,
-        secret_answer,
-        clue_1,
-        clue_2,
-        clue_3,
-        clue_4,
-        clue_5,
-        clue_6,
-        clue_7,
-        poem_text,
-        date_site,
-        date_details,
-        calendly_link,
-        system_prompt,
-        amount_roses,
-        wallet_address_created_by,
-        valentines_user_id,
-        peanut_link
-      )
+      *
     `
     )
-    .eq("id", gameId)
+    .eq("peanut_link", peanut_link)
     .single();
 
   if (error) {
@@ -45,11 +21,11 @@ export async function getGameState(gameId: string): Promise<GameState | null> {
   return data;
 }
 
-export async function checkRoseClaimed(roseId: string): Promise<boolean> {
+export async function checkRoseClaimed(peanutLink: string): Promise<boolean> {
   const { data, error } = await supabase
     .from("roses")
     .select("claimed")
-    .eq("id", roseId)
+    .eq("peanut_link", peanutLink)
     .single();
 
   if (error) {
@@ -83,13 +59,7 @@ export async function getRoseByPeanutLink(
     .select(
       `
       *,
-      game: game_id (
-        id,
-        ascii_game,
-        guess_game,
-        poem_game,
-        roses_game
-      )
+      game_id
     `
     )
     .eq("peanut_link", peanutLink)
@@ -99,6 +69,7 @@ export async function getRoseByPeanutLink(
     console.error("Error fetching rose:", error);
     return null;
   }
+  console.log('getRoseByPeanutLink', data);
 
   return data;
 }

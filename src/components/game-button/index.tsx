@@ -1,6 +1,5 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { useQueryState } from 'nuqs';
 import { Button } from '@/components/ui/button';
 
 interface GameButtonProps {
@@ -10,7 +9,6 @@ interface GameButtonProps {
 
 export default function GameButton({ peanutLink, disabled = false }: GameButtonProps) {
   const router = useRouter();
-  const [, setLove] = useQueryState('love');
   
   const handleNavigateToGame = async () => {
     if (!peanutLink) {
@@ -19,12 +17,14 @@ export default function GameButton({ peanutLink, disabled = false }: GameButtonP
     }
     
     try {
-      // Get the full URL path and parameters
-      const gameUrl = peanutLink.replace('/love', '/game');
+      // Parse the original URL
+      const url = new URL(peanutLink);
+      const params = url.searchParams;
       
-      // Set the full URL as the love parameter
-      await setLove(gameUrl);
-      router.push('/game');
+      // Create game URL with all original parameters
+      const gameUrl = `/game?${params.toString()}${url.hash}`;
+      
+      router.push(gameUrl);
     } catch (error) {
       console.error('Error handling navigation:', error);
     }

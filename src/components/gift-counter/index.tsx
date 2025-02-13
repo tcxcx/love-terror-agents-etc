@@ -121,22 +121,12 @@ const GiftCounter: React.FC<GiftCounterProps> = ({ gameState }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Link href="/">
-          <Image 
-            src="/cringe-logo.png" 
-            alt="Gift" 
-            width={96} 
-            height={96} 
-            priority 
-            className="flex justify-start items-left top-0 left-0 w-25 h-25 object-cover" 
-          />
-        </Link>
         <span className="h-px flex-1 bg-border"></span>
         <div className="flex flex-col space-y-0 p-0 bg-transparent">
-          <h1 className="text-2xl font-bold">Open your gifts</h1>
+          <h1 className="text-xl font-bold">Open your <span className="text-red-500">gifts</span></h1>
           <h2 className="text-xs text-gray-600 font-bold">Find your secret admirer</h2>
         </div>
-        <div className="flex flex-row space-y-2 p-4 bg-transparent">
+        <div className="flex flex-row space-y-2 p-0 bg-transparent">
           {gifts.map((gift) => (
             <GiftItem 
               key={gift.name} 

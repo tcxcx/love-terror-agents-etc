@@ -23,13 +23,13 @@ interface ValentineChatProps {
 }
 
 export default function ValentineChat({ gameInfo }: ValentineChatProps) {
-  
+  console.log('gameInfo in ValentineChat', gameInfo);
   const { messages, input, handleInputChange, handleSubmit, isLoading, stop } = useChat({
     initialMessages: [
       {
         id: 'initial',
         role: 'assistant',
-        content: `🌹 Hi there ${gameInfo.valentineName}! Welcome to this Valentine's game. You just got some $LOVE tokens. A secret admirer is trying to ask you out. You must unlock all four gift's to find out the details of all this. Are you a romantic? ¿Who might be your secret Valentine? 💫. I am an AI but my guess is you are quite beautiful. Now, let's see if you're smart. This game won't be difficult, but that depends on how easy your valentine made it for you. Is your Valentine worth it? 💝 Find out what the four games are, get the gifts and find out who your secret Valentine is. Good luck! 💝`
+        content: `🌹 Hi there ${gameInfo.valentineName}! Welcome to this Valentine's game. You just got some $LOVE tokens. A secret admirer is trying to ask you out. You must unlock all four gift's to find out the details of all this. Are you a romantic? ¿Who might be your secret Valentine? 💫. I am an AI but my guess is you are quite beautiful. Now, let's see if you're smart. This game won't be difficult, but that depends on how easy your Valentine made it for you. Is your Valentine worth it? 💝 Find out what the four games are, get the gifts and find out who your secret Valentine is. There is a surprise by the end of it all so make sure you get all the gifts. Good luck! 💝`
       }
     ],
     body: {

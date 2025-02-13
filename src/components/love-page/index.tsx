@@ -14,36 +14,27 @@ import { LoadingOverview } from "@/components/loading-overview";
 export default function LovePage({ peanutLink }: { peanutLink: string }) {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [gameId] = useQueryState('gameId');
-  
+
   useEffect(() => {
     async function initializeGame() {
       try {
-        // If we already have the gameId from the URL state, use it
-        if (gameId) {
-          const currentGameState = await getGameState(gameId);
-          if (currentGameState) {
-            setGameState(currentGameState);
-            return;
-          }
-        }
-
-        // Otherwise get it from the rose
         const rose = await getRoseByPeanutLink(peanutLink);
         if (!rose?.game_id) {
           console.error("No rose found for this peanut link");
           return;
         }
 
-        let currentGameState = await getGameState(rose.game_id);
+        console.log('rose id', rose.game_id);
+
+        let currentGameState = await getGameState(rose?.peanut_link!);
 
         if (!currentGameState) {
           const { data: newGameState, error: gameError } = await supabase
             .from("games")
             .select("*")
-            .eq("id", rose.game_id)
+            .eq("game_id", rose.game_id)
             .single();
-
+          console.log('newGameState', newGameState);
           if (gameError) {
             console.error("Failed to create game state");
             toast({
@@ -72,7 +63,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
     if (peanutLink) {
       initializeGame();
     }
-  }, [peanutLink, gameId]);
+  }, [peanutLink]);
 
   if (isLoading) {
     return <LoadingOverview />;
@@ -91,6 +82,8 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
     gameState.ascii_game &&
     gameState.guess_game &&
     gameState.poem_game;
+
+    console.log('gameState', gameState);
 
   const gameInfo = {
     valentineName: gameState.roses?.[0]?.valentines_name || "there",
