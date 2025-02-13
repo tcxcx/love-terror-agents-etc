@@ -34,6 +34,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
             .select("*")
             .eq("game_id", rose.game_id)
             .single();
+
           console.log('newGameState', newGameState);
           if (gameError) {
             console.error("Failed to create game state");
@@ -46,8 +47,19 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
           }
           currentGameState = newGameState;
         }
-
-        setGameState(currentGameState);
+        // Include the rose data in the game state
+        setGameState({
+          id: currentGameState?.id!,
+          created_at: currentGameState?.created_at!,
+          roses_game: currentGameState?.roses_game!,
+          ascii_game: currentGameState?.ascii_game!, 
+          guess_game: currentGameState?.guess_game!,
+          poem_game: currentGameState?.poem_game!,
+          valentines_user_id: currentGameState?.valentines_user_id!,
+          valentines_user: currentGameState?.valentines_user!,
+          claimed: currentGameState?.claimed,
+          roses: [rose]
+        });
       } catch (error) {
         console.error("Error initializing game:", error);
         toast({
@@ -83,7 +95,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
     gameState.guess_game &&
     gameState.poem_game;
 
-    console.log('gameState', gameState);
+  console.log('gameState', gameState);
 
   const gameInfo = {
     valentineName: gameState.roses?.[0]?.valentines_name || "there",
@@ -104,9 +116,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
 
   const renderMainContent = () => {
     if (allGiftsUnlocked) {
-
-        // TODO: Add GameInfo={gameInfo} as
-      return <DateComponent />;
+      return <DateComponent gameInfo={gameInfo} />;
     }
 
     return (

@@ -357,7 +357,11 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
               <FormControl>
                 <Textarea
                   {...field}
-                  placeholder="Violets are red.... max 1000 wordsEnter your text"
+                  placeholder="Violets are red
+                  Roses are blue
+                  My portfolio is rekt
+                  But I still love you
+                  "
                   className="resize-none min-h-[300px]"
                 />
               </FormControl>
