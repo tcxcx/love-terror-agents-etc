@@ -70,6 +70,10 @@ export default function RoseLinkForm({
           setCurrentText(`Failed to create link: ${error.message}`)
       );
 
+      console.log(tokenAmount, "tokenAmount in send");
+
+      console.log(linkResponse, "linkResponse in send");
+
       if (!linkResponse) {
         throw new Error("Failed to create peanut link");
       }

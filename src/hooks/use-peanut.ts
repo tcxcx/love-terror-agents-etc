@@ -17,7 +17,7 @@ import { PEANUTAPIKEY } from "@/constants/Env";
 import { saveCreatedLinkToLocalStorage } from "@/utils/local-storage";
 import { playAudio } from "@/utils/audio/server";
 
-
+import { parseUnits } from "viem";
 
 export const usePeanut = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -99,7 +99,7 @@ export const usePeanut = () => {
         typeof tokenAddress === "string" ? tokenAddress : tokenAddress.address;
 
       const linkDetails = generateLinkDetails({
-        tokenValue: amount,
+        tokenValue: parseUnits(amount, 12).toString(),
         tokenAddress: actualTokenAddress,
       });
 

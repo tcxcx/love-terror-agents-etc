@@ -467,9 +467,9 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           const value = e.target.value;
                           if (value === "" || /^\d*\.?\d*$/.test(value)) {
-                            const numericValue = parseFloat(value) || 0;
+                            const numericValue = value;
                             field.onChange(numericValue);
-                            setTokenAmount(numericValue); // Update parent state for peanut
+                            setTokenAmount(Number(numericValue)); // Update parent state for peanut
                           }
                         }}
                         className="text-center w-full text-7xl "
