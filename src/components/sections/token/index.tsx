@@ -25,7 +25,7 @@ const TokenSection = () => {
         loop 
         muted 
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-10"
+        className="absolute inset-0 w-full h-full object-cover opacity-10 cursor-pointer"
       >
         <source src="/bg-yellow.mp4" type="video/mp4" />
       </video>
