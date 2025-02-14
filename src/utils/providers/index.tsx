@@ -7,8 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { config } from "@/lib/wagmi";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { ReactNode } from "react";
-import { DYNAMIC_ENVIRONMENT_ID } from "@/utils/constants/Env";
-import { Base, BaseSepolia } from "@/utils/constants/Chains";
+import { DYNAMIC_ENVIRONMENT_ID } from "@/constants/Env";
+import { Base, BaseSepolia } from "@/constants/Chains";
 
 const queryClient = new QueryClient();
 const evmNetworks = [Base, BaseSepolia];

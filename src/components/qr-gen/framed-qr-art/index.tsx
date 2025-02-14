@@ -100,10 +100,10 @@ export const FramedQRCode = ({
               darkColor="#000000"
               lightColor="#FFFFFF"
               posType="rect"
-              posColor="#ffc640"
+              posColor="#C70039"
             />
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50 rounded-lg">
-              <span className="text-white text-sm font-aeonik">
+            <div className="absolute inset-0 flex items-center justify-center opacity-0  group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-70 rounded-lg">
+              <span className="text-red-500 text-base uppercase font-bold">
                 Click to copy link
               </span>
             </div>

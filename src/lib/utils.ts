@@ -1,13 +1,12 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import confetti from "canvas-confetti";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-
-export  const confettiLove = () => {
+export const confettiLove = () => {
   const duration = 5 * 1000;
   const animationEnd = Date.now() + duration;
   const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -21,7 +20,8 @@ export  const confettiLove = () => {
     const timeLeft = animationEnd - Date.now();
 
     if (timeLeft <= 0) {
-      return clearInterval(interval);
+      clearInterval(interval);
+      return;
     }
 
     const particleCount = 50 * (timeLeft / duration);
@@ -36,8 +36,12 @@ export  const confettiLove = () => {
       origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
     });
   }, 250);
-};
 
+  // Asegurarse de que el intervalo se limpie después de la duración
+  setTimeout(() => {
+    clearInterval(interval);
+  }, duration + 1000); // Agregamos 1 segundo extra para asegurar
+};
 
 export const VALENTINE_ASCII = `
 ███████╗███████╗██╗     ██╗███████╗    
@@ -61,27 +65,24 @@ export const VALENTINE_ASCII = `
  ╚████╔╝ ██║  ██║███████╗███████╗██║ ╚████║   ██║   ██║██║ ╚████║
   ╚═══╝  ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝╚═╝  ╚═══╝
                                                      
-💝 Para la más hermosa Géminis de ojos verdes 💝
-Te pido perdon por haberte llamado 'bruja', pero es que nunca he sentido tanta magia como la que siento cuando te veo. Tanto que me aterras.
 `;
-
 
 export const defaultQRSize = 150;
 
 export const sizeStyles = {
   container: {
-    sm: 'w-48',
-    base: 'w-64',
-    lg: 'w-72'
+    sm: "w-48",
+    base: "w-64",
+    lg: "w-72",
   },
   input: {
-    sm: 'text-lg',
-    base: 'text-2xl',
-    lg: 'text-6xl'
+    sm: "text-lg",
+    base: "text-2xl",
+    lg: "text-6xl",
   },
   balance: {
-    sm: 'text-xs',
-    base: 'text-sm',
-    lg: 'text-base'
-  }
+    sm: "text-xs",
+    base: "text-sm",
+    lg: "text-base",
+  },
 };

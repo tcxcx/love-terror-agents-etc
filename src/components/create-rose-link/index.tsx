@@ -1,27 +1,34 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { usePeanut } from "@/hooks/use-peanut";
 import { useToast } from "@/hooks/use-toast";
 import LinkUiForm from "@/components/create-link-input";
 import Overlay from "@/components/overlay";
-import { Token, TransactionDetails } from "@/types";
+import { TransactionDetails } from "@/types";
 import confetti from "canvas-confetti";
-import { useGetTokensOrChain } from "@/hooks/use-tokens-or-chain";
+import { useAccount } from "wagmi";
 import { useNetworkManager } from "@/hooks/use-dynamic-network";
 import { truncateAddress } from "@/utils/truncate-address";
-import { createRoseSubmission, createPeanutLink } from "@/utils/supabase/mutations/client";
+
+import { BaseSepoliaTokens } from "@/constants/Tokens";
+import supabase from "@/utils/supabase/client";
 
 interface RoseLinkFormProps {
-    formData: any;
-    onSubmitForm: (handler: (data: any) => Promise<void>) => (e: React.BaseSyntheticEvent) => Promise<void>;
-  }
-  
-  export default function RoseLinkForm({ formData, onSubmitForm }: RoseLinkFormProps) {
-    const { toast } = useToast();
+  formData: any;
+  onSubmitForm: (
+    handler: (data: any) => Promise<void>
+  ) => (e: React.BaseSyntheticEvent) => Promise<void>;
+}
+
+export default function RoseLinkForm({
+  formData,
+  onSubmitForm,
+}: RoseLinkFormProps) {
+  const { toast } = useToast();
+  const { address } = useAccount();
   const currentChainId = useNetworkManager();
   const chainId = currentChainId as number;
-  const availableTokens = useGetTokensOrChain(chainId, "tokens");
 
   const {
     createPayLink,
@@ -30,18 +37,20 @@ interface RoseLinkFormProps {
   } = usePeanut();
 
   const [overlayVisible, setOverlayVisible] = useState(false);
-  const [usdAmount, setUsdAmount] = useState<number>(0);
-  const [tokenAmount, setTokenAmount] = useState<number>(0);
   const [transactionDetails, setTransactionDetails] =
     useState<TransactionDetails | null>(null);
-  const [selectedToken, setSelectedToken] = useState<string>("");
   const [currentText, setCurrentText] = useState<string>("");
+  const [tokenAmount, setTokenAmount] = useState<number>(0);
+  const onValueChange = (usdAmount: number, tokenAmount: number) => {
+    setTokenAmount(tokenAmount);
+  };
 
   const handleSubmit = async (formData: any) => {
-    if (!formData.formState.isValid || !selectedToken || tokenAmount <= 0) {
+    if (!formData.formState.isValid || !address) {
       toast({
         title: "Form Error",
-        description: "Please fill out all required fields and select a token amount",
+        description:
+          "Please connect your wallet and fill out all required fields",
         variant: "destructive",
       });
       return;
@@ -49,38 +58,74 @@ interface RoseLinkFormProps {
 
     setOverlayVisible(true);
     try {
-      const tokenAddress = selectedToken;
-      setCurrentText("Planting roses link...");
-
-      const rose = await createRoseSubmission({
-        ...formData,
-        amount_roses: tokenAmount,
-      });
-
-      if (!rose) {
-        throw new Error("Failed to create rose submission");
-      }
+      const tokenAddress = BaseSepoliaTokens[0].address;
+      setCurrentText("Creating rose link...");
 
       const linkResponse = await createPayLink(
         tokenAmount.toString(),
         tokenAddress,
         () => setCurrentText("Please be patient..."),
-        () => setCurrentText("Rose Bouquet Link created successfully"),
+        () => setCurrentText("Rose link created successfully"),
         (error: Error) =>
-          setCurrentText(`${"Failed to create link"} ${error.message}`),
+          setCurrentText(`Failed to create link: ${error.message}`)
       );
-      if (linkResponse) {
-        setTransactionDetails(linkResponse as TransactionDetails);
 
-        triggerConfetti("😍");
-      } else {
-        setOverlayVisible(false);
+      if (!linkResponse) {
+        throw new Error("Failed to create peanut link");
       }
+
+      setTransactionDetails(linkResponse as TransactionDetails);
+
+      const { data: gameData, error: gameError } = await supabase
+        .from("games")
+        .insert([
+          {
+            roses_game: true,
+            ascii_game: false,
+            guess_game: false,
+            poem_game: false,
+          },
+        ])
+        .select()
+        .single();
+
+      const { data: submittedRose, error: roseError } = await supabase
+        .from("roses")
+        .insert([
+          {
+            ...formData,
+            game_id: gameData.id,
+          },
+        ])
+        .select()
+        .single();
+
+      console.log(submittedRose, "submittedRose");
+      console.log(gameData, "gameData");
+      console.log(roseError, "roseError");
+      console.log(gameError, "gameError");
+
+      const { data, error } = await supabase
+        .from("peanut_link")
+        .insert([
+          {
+            rose_id: submittedRose.id,
+            link: linkResponse.paymentLink,
+            claimed: false,
+            created_at: new Date().toISOString(),
+          },
+        ])
+        .select()
+        .single();
+      console.log(data, "data");
+      console.log(error, "error");
+
+      triggerConfetti("😍");
     } catch (error: any) {
-      console.error("Error creating pay link:", error);
+      console.error("Error in submission process:", error);
       setOverlayVisible(false);
       toast({
-        title: `Failed to create link`,
+        title: "Failed to create rose",
         description: error.message,
         variant: "destructive",
       });
@@ -91,11 +136,6 @@ interface RoseLinkFormProps {
 
   const handleCloseOverlay = () => {
     setOverlayVisible(false);
-  };
-
-  const handleValueChange = (usdAmount: number, tokenAmount: number) => {
-    setUsdAmount(usdAmount);
-    setTokenAmount(tokenAmount);
   };
 
   const handleShare = (platform: string) => {
@@ -158,11 +198,7 @@ interface RoseLinkFormProps {
   return (
     <section className="mx-auto h-full flex flex-col items-center">
       <LinkUiForm
-        tokenAmount={tokenAmount}
-        handleValueChange={handleValueChange}
-        availableTokens={availableTokens as Token[]}
-        setSelectedToken={setSelectedToken}
-        chainId={chainId}
+        handleValueChange={onValueChange}
         handleCreateLinkClick={onSubmitForm(handleSubmit)}
         isPeanutLoading={isPeanutLoading}
       />

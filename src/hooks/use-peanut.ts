@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useCallback, useState } from "react";
 import peanut, {
@@ -8,14 +8,16 @@ import peanut, {
 } from "@squirrel-labs/peanut-sdk";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useTransactionStore } from "@/store";
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
 import { useChainId } from "wagmi";
 import { useEthersSigner } from "@/lib/wagmi";
-import { NATIVE_TOKEN_ADDRESS } from "@/utils/constants/Tokens";
+import { NATIVE_TOKEN_ADDRESS } from "@/constants/Tokens";
 import { Token } from "@/types";
-import { PEANUTAPIKEY } from "@/utils/constants/Env";
+import { PEANUTAPIKEY } from "@/constants/Env";
 import { saveCreatedLinkToLocalStorage } from "@/utils/local-storage";
 import { playAudio } from "@/utils/audio/server";
+
+
 
 export const usePeanut = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -24,6 +26,7 @@ export const usePeanut = () => {
   const { toast } = useToast();
   const chainId = useChainId();
   const signer = useEthersSigner({ chainId });
+
   const generatePassword = async () => {
     try {
       return await getRandomString(16);
@@ -51,7 +54,7 @@ export const usePeanut = () => {
     }) => {
       try {
         const tokenDetails = getTokenDetails(tokenAddress);
-        const baseUrl = `${window.location.origin}/claim`;
+        const baseUrl = `${window.location.origin}/love`;
 
         return {
           chainId: chainId.toString(),
@@ -219,16 +222,20 @@ export const usePeanut = () => {
 
       if (walletAddress !== "" && walletAddress !== undefined) {
         wallet = walletAddress;
+        console.log("Wallet address1 :", wallet);
       } else {
         wallet = primaryWallet.address;
+        console.log("Wallet address 2:", wallet);
       }
+      console.log("Wallet address 3:", link, PEANUTAPIKEY, wallet);
 
       const claimedLinkResponse = await claimLinkGasless({
         link,
         APIKey: PEANUTAPIKEY!,
         recipientAddress: wallet as `0x${string}`,
-        baseUrl: `https://api.peanut.to/claim-v2`,
       });
+
+      console.log("Claimed link response:", claimedLinkResponse);
 
       saveCreatedLinkToLocalStorage({
         address: primaryWallet.address as string,

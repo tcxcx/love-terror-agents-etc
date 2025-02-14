@@ -1,137 +1,217 @@
-import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
-import { GameState } from '@/utils/supabase/types';
-import { Rose, PeanutLink } from '@/types';
-
-export async function createGameState(): Promise<GameState | null> {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  
-  const { data, error } = await supabase
-    .from('games')
-    .insert([{ ascii_game: true }])
+import supabase from "@/utils/supabase/client";
+import { Rose, GameState, PeanutLink } from "@/types";
+export async function createGameState(
+  peanutLink: string
+): Promise<GameState | null> {
+  const { data: gameData, error: gameError } = await supabase
+    .from("games")
+    .insert([
+      {
+        roses_game: false,
+        ascii_game: false,
+        guess_game: false,
+        poem_game: false,
+        peanut_link: peanutLink,
+      },
+    ])
     .select()
     .single();
-    
-  if (error) {
-    console.error('Error creating game state:', error);
+
+  if (gameError) {
+    console.error("Error creating game state:", gameError);
     return null;
   }
-  
-  return data;
-  console.log("here is the data return for a created  game", data);
+
+  // Then create the initial roses entry linked to this game
+  const { data: roseData, error: roseError } = await supabase
+    .from("roses")
+    .insert([
+      {
+        game_id: gameData.id,
+        peanut_link: peanutLink,
+      },
+    ])
+    .select()
+    .single();
+
+  if (roseError) {
+    console.error("Error creating rose entry:", roseError);
+    return null;
+  }
+
+  // Finally create the peanut link entry
+  const { error: peanutError } = await supabase.from("peanut_link").insert([
+    {
+      rose_id: roseData.id,
+      link: peanutLink,
+      claimed: false,
+    },
+  ]);
+
+  if (peanutError) {
+    console.error("Error creating peanut link entry:", peanutError);
+    return null;
+  }
+
+  return gameData;
 }
 
 export async function updateGameState(
-    id: string,
-    updates: Partial<Omit<GameState, 'id' | 'created_at'>>
-  ): Promise<GameState | null> {
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-    
-    const { data, error } = await supabase
-      .from('games')
-      .update(updates)
-      
-      .eq('id', id)
-      .select()
-      .single();
-      
-    if (error) {
-      console.error('Error updating game state:', error);
-      return null;
-    }
-    console.log("here is the data return for GAME STATE", data);
-
-    return data;
-  }
-
-
-export async function createRoseSubmission(roseData: Omit<Rose, 'id' | 'created_at' | 'claimed'>): Promise<Rose | null> {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  
-  // First create the game state
-  const { data: gameData, error: gameError } = await supabase
-    .from('games')
-    .insert([{ 
-      roses_game: true,
-      ascii_game: false,
-      guess_game: false,
-      poem_game: false
-    }])
+  gameId: string,
+  updates: Partial<GameState>
+): Promise<GameState | null> {
+  const { data, error } = await supabase
+    .from("games")
+    .update(updates)
+    .eq("id", gameId)
     .select()
     .single();
-    
-  if (gameError) {
-    console.error('Error creating game state:', gameError);
+
+  if (error) {
+    console.error("Error updating game state:", error);
     return null;
   }
 
-  // Then create the rose submission with the game_id
-  const { data: submittedRose, error: roseError } = await supabase
-    .from('roses')
-    .insert([{ 
-      ...roseData,
-      game_id: gameData.id
-    }])
+  return data;
+}
+
+export async function createRoseSubmission(
+  gameId: string,
+  roseData: Omit<Rose, "id" | "created_at" | "claimed">
+): Promise<Rose | null> {
+  // Create new game state
+  const gameState = await createGameState(gameId);
+  if (!gameState) return null;
+
+  // Create rose submission
+  const { data: rose, error: roseError } = await supabase
+    .from("roses")
+    .insert([
+      {
+        ...roseData,
+        game_id: gameState.id,
+        claimed: false,
+      },
+    ])
     .select()
     .single();
-    
+
   if (roseError) {
-    console.error('Error creating rose submission:', roseError);
+    console.error("Error creating rose submission:", roseError);
     return null;
   }
 
-  return submittedRose;
+  return rose;
+}
+
+export async function setRoseClaimed(
+  roseId: string,
+  walletAddress: string,
+  valentinesUserId: number
+): Promise<boolean> {
+  // Start a transaction
+  const { error: roseError } = await supabase
+    .from("roses")
+    .update({
+      claimed: true,
+      valentines_user_id: valentinesUserId,
+    })
+    .eq("id", roseId);
+
+  if (roseError) {
+    console.error("Error updating rose claimed status:", roseError);
+    return false;
+  }
+
+  // Get game_id from rose
+  const { data: rose } = await supabase
+    .from("roses")
+    .select("game_id")
+    .eq("id", roseId)
+    .single();
+
+  if (!rose?.game_id) return false;
+
+  // Update game state
+  const { error: gameError } = await supabase
+    .from("games")
+    .update({
+      roses_game: true,
+    })
+    .eq("id", rose.game_id);
+
+  if (gameError) {
+    console.error("Error updating game state:", gameError);
+    return false;
+  }
+
+  return true;
+}
+
+export async function updateGameProgress(
+  gameId: string,
+  updates: Partial<GameState>
+): Promise<GameState | null> {
+  const { data, error } = await supabase
+    .from("games")
+    .update(updates)
+    .eq("id", gameId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating game progress:", error);
+    return null;
+  }
+
+  return data;
 }
 
 export async function createPeanutLink(
-  roseId: string, 
-  link: string
+  roseId: string,
+  link: string,
+  walletCreated: string
 ): Promise<PeanutLink | null> {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  
   const { data, error } = await supabase
-    .from('peanut_links')
-    .insert([{
-      rose_id: roseId,
-      link: link
-    }])
+    .from("peanut_link")
+    .insert([
+      {
+        rose_id: roseId,
+        link: link,
+        claimed: false,
+        wallet_created: walletCreated,
+      },
+    ])
     .select()
     .single();
-    
+
   if (error) {
-    console.error('Error creating peanut link:', error);
+    console.error("Error creating peanut link:", error);
     return null;
   }
-  
+
   return data;
 }
 
 export async function claimPeanutLink(
   linkId: string,
-  walletAddress: string
+  claimWallet: string
 ): Promise<PeanutLink | null> {
-  const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
-  
   const { data, error } = await supabase
-    .from('peanut_link')
+    .from("peanut_link")
     .update({
       claimed: true,
       claimed_at: new Date().toISOString(),
-      claimed_by: walletAddress
+      claim_wallet: claimWallet,
     })
-    .eq('id', linkId)
+    .eq("id", linkId)
     .select()
     .single();
-    
+
   if (error) {
-    console.error('Error claiming peanut link:', error);
+    console.error("Error claiming peanut link:", error);
     return null;
   }
-  
+
   return data;
 }

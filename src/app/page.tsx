@@ -9,15 +9,14 @@ import FeatureGrid from "@/components/sections/features/feature-grid";
 import DisclaimerSection from "@/components/sections/disclaimer";
 import CTASection from "@/components/sections/cta";
 import InspirationVideo from "@/components/sections/video";
-import Header from "@/components/header";
-import SocialSection from "@/components/sections/social";
-
+import Footer from "@/components/footer";
+import SocialsSection from "@/components/sections/social";
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary-lighter to-white">
-      <Header />
+    <div className="min-h-screen">
       <HeroSection />
       <TerminalWindow />
+      <div className="max-w-4xl mx-auto">
       <TokenSection />
       <DevStorySection />
       <HowItWorksSection />
@@ -25,7 +24,13 @@ const Index = () => {
       <InspirationVideo />
       <DisclaimerSection />
       <CTASection />
-      <SocialSection />
+      </div>
+      <SocialsSection />
+      <section 
+        className="w-full h-[400px] bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url(/bg-yellow.png)' }}
+      />
+      <Footer />
     </div>
   );
 };

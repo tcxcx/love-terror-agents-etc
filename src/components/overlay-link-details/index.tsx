@@ -41,7 +41,7 @@ export default function TransactionDetailsDisplay({
           {isValidPaymentLink ? (
             <Suspense fallback={<Skeleton className="w-32 h-32" />}>
               <FramedQRCode
-                image="/images/iso-logo.png"
+                image="/cringe-logo.png"
                 link={paymentLink}
                 frameText={"Your $LOVE Roses Bouquet is ready for you to send"}
                 copyLink={() =>
@@ -68,7 +68,7 @@ export default function TransactionDetailsDisplay({
           </Button>
         </div>
 
-        <div className="flex justify-center text-xs text-primary my-2">
+        <div className="flex justify-center text-xs text-black font-bold my-2">
             Send this $LOVE Roses Bouquet to your Valentine
         </div>
 

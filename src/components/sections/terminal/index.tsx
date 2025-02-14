@@ -10,7 +10,7 @@ const TerminalWindow = () => {
   const navigate = useRouter();
 
   return (
-    <div className="retro-window mt-12 max-w-2xl mx-auto crt-effect">
+    <div className="retro-window max-w-2xl mx-auto crt-effect">
       <div className="bg-accent p-2 flex items-center gap-2 rounded-t">
         <div className="flex gap-1.5">
           <div className="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
@@ -55,14 +55,18 @@ const TerminalWindow = () => {
         <div className="mt-2 animate-pulse">
           <span className="text-secondary-lighter">{">"}</span> waiting for your move, champion... <span className="text-secondary-lighter animate-pulse">_</span>
         </div>
+
+        <div className="mt-2 animate-pulse">
+          <span className="text-secondary-lighter">{">"}</span> who&lsquo;s your <span className="text-red-500 animate-pulse">heart going to beat for tonight? </span> <span className="text-secondary-lighter animate-pulse">_</span>
+        </div>
         </AnimatedSpan>
 
-        <div className="mt-4 flex justify-center gap-4">
+        <div className="mt-4 flex flex-col sm:flex-row justify-center gap-4">
           <Button
             onClick={() => navigate.push('/roses')}
             variant="secondary"
             disabled={true}
-            className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300"
+            className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300 w-full sm:w-auto"
           >
             🌹 Send Roses 🌹
           </Button>
@@ -70,8 +74,7 @@ const TerminalWindow = () => {
             onClick={() => navigate.push('/love')}
             variant="secondary"
             disabled={true}
-
-            className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300"
+            className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300 w-full sm:w-auto"
           >
             💝 Claim $LOVE 💝
           </Button>

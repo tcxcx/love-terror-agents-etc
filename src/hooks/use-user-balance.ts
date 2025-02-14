@@ -21,5 +21,7 @@ export function useTokenBalance({
     });
   }
 
+  console.log("balance in use-user-balance", balance);
+
   return balance;
 }

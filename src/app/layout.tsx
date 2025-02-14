@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { GridPattern } from "@/components/magicui/grid-pattern";
 import Providers from "@/utils/providers";
 import { cn } from "@/lib/utils";
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
+import Header from "@/components/header";
 
 
 import "./globals.css";
@@ -31,19 +33,17 @@ export default function RootLayout({
   return (
     <html lang="en">
         <Providers>
+        <NuqsAdapter>
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <GridPattern
-            width={20}
-            height={20}
-            x={-1}
-            y={-1}
-            className={cn(
-              "[mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]"
-            )}
-          />
-            {children}
+          <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]">
+              <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_500px_at_50%_200px,#C9EBFF,transparent)]">
+            <Header />
+              {children}
+            </div>
+            </div>
           </body>
           <Toaster />
+          </NuqsAdapter>
         </Providers>
     </html>
   );

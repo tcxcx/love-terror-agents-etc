@@ -58,13 +58,13 @@ export const EnhancedQRCode = forwardRef<HTMLDivElement, EnhancedQRCodeProps>(
         <CardContent className="p-6">
           <div className="flex items-center justify-center mb-4">
             <Image
-              src="/images/iso-logo.png"
-              alt="BooFi"
+              src="/cringe-logo.png"
+              alt="AI Valentines | Cringy Cupid"
               width={64}
               height={64}
             />
             <span className="inline-block font-clash bg-gradient-to-r text-xl from-indigo-300 via-purple-400 to-cyan-300 bg-clip-text text-transparent">
-              bu.fi
+                AI Valentines | Cringy Cupid
             </span>
           </div>
           <div
@@ -90,7 +90,8 @@ export const EnhancedQRCode = forwardRef<HTMLDivElement, EnhancedQRCodeProps>(
           </div>
           <p className="text-center text-sm text-gray-500">
             Scan this QR code to{" "}
-            {action === "pay" ? "pay" : "request payment from"} this Bu user:
+            {action === "pay" ? "pay" : "request payment from"} this Cringy Cupid
+            user:
           </p>
           {(ensName || userAddress) && (
             <p className="text-center text-sm text-gray-500">
