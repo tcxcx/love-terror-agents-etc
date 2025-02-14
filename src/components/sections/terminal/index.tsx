@@ -55,14 +55,18 @@ const TerminalWindow = () => {
         <div className="mt-2 animate-pulse">
           <span className="text-secondary-lighter">{">"}</span> waiting for your move, champion... <span className="text-secondary-lighter animate-pulse">_</span>
         </div>
+
+        <div className="mt-2 animate-pulse">
+          <span className="text-secondary-lighter">{">"}</span> who's your <span className="text-red-500 animate-pulse">heartgoing to beat for tonight? </span> <span className="text-secondary-lighter animate-pulse">_</span>
+        </div>
         </AnimatedSpan>
 
-        <div className="mt-4 flex justify-center gap-4">
+        <div className="mt-4 flex flex-col sm:flex-row justify-center gap-4">
           <Button
             onClick={() => navigate.push('/roses')}
             variant="secondary"
             disabled={false}
-            className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300"
+            className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300 w-full sm:w-auto"
           >
             🌹 Send Roses 🌹
           </Button>
@@ -70,7 +74,7 @@ const TerminalWindow = () => {
             onClick={() => navigate.push('/love')}
             variant="secondary"
             disabled={false}
-            className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300"
+            className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300 w-full sm:w-auto"
           >
             💝 Claim $LOVE 💝
           </Button>

@@ -111,8 +111,7 @@ export default function RoseLinkForm({
           {
             rose_id: submittedRose.id,
             link: linkResponse.paymentLink,
-            claim: false,
-            claim_wallet: address as string,
+            claimed: false,
             created_at: new Date().toISOString(),
           },
         ])

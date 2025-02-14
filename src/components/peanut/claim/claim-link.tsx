@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { usePeanut } from "@/hooks/use-peanut";
 import PaymentDetails from "@/components/peanut/card/details";
@@ -19,11 +19,9 @@ import { fetchLinkDetails } from "@/utils/local-storage";
 import { useDestinationToken } from "@/hooks/use-destination-chain";
 import { useAccount } from "wagmi";
 import GameButton from "@/components/game-button";
-import {
-  updatePeanutLink,
-} from "@/utils/supabase/mutations/client";
-
 import { triggerConfetti } from "@/utils";
+import supabase from "@/utils/supabase/client";
+import { v4 as uuidv4 } from "uuid";
 
 
 export function getChainInfoByChainId(chainId: number | string) {
@@ -67,6 +65,7 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
   const [paymentInfo, setPaymentInfo] = useState<ExtendedPaymentInfo | null>(
     null
   );
+  const [userLoggedIn, setUserLoggedIn] = useState<any>(null);
 
 
   const [inProgress, setInProgress] = useState(false);
@@ -80,6 +79,17 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
 
   const [destinationChainId, setDestinationChainId] = useState<string>("");
   const [details, setDetails] = useState<IGetLinkDetailsResponse | null>(null);
+
+  const [userId, setUserId] = useState<string>(uuidv4());
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserLoggedIn(user);
+      setUserId(user?.id!);
+    };
+    getUser();
+  }, []);
 
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -130,24 +140,36 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
       try {
         setCurrentText("Claiming $LOVE started ");
         const txHash = await claimPayLink(
-          details?.link || "",
+          details?.link as string,
           () => setCurrentText("Claiming your roses 🌹🌹🌹"),
           () => setCurrentText("Claiming your roses 🌹🌹🌹"),
           (error: Error) => setCurrentText(`Error: ${error.message}`),
           () => setCurrentText("Claiming your roses 🌹🌹🌹"),
           address
         );
-        
-      // Update peanut link record
-      const peanutLinkRecord = await updatePeanutLink(
-        details?.link || "",
-        address as string,
-      );
+
+        const { data: peanutLinkRecord, error: peanutLinkError } = await supabase
+          .from("peanut_link")
+          .update({
+            claimed_wallet: userId,
+            claimed: true as boolean,
+            claimed_at: new Date().toISOString()
+          })
+          .eq("link", details?.link as string)
+          .select()
+          .single();
+
+        if (peanutLinkError) {
+          console.error("Error updating peanut link:", peanutLinkError);
+          throw new Error("Failed to update peanut link record");
+        }
+
+        console.log(peanutLinkRecord, "peanutLinkRecord in claim link");
 
 
-      if (!peanutLinkRecord) {
-        throw new Error("Failed to record peanut link");
-      }
+        if (!peanutLinkRecord) {
+          throw new Error("Failed to record peanut link");
+        }
 
         setPaymentInfo((prevInfo) =>
           prevInfo

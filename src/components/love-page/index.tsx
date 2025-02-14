@@ -49,6 +49,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
           }
           currentGameState = newGameState;
         }
+        
 
         // Create the complete game state
         const completeGameState = {
@@ -66,7 +67,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
 
         // Set both local and Zustand state
         setGameState(completeGameState);
-        setZustandGameState(completeGameState);
+        setZustandGameState(completeGameState as any);
 
       } catch (error) {
         console.error("Error initializing game:", error);

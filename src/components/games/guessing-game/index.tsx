@@ -1,49 +1,70 @@
-'use client';
+"use client"
 
-import React, { useState } from 'react';
+import type React from "react"
+import { useState } from "react"
+import { motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface GuessingGameProps {
   clues: {
-    clue_1?: string;
-    clue_2?: string;
-    clue_3?: string;
-    clue_4?: string;
-    clue_5?: string;
-    clue_6?: string;
-    clue_7?: string;
-  };
-  currentClue: number;
-  secretAnswer?: string;
-  onComplete?: () => void;
-  guess?: string;
+    [key: string]: string
+  }
+  currentClue: number
+  secretAnswer: string
+  onComplete: () => void
+  guess?: string
 }
 
-export const GuessingGame: React.FC<GuessingGameProps> = ({
-  clues,
-  currentClue,
-  secretAnswer,
-  onComplete,
-  guess
-}) => {
-  const [localGuess, setLocalGuess] = useState(guess || '');
+export const GuessingGame: React.FC<GuessingGameProps> = ({ clues, currentClue, secretAnswer, onComplete, guess }) => {
+  const [userGuess, setUserGuess] = useState(guess || "")
+  const [isCorrect, setIsCorrect] = useState(false)
 
-  const currentClueText = clues[`clue_${currentClue}` as keyof typeof clues];
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (userGuess.toLowerCase().trim() === secretAnswer.toLowerCase().trim()) {
+      setIsCorrect(true)
+      onComplete()
+    }
+  }
 
   return (
-    <div className="p-4 bg-purple-500/10 rounded-lg tool-content">
-      <h3 className="text-lg font-bold mb-4">Clue #{currentClue}</h3>
-      <p className="mb-4 text-purple-300">{currentClueText}</p>
-      <div className="space-y-4">
-        {/* Previous clues */}
-        {currentClue > 1 && (
-          <div className="text-sm opacity-70">
-            <h4>Previous Clues:</h4>
-            {Array.from({ length: currentClue - 1 }, (_, i) => (
-              <p key={i}>{clues[`clue_${i + 1}` as keyof typeof clues]}</p>
-            ))}
-          </div>
-        )}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-6 bg-gradient-to-r from-red-100 to-pink-100 rounded-xl shadow-lg border border-red-200"
+    >
+      <h3 className="text-2xl font-bold mb-4 text-center text-red-600">Guessing Game</h3>
+      <div className="mb-6 p-4 bg-white bg-opacity-50 rounded-lg">
+        <h4 className="text-lg font-semibold mb-2 text-pink-700">Clue #{currentClue}</h4>
+        <p className="text-red-800 italic">{clues[`clue${currentClue}`]}</p>
       </div>
-    </div>
-  );
-};
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          type="text"
+          value={userGuess}
+          onChange={(e) => setUserGuess(e.target.value)}
+          placeholder="Enter your guess"
+          className="w-full border-2 border-pink-300 focus:border-red-500 rounded-lg"
+        />
+        <Button
+          type="submit"
+          className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+        >
+          Submit Guess
+        </Button>
+      </form>
+      {isCorrect && (
+        <motion.p
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mt-4 text-green-600 font-semibold text-center"
+        >
+          🎉 Correct! Well done! 🎉
+        </motion.p>
+      )}
+    </motion.div>
+  )
+}
+

@@ -20,6 +20,7 @@ interface RoseStore {
   getRoses: () => Rose[];
   getCurrentRose: () => Rose | undefined;
   updateGame: (updates: Partial<GameState>) => void;
+  getGameState: () => GameState | null;
 }
 
 export const useRoseStore = create<RoseStore>((set, get) => ({
@@ -31,4 +32,5 @@ export const useRoseStore = create<RoseStore>((set, get) => ({
     set((state) => ({
       gameState: state.gameState ? { ...state.gameState, ...updates } : null
     })),
+  getGameState: () => get().gameState,
 }));

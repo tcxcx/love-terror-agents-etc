@@ -1,4 +1,5 @@
 
+import Link from "next/link";
 import React from "react";
 
 const CTASection = () => {
@@ -10,11 +11,14 @@ const CTASection = () => {
             Ready to Level Up Your Love Game? 
           </h2>
           <p className="text-lg text-accent/70 mb-8">
-            Join the most based Web3 Valentine&lsquo;s platform today! 🚀
+            Join the most based Web3 Love platform today! 🚀
           </p>
-          <button className="px-8 py-3 bg-secondary text-white rounded-lg font-medium hover:bg-secondary-darker transition-colors duration-300 shadow-lg transform hover:scale-105">
-            Start Your Love Quest
-          </button>
+          <Link
+            href="/love"
+            className="inline-block px-8 py-3 bg-secondary text-white rounded-lg font-medium hover:bg-secondary-darker transition-colors duration-300 shadow-lg transform hover:scale-105"
+          >
+            Create Love Quest
+          </Link>
         </div>
       </div>
     </section>

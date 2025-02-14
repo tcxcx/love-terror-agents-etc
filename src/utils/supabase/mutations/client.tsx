@@ -57,7 +57,8 @@ export async function createPeanutLink(
 
 export async function updatePeanutLink(
   link: string,
-  claimWallet: string
+  claimed_wallet: string,
+  claimed: boolean
 ): Promise<PeanutLink | null> {
   try {
     const response = await fetch("/api/peanut-links", {
@@ -65,7 +66,7 @@ export async function updatePeanutLink(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ link, claimWallet }),
+      body: JSON.stringify({ link, claimed_wallet, claimed }),
     });
 
     if (!response.ok) {

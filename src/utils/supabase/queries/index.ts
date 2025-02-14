@@ -64,7 +64,8 @@ export async function getRoseByPeanutLink(
     )
     .eq("peanut_link", peanutLink)
     .single();
-
+  console.log('peanutLink', peanutLink);
+  
   if (error) {
     console.error("Error fetching rose:", error);
     return null;

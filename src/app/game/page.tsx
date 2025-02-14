@@ -12,6 +12,8 @@ export default function GamePage() {
   const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
   
   // Get hash if present
+  if (typeof window === "undefined") return;
+
   const hash = window.location.hash;
   
   // Create love URL with all parameters and hash

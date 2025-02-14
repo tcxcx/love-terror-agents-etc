@@ -30,6 +30,7 @@
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.8",
     "@squirrel-labs/peanut-sdk": "^0.5.8",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.5.2",
     "@types/canvas-confetti": "^1.9.0",
     "ai": "^4.1.26",
@@ -49,8 +50,10 @@
     "react-hook-form": "^7.54.1",
     "react-icons": "^5.4.0",
     "react-qrbtf": "^1.2.1",
+    "swr": "^2.3.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
+    "usehooks-ts": "^3.1.1",
     "uuid": "^11.0.5",
     "wagmi": "^2.14.11",
     "zod": "^3.24.1"
