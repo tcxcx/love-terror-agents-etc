@@ -147,32 +147,43 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
           address
         );
 
-        const { data: peanutLinkRecord, error: peanutLinkError } = await supabase
-          .from("peanut_link")
+        // const { data: peanutLinkRecord, error: peanutLinkError } = await supabase
+        //   .from("peanut_link")
+        //   .update({
+        //     claimed: true as boolean,
+        //     claimed_wallet: userId
+        //   })
+        //   .eq("link", details?.link as string)
+        //   .select()
+        //   .single();  
+
+        console.log(details?.link, "peanutLink in claim link");
+        const peanutLink = details?.link as string;
+
+          const { data: gamesUpdate, error: gamesUpdateError } = await supabase
+          .from("games")
           .update({
-            claimed_wallet: userId,
-            claimed: true as boolean,
-            claimed_at: new Date().toISOString()
+           claimed_by: userId
           })
-          .eq("link", details?.link as string)
+          .eq("link", peanutLink)
           .select()
-          .single();
+          .single();   
 
-        if (peanutLinkError) {
-          console.error("Error updating peanut link:", peanutLinkError);
-          throw new Error("Failed to update peanut link record");
-        }
+        // if (peanutLinkError) {
+        //   console.error("Error updating peanut link:", peanutLinkError);
+        //   throw new Error("Failed to update peanut link record");
+        // }
 
-        console.log(peanutLinkRecord, "peanutLinkRecord in claim link");
+        // console.log(peanutLinkRecord, "peanutLinkRecord in claim link");
 
 
-        if (!peanutLinkRecord) {
-          throw new Error("Failed to record peanut link");
-        }
+        // if (!peanutLinkRecord) {
+        //   throw new Error("Failed to record peanut link");
+        // }
 
         setPaymentInfo((prevInfo) =>
           prevInfo
-            ? { ...prevInfo, transactionHash: txHash, claimed: true }
+            ? { ...prevInfo, transactionHash: "txHash", claimed: true }
             : null
         );
 

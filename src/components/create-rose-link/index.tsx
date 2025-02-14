@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePeanut } from "@/hooks/use-peanut";
 import { useToast } from "@/hooks/use-toast";
 import LinkUiForm from "@/components/create-link-input";
@@ -11,7 +11,7 @@ import { useAccount } from "wagmi";
 import { useNetworkManager } from "@/hooks/use-dynamic-network";
 import { truncateAddress } from "@/utils/truncate-address";
 
-import { BaseTokens } from "@/constants/Tokens";
+import { BaseSepoliaTokens } from "@/constants/Tokens";
 import supabase from "@/utils/supabase/client";
 
 interface RoseLinkFormProps {
@@ -29,6 +29,19 @@ export default function RoseLinkForm({
   const { address } = useAccount();
   const currentChainId = useNetworkManager();
   const chainId = currentChainId as number;
+  const [userLoggedIn, setUserLoggedIn] = useState<any>(null);
+  const [userId, setUserId] = useState<string>("");
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserLoggedIn(user);
+      setUserId(user?.id!);
+    };
+    getUser();
+  }, []);
+
+
 
   const {
     createPayLink,
@@ -58,7 +71,7 @@ export default function RoseLinkForm({
 
     setOverlayVisible(true);
     try {
-      const tokenAddress = BaseTokens[0].address;
+      const tokenAddress = BaseSepoliaTokens[0].address;
       setCurrentText("Creating rose link...");
 
       const linkResponse = await createPayLink(
@@ -69,10 +82,6 @@ export default function RoseLinkForm({
         (error: Error) =>
           setCurrentText(`Failed to create link: ${error.message}`)
       );
-
-      console.log(tokenAmount, "tokenAmount in send");
-
-      console.log(linkResponse, "linkResponse in send");
 
       if (!linkResponse) {
         throw new Error("Failed to create peanut link");
@@ -116,7 +125,7 @@ export default function RoseLinkForm({
             rose_id: submittedRose.id,
             link: linkResponse.paymentLink,
             claim: false,
-            claim_wallet: address as string,
+            claim_wallet: userId as string,
             created_at: new Date().toISOString(),
           },
         ])
