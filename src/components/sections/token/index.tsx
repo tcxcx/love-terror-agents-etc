@@ -25,7 +25,7 @@ const TokenSection = () => {
         loop 
         muted 
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-10 cursor-pointer"
+        className="absolute inset-0 w-full h-full object-cover opacity-10"
       >
         <source src="/bg-yellow.mp4" type="video/mp4" />
       </video>
@@ -63,7 +63,7 @@ const TokenSection = () => {
             </button>
           </div>
           <a
-            href="hhttps://flaunch.gg/base/coin/0xc6a7C1bEb28910c4adb46Ad8A86Ce22ac8AE2762"
+            href="https://flaunch.gg/base/coin/0xc6a7C1bEb28910c4adb46Ad8A86Ce22ac8AE2762"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-3 bg-secondary text-white rounded-lg font-medium hover:bg-secondary-darker transition-colors duration-300 shadow-lg"
@@ -76,7 +76,6 @@ const TokenSection = () => {
               playsInline
               className="w-6 h-6 rounded-full ml-2"
             >
-              <source src="/flaunch-logo.mp4" type="video/mp4" />
             </video>
             <Link className="w-4 h-4" />
           </a>
