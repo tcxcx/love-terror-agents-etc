@@ -9,7 +9,7 @@ import { providers } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
 
 export const config = createConfig({
-  chains: [baseSepolia, base],
+  chains: [ base, baseSepolia],
   transports: {
     [base.id]: http(),
     [baseSepolia.id]: http(),

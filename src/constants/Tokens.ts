@@ -31,7 +31,7 @@ export const BaseSepoliaTokens: Token[] = [
   //     "https://dynamic-assets.coinbase.com/3c15df5e2ac7d4abbe9499ed9335041f00c620f28e8de2f93474a9f432058742cdf4674bd43f309e69778a26969372310135be97eb183d91c492154176d455b8/asset_icons/9d67b728b6c8f457717154b3a35f9ddc702eae7e76c4684ee39302c4d7fd0bb8.png",
   // },
   {
-    address: "0x036CbD53842c5426634e7929541eC2318f3dCF7e" as Hex,
+    address: "0xc6a7C1bEb28910c4adb46Ad8A86Ce22ac8AE2762" as Hex,
     chainId: 84532,
     decimals: 18,
     name: "LOVE",
@@ -43,6 +43,15 @@ export const BaseSepoliaTokens: Token[] = [
 ////////////////////////////// TOKEN ORDER IS IMPORTANT //////////////////////////////
 
 export const BaseTokens: Token[] = [
+  {
+    address: "0xc6a7C1bEb28910c4adb46Ad8A86Ce22ac8AE2762" as Hex,
+    chainId: 8453,
+    decimals: 18,
+    name: "LOVE",
+    payable: true,
+    symbol: "LOVE",
+    image: "/images/pixel-roses.png",
+  },
   {
     address: NATIVE_TOKEN_ADDRESS,
     chainId: 84532,
@@ -63,15 +72,7 @@ export const BaseTokens: Token[] = [
     image:
       "https://dynamic-assets.coinbase.com/3c15df5e2ac7d4abbe9499ed9335041f00c620f28e8de2f93474a9f432058742cdf4674bd43f309e69778a26969372310135be97eb183d91c492154176d455b8/asset_icons/9d67b728b6c8f457717154b3a35f9ddc702eae7e76c4684ee39302c4d7fd0bb8.png",
   },
-  // {
-  //   address: "0x036CbD53842c5426634e7929541eC2318f3dCF7e" as Hex,
-  //   chainId: 8453,
-  //   decimals: 18,
-  //   name: "LOVE",
-  //   payable: true,
-  //   symbol: "LOVE",
-  //   image: "/images/pixel-roses.png",
-  // },
+
 ];
 
 export const allTokens = [...BaseSepoliaTokens, ...BaseTokens];
