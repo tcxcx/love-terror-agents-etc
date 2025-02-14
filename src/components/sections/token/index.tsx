@@ -8,6 +8,7 @@ const TokenSection = () => {
   const { toast } = useToast();
   const contractAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
 
+
   const handleCopyContract = () => {
     navigator.clipboard.writeText(contractAddress);
     toast({
@@ -33,7 +34,7 @@ const TokenSection = () => {
         <div className="retro-window p-8 bg-gradient-to-r from-secondary/5 to-primary/5 backdrop-blur-sm">
           <h2 className="text-3xl font-bold mb-6">Get Your Love Tokens 💝</h2>
           <p className="text-lg mb-6">
-            Power your romantic journey with $LOVE tokens on Base blockchain
+            Power your romantic journey with $LOVE tokens on Secret blockchain
           </p>
           
           {/* Floating Flaunch Logo Animation */}
