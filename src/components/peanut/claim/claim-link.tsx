@@ -16,7 +16,6 @@ import { ExtendedPaymentInfo, IGetLinkDetailsResponse } from "@/types";
 import * as Chains from "@/constants/Chains";
 import { getBlockExplorerUrlByChainId } from "@/utils/get-explorer";
 import { fetchLinkDetails } from "@/utils/local-storage";
-import { useDestinationToken } from "@/hooks/use-destination-chain";
 import { useAccount } from "wagmi";
 import GameButton from "@/components/game-button";
 import { triggerConfetti } from "@/utils";

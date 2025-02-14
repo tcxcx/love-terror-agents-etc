@@ -1,18 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { parseAsBoolean, parseAsString, useQueryState } from "nuqs";
+import { parseAsBoolean, useQueryState } from "nuqs";
 import { fetchLinkDetails } from "@/utils/local-storage";
 import { IGetLinkDetailsResponse, ExtendedPaymentInfo } from "@/types";
 
-interface LinkState {
-  peanutLink: string | null;
-  isLoading: boolean;
-  isValidLink: boolean;
-  isClaimed: boolean;
-  details: IGetLinkDetailsResponse | null;
-  paymentInfo: ExtendedPaymentInfo | null;
-}
 
 export function LoveLink() {
   const [claimId] = useQueryState("love");

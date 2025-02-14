@@ -4,10 +4,7 @@ import React, { useState, ChangeEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { usePeanut } from "@/hooks/use-peanut";
 import PaymentDetails from "@/components/peanut/card/details";
-import confetti from "canvas-confetti";
 import { toast } from "@/hooks/use-toast";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { AnimatePresence, motion } from "framer-motion";
 import { FadeText } from "@/components/magicui/fade-text";
 import { ChevronRightIcon, XIcon } from "lucide-react";
@@ -16,7 +13,6 @@ import Image from "next/image";
 import { chainIdMapping, chainIcons } from "@/components/peanut/card/details";
 import { ExtendedPaymentInfo, IGetLinkDetailsResponse } from "@/types";
 import * as Chains from "@/constants/Chains";
-import { useSwitchNetwork } from "@dynamic-labs/sdk-react-core";
 import { getBlockExplorerUrlByChainId } from "@/utils/get-explorer";
 import { fetchLinkDetails } from "@/utils/local-storage";
 import { useDestinationToken } from "@/hooks/use-destination-chain";
@@ -27,7 +23,6 @@ import {
 import GameButton from "@/components/game-button";
 
   // Fix 1: Handle searchParams properly
-import { useSearchParams } from "next/navigation";
 import { triggerConfetti } from "@/utils";
 
 
@@ -134,15 +129,15 @@ export default function Claim({peanutLink}: {peanutLink: string}) {
         );
         
       // Update peanut link record
-      const peanutLinkRecord = await updatePeanutLink(
-        details?.link || "",
-        address as string,
-      );
+      // const peanutLinkRecord = await updatePeanutLink(
+      //   details?.link || "",
+      //   address as string,
+      // );
 
 
-      if (!peanutLinkRecord) {
-        throw new Error("Failed to record peanut link");
-      }
+      // if (!peanutLinkRecord) {
+      //   throw new Error("Failed to record peanut link");
+      // }
 
         setPaymentInfo((prevInfo) =>
           prevInfo

@@ -52,10 +52,10 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
   } = {
     1: (
       <div>
-        <h1 className="text-3xl font-bold">Create new Valentine's game</h1>
+        <h1 className="text-3xl font-bold">Create new Valentine&lsquo;s game</h1>
         <h2 className="text-2xl font-bold">Create AI agent Context 🤖</h2>
         <p className="text-base">
-          Welcome! Here you must create an AI agent that will interact with your Valentine's through a bunch of games. <br /> Give as much context as possible to make it more personal and create a closer connection.
+          Welcome! Here you must create an AI agent that will interact with your Valentine&lsquo;s through a bunch of games. <br /> Give as much context as possible to make it more personal and create a closer connection.
         </p>
         <FormField
           control={formData.control}
@@ -133,7 +133,7 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
     2: (
       <div>
         <h2 className="text-2xl font-bold">Game 2: Secret Passphrase Question 🤓</h2>
-        <p className="text-base">Ask a fun secret question for your Valentine to guess. Provide up to 7 clues to help them. In order to win this gift your valentine's must explicitly state the two words.</p>
+        <p className="text-base">Ask a fun secret question for your Valentine to guess. Provide up to 7 clues to help them. In order to win this gift your valentine&lsquo;s must explicitly state the two words.</p>
 
         <FormField
           control={formData.control}
@@ -448,7 +448,7 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
         <div>
           <h1 className="text-3xl font-bold">Send $LOVE quest 🌹</h1>
           <h2 className="text-2xl font-bold">This is a gift</h2>
-          <p className="text-base">$LOVE are tokens that unlock a given amount of roses and are the first gift the user receives during the game. You will receive a shareable link you can send to a user or embedd or download as a QR so that you can gift $LOVE to your Valentine's.</p>
+          <p className="text-base">$LOVE are tokens that unlock a given amount of roses and are the first gift the user receives during the game. You will receive a shareable link you can send to a user or embedd or download as a QR so that you can gift $LOVE to your Valentine&lsquo;s.</p>
           <div className="px-4 pt-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-xl">💸💕💸</span>

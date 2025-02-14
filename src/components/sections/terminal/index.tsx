@@ -57,7 +57,7 @@ const TerminalWindow = () => {
         </div>
 
         <div className="mt-2 animate-pulse">
-          <span className="text-secondary-lighter">{">"}</span> who's your <span className="text-red-500 animate-pulse">heartgoing to beat for tonight? </span> <span className="text-secondary-lighter animate-pulse">_</span>
+          <span className="text-secondary-lighter">{">"}</span> who&lsquo;s your <span className="text-red-500 animate-pulse">heart going to beat for tonight? </span> <span className="text-secondary-lighter animate-pulse">_</span>
         </div>
         </AnimatedSpan>
 

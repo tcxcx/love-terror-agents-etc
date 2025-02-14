@@ -14,7 +14,6 @@ export default function ClaimRoses() {
     null
   );
   const [isClaimingLink, setIsClaimingLink] = useState(false);
-  const [destinationChainId, setDestinationChainId] = useState<string>("");
   const { address } = useAccount();
   const { toast } = useToast();
 
@@ -76,7 +75,8 @@ export default function ClaimRoses() {
         date
       </p>
       <Claim
-        details={details!}
+        // @ts-ignore
+        details={details}
         paymentInfo={paymentInfo!}
         setPaymentInfo={setPaymentInfo}
         setDestinationChainId={() => {

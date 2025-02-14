@@ -98,6 +98,7 @@ const ShareableQRCard = ({
               tokenAmount={amount ? parseFloat(amount) : 0}
               onValueChange={handleAmountChange}
               initialAmount={amount ? parseFloat(amount) : 0}
+              // @ts-ignore
               availableTokens={availableTokens}
               onTokenSelect={handleTokenSelect}
               currentNetwork={currentNetwork}

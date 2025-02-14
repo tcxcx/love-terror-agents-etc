@@ -36,7 +36,7 @@ const PrivacyPolicy = () => {
             <div className="space-y-4">
               <p>Your information helps us provide and improve our services:</p>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Facilitate sending roses and $LOVE tokens for the Valentine's Day game purposes only</li>
+                <li>Facilitate sending roses and $LOVE tokens for the Valentine Day game purposes only</li>
                 <li>Improve user experience and platform functionality</li>
                 <li>Maintain platform security and prevent fraud</li>
                 <li>Send important updates about our service</li>

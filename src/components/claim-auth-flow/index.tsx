@@ -19,7 +19,7 @@ const ClaimAuthFlow = ({ peanutLink }: ClaimAuthFlowProps) => {
       </div>
       <h1 className="text-3xl font-bold text-accent">Someone Sent You a Valentine Secret Admirer Game!</h1>
       <p className="text-accent/60 max-w-md mx-auto">
-        You've received a special Valentine's Rose Game. To claim your gift, we'll need to set up your account securely.
+        You&apos;ve received a special Valentine&lsquo;s Rose Game. To claim your gift, we&lsquo;ll need to set up your account securely.
       </p>
       <div className="bg-accent/5 p-6 rounded-xl max-w-md mx-auto">
         <h3 className="font-semibold mb-4 flex items-center justify-center gap-2">
@@ -53,7 +53,7 @@ const ClaimAuthFlow = ({ peanutLink }: ClaimAuthFlowProps) => {
       </div>
       <h2 className="text-2xl font-bold text-accent">Step 1: Sign In</h2>
       <p className="text-accent/60 max-w-md mx-auto mb-6">
-        First, let's create your account to keep track of your game state.
+        First, let&lsquo;s create your account to keep track of your game state.
       </p>
       <div className="max-w-sm mx-auto">
         <GoogleSignin />
@@ -68,14 +68,14 @@ const ClaimAuthFlow = ({ peanutLink }: ClaimAuthFlowProps) => {
       </div>
       <h2 className="text-2xl font-bold text-accent">Step 2: Connect Wallet</h2>
       <p className="text-accent/60 max-w-md mx-auto mb-6">
-        Now, connect your wallet to claim your Valentine's gift. You'll need a small amount of ETH on Base for network fees.
+        Now, connect your wallet to claim your Valentine&lsquo;s gift. You&lsquo;ll need a small amount of ETH on Base for network fees.
       </p>
       <div className="max-w-sm mx-auto">
         <DynamicWidget />
       </div>
       <div className="bg-primary/5 p-4 rounded-xl max-w-md mx-auto mt-6">
         <p className="text-sm text-accent/80">
-          New to Web3? Don't worry! Your wallet is like a digital key that lets you receive and manage your Valentine's gifts securely.
+          New to Web3? Don&lsquo;t worry! Your wallet is like a digital key that lets you receive and manage your Valentine&lsquo;s gifts securely.
         </p>
       </div>
     </div>

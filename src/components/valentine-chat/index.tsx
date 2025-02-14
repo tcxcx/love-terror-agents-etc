@@ -20,7 +20,7 @@ interface ValentineChatProps {
     poemText: string;
     dateDetails: string;
     calendlyLink: string;
-    gameId: string;
+    gameId?: string;
   };
 }
 

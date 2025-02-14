@@ -6,13 +6,21 @@ import { LoadingOverview } from '@/components/loading-overview';
 import { useSearchParams } from 'next/navigation';
 
 export default function GamePage() {
+  return (
+    <Suspense fallback={<LoadingOverview />}>
+      <GameContent />
+    </Suspense>
+  );
+}
+
+function GameContent() {
   const searchParams = useSearchParams();
   
   // Get the base URL
   const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
   
   // Get hash if present
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined") return null;
 
   const hash = window.location.hash;
   
@@ -25,9 +33,5 @@ export default function GamePage() {
     return <div>No parameters found</div>;
   }
 
-  return (
-    <Suspense fallback={<LoadingOverview />}>
-      <LovePage peanutLink={loveUrl} />
-    </Suspense>
-  );
+  return <LovePage peanutLink={loveUrl} />;
 }

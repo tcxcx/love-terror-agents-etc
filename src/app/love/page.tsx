@@ -4,8 +4,6 @@ import { Suspense, useEffect, useState } from 'react';
 import { EmptyState } from '@/components/love-page/empty-state';
 import LovePage from '@/components/love-page';
 import { LoveLink } from '@/components/love-page/link-params';
-import { checkRoseClaimed, getRoseByPeanutLink } from '@/utils/supabase/queries';
-import WalletNotConnected from '@/components/wallet-not-connected';
 import ClaimLink from '@/components/peanut/claim/claim-link';
 import { useAccount } from 'wagmi';
 import ClaimAuthFlow from '@/components/claim-auth-flow';
@@ -13,6 +11,14 @@ import supabase from '@/utils/supabase/client';
 import { Session } from '@supabase/supabase-js';
 
 export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PageContent />
+    </Suspense>
+  );
+}
+
+function PageContent() {
   const { peanutLink, isLoading, isValidLink, isClaimed } = LoveLink();
   const { address } = useAccount();
   const [session, setSession] = useState<Session | null>(null);
