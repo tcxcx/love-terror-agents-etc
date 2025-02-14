@@ -80,12 +80,15 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
   const [details, setDetails] = useState<IGetLinkDetailsResponse | null>(null);
 
   const [userId, setUserId] = useState<string>(uuidv4());
-
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.id) {
+        window.location.href = '/';
+        return;
+      }
       setUserLoggedIn(user);
-      setUserId(user?.id!);
+      setUserId(user.id);
     };
     getUser();
   }, []);
@@ -149,7 +152,6 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
 
         const peanutLink = details?.link as string;
 
-
         const { data: peanutLinkRecord, error: peanutLinkError } = await supabase
           .from("peanut_link")
           .update({
@@ -167,23 +169,24 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
           .update({
            claimed_by: userId
           })
-          .eq("link", peanutLink)
+          .eq("peanut_link", peanutLink) // The column name was likely "peanut_link" not "link"
           .select()
           .single();   
 
         console.log(gamesUpdate, "gamesUpdate in claim link");
+        console.log(gamesUpdateError, "gamesUpdateError in claim link");
 
-        // if (peanutLinkError) {
-        //   console.error("Error updating peanut link:", peanutLinkError);
-        //   throw new Error("Failed to update peanut link record");
-        // }
+        if (peanutLinkError) {
+          console.error("Error updating peanut link:", peanutLinkError);
+          throw new Error("Failed to update peanut link record");
+        }
 
-        // console.log(peanutLinkRecord, "peanutLinkRecord in claim link");
+        console.log(peanutLinkRecord, "peanutLinkRecord in claim link");
 
 
-        // if (!peanutLinkRecord) {
-        //   throw new Error("Failed to record peanut link");
-        // }
+        if (!peanutLinkRecord) {
+          throw new Error("Failed to record peanut link");
+        }
 
         setPaymentInfo((prevInfo) =>
           prevInfo
