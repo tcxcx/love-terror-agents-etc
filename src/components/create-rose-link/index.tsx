@@ -97,6 +97,7 @@ export default function RoseLinkForm({
             ascii_game: false,
             guess_game: false,
             poem_game: false,
+            peanut_link: linkResponse.paymentLink
           },
         ])
         .select()
@@ -124,8 +125,7 @@ export default function RoseLinkForm({
           {
             rose_id: submittedRose.id,
             link: linkResponse.paymentLink,
-            claim: false,
-            claim_wallet: userId as string,
+            claimed: false,
             created_at: new Date().toISOString(),
           },
         ])
