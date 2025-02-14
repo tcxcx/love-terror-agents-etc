@@ -1,3 +1,5 @@
+'use client';
+
 import React from "react";
 import { Copy, Link } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
