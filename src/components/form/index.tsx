@@ -13,7 +13,7 @@ import * as z from "zod";
 import supabase from "@/utils/supabase/client";
 import confetti from "canvas-confetti";
 import { TransactionDetails } from "@/types";
-import { BaseSepoliaTokens } from "@/constants/Tokens";
+import { BaseTokens } from "@/constants/Tokens";
 import { useState } from "react";
 import { usePeanut } from "@/hooks/use-peanut";
 import { useNetworkManager } from "@/hooks/use-dynamic-network";
@@ -120,7 +120,7 @@ export function CupidForm() {
     
         setOverlayVisible(true);
         try {
-          const tokenAddress = BaseSepoliaTokens[0].address;
+          const tokenAddress = BaseTokens[0].address;
           setCurrentText("Creating rose link...");
     
           // Generate peanut link first

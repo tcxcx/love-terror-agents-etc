@@ -11,7 +11,7 @@ import { useAccount } from "wagmi";
 import { useNetworkManager } from "@/hooks/use-dynamic-network";
 import { truncateAddress } from "@/utils/truncate-address";
 
-import { BaseSepoliaTokens } from "@/constants/Tokens";
+import { BaseTokens } from "@/constants/Tokens";
 import supabase from "@/utils/supabase/client";
 
 interface RoseLinkFormProps {
@@ -58,7 +58,7 @@ export default function RoseLinkForm({
 
     setOverlayVisible(true);
     try {
-      const tokenAddress = BaseSepoliaTokens[0].address;
+      const tokenAddress = BaseTokens[0].address;
       setCurrentText("Creating rose link...");
 
       const linkResponse = await createPayLink(
@@ -111,7 +111,8 @@ export default function RoseLinkForm({
           {
             rose_id: submittedRose.id,
             link: linkResponse.paymentLink,
-            claimed: false,
+            claim: false,
+            claim_wallet: address as string,
             created_at: new Date().toISOString(),
           },
         ])

@@ -18,7 +18,7 @@ import { useMultiStepForm } from '@/hooks/use-multi-step-form'
 import { JSX } from "react"
 import React, { useState } from 'react';
 import { TokenChip } from '@/components/token-chip';
-import { BaseSepoliaTokens } from '@/constants/Tokens';
+import { BaseTokens } from '@/constants/Tokens';
 //------------------------------ peanut link imports ------------------------------
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { useAccount } from "wagmi";
@@ -475,7 +475,7 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                         className="text-center w-full text-7xl "
                       />
                       <div className="w-full flex justify-center mt-2">
-                        <TokenChip token={BaseSepoliaTokens[0]} />
+                        <TokenChip token={BaseTokens[0]} />
                       </div>
                     </div>
                   </FormControl>
