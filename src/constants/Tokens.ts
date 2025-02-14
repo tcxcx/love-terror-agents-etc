@@ -44,6 +44,15 @@ export const BaseSepoliaTokens: Token[] = [
 
 export const BaseTokens: Token[] = [
   {
+    address: "0xc6a7c1beb28910c4adb46ad8a86ce22ac8ae2762" as Hex,
+    chainId: 84532,
+    decimals: 18,
+    name: "LOVE",
+    payable: true,
+    symbol: "LOVE",
+    image: "/images/pixel-roses.png",
+  },
+  {
     address: NATIVE_TOKEN_ADDRESS,
     chainId: 84532,
     decimals: 18,
