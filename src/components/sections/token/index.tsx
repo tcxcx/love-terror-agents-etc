@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const TokenSection = () => {
   const { toast } = useToast();
-  const contractAddress = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
+  const contractAddress = "0xc6a7C1bEb28910c4adb46Ad8A86Ce22ac8AE2762";
 
 
   const handleCopyContract = () => {
@@ -38,15 +38,18 @@ const TokenSection = () => {
           </p>
           
           {/* Floating Flaunch Logo Animation */}
-          <div className="absolute -right-4 -top-4 w-24 h-24 animate-bounce">
+          <div 
+            className="absolute -right-4 -top-4 w-24 h-24 animate-bounce cursor-pointer"
+            onClick={() => window.open('https://flaunch.gg/base/coin/0xc6a7C1bEb28910c4adb46Ad8A86Ce22ac8AE2762', '_blank')}
+          >
             <video 
               autoPlay 
               loop 
               muted 
               playsInline
-              className="w-full h-full rounded-full shadow-lg"
+              className="w-full h-full rounded-full shadow-lg object-cover"
             >
-              <source src="/flaunch-coin.mp4" type="video/mp4" />
+              <source src="/video/flaunch-logo.mp4" type="video/mp4" />
             </video>
           </div>
 
@@ -60,7 +63,7 @@ const TokenSection = () => {
             </button>
           </div>
           <a
-            href="https://app.uniswap.org/"
+            href="hhttps://flaunch.gg/base/coin/0xc6a7C1bEb28910c4adb46Ad8A86Ce22ac8AE2762"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-3 bg-secondary text-white rounded-lg font-medium hover:bg-secondary-darker transition-colors duration-300 shadow-lg"
