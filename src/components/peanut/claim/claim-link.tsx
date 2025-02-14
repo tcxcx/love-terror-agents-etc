@@ -147,18 +147,20 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
           address
         );
 
-        // const { data: peanutLinkRecord, error: peanutLinkError } = await supabase
-        //   .from("peanut_link")
-        //   .update({
-        //     claimed: true as boolean,
-        //     claimed_wallet: userId
-        //   })
-        //   .eq("link", details?.link as string)
-        //   .select()
-        //   .single();  
+        const peanutLink = details?.link as string;
+
+
+        const { data: peanutLinkRecord, error: peanutLinkError } = await supabase
+          .from("peanut_link")
+          .update({
+            claimed: true as boolean,
+            claimed_wallet: userId
+          })
+          .eq("link", peanutLink)
+          .select()
+          .single();  
 
         console.log(details?.link, "peanutLink in claim link");
-        const peanutLink = details?.link as string;
 
           const { data: gamesUpdate, error: gamesUpdateError } = await supabase
           .from("games")
@@ -168,6 +170,8 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
           .eq("link", peanutLink)
           .select()
           .single();   
+
+        console.log(gamesUpdate, "gamesUpdate in claim link");
 
         // if (peanutLinkError) {
         //   console.error("Error updating peanut link:", peanutLinkError);
