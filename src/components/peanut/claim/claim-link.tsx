@@ -149,6 +149,10 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
           () => setCurrentText("Claiming your roses 🌹🌹🌹"),
           address
         );
+        
+        if (!details?.link) {
+          throw new Error("Failed to record peanut link");
+        }
 
         const peanutLink = details?.link as string;
 
@@ -169,7 +173,7 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
           .update({
            claimed_by: userId
           })
-          .eq("peanut_link", peanutLink) // The column name was likely "peanut_link" not "link"
+          .eq("peanut_link", peanutLink)
           .select()
           .single();   
 
