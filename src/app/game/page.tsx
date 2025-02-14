@@ -17,7 +17,7 @@ function GameContent() {
   const searchParams = useSearchParams();
   
   // Get the base URL
-  const baseUrl = process.env.NEXT_PUBLIC_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://cringy-cupid.com';
   
   // Get hash if present
   if (typeof window === "undefined") return null;

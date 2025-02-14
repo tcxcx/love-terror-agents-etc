@@ -16,7 +16,7 @@ export function GoogleSignin() {
   const baseUrl =
     process.env.NEXT_PUBLIC_TESTNET_URL ||
     window.location.origin ||
-    "http://localhost:3000";
+    "https://cringy-cupid.com";
 
   const handleSignIn = async () => {
     try {
