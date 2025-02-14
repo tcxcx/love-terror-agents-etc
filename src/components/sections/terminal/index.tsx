@@ -65,7 +65,7 @@ const TerminalWindow = () => {
           <Button
             onClick={() => navigate.push('/roses')}
             variant="secondary"
-            disabled={true}
+            disabled={false}
             className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300 w-full sm:w-auto"
           >
             🌹 Send Roses 🌹
@@ -73,7 +73,7 @@ const TerminalWindow = () => {
           <Button
             onClick={() => navigate.push('/love')}
             variant="secondary"
-            disabled={true}
+            disabled={false}
             className="px-6 py-2 font-mono animate-pulse hover:scale-105 transition-all duration-300 w-full sm:w-auto"
           >
             💝 Claim $LOVE 💝
