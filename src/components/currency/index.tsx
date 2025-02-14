@@ -6,7 +6,7 @@ import { InputMoney } from "../ui/input";
 import { CurrencyDisplayerProps, Token } from "@/types";
 import { TokenChip } from "../token-chip";
 import { sizeStyles } from "@/lib/utils";
-import { BaseSepoliaTokens } from "@/constants/Tokens";
+import { BaseTokens } from "@/constants/Tokens";
 
 const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   tokenAmount,
@@ -17,7 +17,7 @@ const CurrencyDisplayer: React.FC<CurrencyDisplayerProps> = ({
   const [inputValue, setInputValue] = useState<string>(
     initialAmount.toFixed(3)
   );
-  const token = BaseSepoliaTokens[0];
+  const token = BaseTokens[0];
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
