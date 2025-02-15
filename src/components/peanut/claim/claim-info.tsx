@@ -70,7 +70,7 @@ export default function ClaimForm() {
 
   console.log(initialClaimId, "initialClaimId");
 
-  const baseUrl = process.env.NEXT_PUBLIC_TESTNET_URL || 'https://cringy-cupid.com.com';
+  const baseUrl = process.env.NEXT_PUBLIC_TESTNET_URL || 'https://cringy-cupid.com';
 
   const fullUrl = `${baseUrl}/love?${initialClaimId}`;
 

@@ -10,7 +10,7 @@ if (!DYNAMIC_ENVIRONMENT_ID || !PEANUTAPIKEY) {
 }
 
 export const IS_MAINNET =
-  process.env.NEXT_PUBLIC_IS_MAINNET === "https://cringy-cupid.com.com" ? false : true;
+  process.env.NEXT_PUBLIC_IS_MAINNET === "https://cringy-cupid.com" ? false : true;
 
 
 export const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
