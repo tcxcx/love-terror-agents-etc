@@ -1,27 +1,29 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription
-} from "@/components/ui/form"
-import { Textarea } from "@/components/ui/textarea"
-import { Separator } from "@/components/ui/separator"
-import { Input, InputMoney } from '@/components/ui/input'
-import { Progress } from '@/components/ui/progress'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useMultiStepForm } from '@/hooks/use-multi-step-form'
-import { JSX } from "react"
-import React, { useState } from 'react';
-import { TokenChip } from '@/components/token-chip';
-import { BaseTokens } from '@/constants/Tokens';
+  FormDescription,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
+import { Input, InputMoney } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { motion, AnimatePresence } from "framer-motion";
+import { useMultiStepForm } from "@/hooks/use-multi-step-form";
+import { JSX } from "react";
+import React, { useState } from "react";
+import { TokenChip } from "@/components/token-chip";
+import { AvalancheTokens, BaseTokens } from "@/constants/Tokens";
 //------------------------------ peanut link imports ------------------------------
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { useAccount } from "wagmi";
+import { Avalanche, Base } from "@/constants/Chains";
+import { useNetworkManager } from "@/hooks/use-dynamic-network";
 
 interface MultiStepViewerProps {
   formData: any;
@@ -36,26 +38,35 @@ interface MultiStepViewerProps {
  * Used to render a multi-step form in preview mode
  */
 
-export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount, onSubmit }: MultiStepViewerProps) {
-    
+export function MultiStepViewer({
+  formData,
+  loading,
+  tokenAmount,
+  setTokenAmount,
+  onSubmit,
+}: MultiStepViewerProps) {
+  const { address } = useAccount();
+  const chainId = useNetworkManager();
 
-    const { address } = useAccount();
-    
-    
-    const handleFormSubmit = async () => {
+  const handleFormSubmit = async () => {
     await onSubmit(formData.getValues(), tokenAmount);
-    };
-
+  };
+  console.log(chainId, "chainId in MultiStepViewer");
 
   const stepFormElements: {
-    [key: number]: JSX.Element
+    [key: number]: JSX.Element;
   } = {
     1: (
       <div>
-        <h1 className="text-3xl font-bold">Create new Valentine&lsquo;s game</h1>
+        <h1 className="text-3xl font-bold">
+          Create new Valentine&lsquo;s game
+        </h1>
         <h2 className="text-2xl font-bold">Create AI agent Context 🤖</h2>
         <p className="text-base">
-          Welcome! Here you must create an AI agent that will interact with your Valentine&lsquo;s through a bunch of games. <br /> Give as much context as possible to make it more personal and create a closer connection.
+          Welcome! Here you must create an AI agent that will interact with your
+          Valentine&lsquo;s through a bunch of games. <br /> Give as much
+          context as possible to make it more personal and create a closer
+          connection.
         </p>
         <FormField
           control={formData.control}
@@ -71,7 +82,8 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                 />
               </FormControl>
               <FormDescription>
-                Give context of you and your valentine. Give as much detail about your connections as possible.
+                Give context of you and your valentine. Give as much detail
+                about your connections as possible.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -100,7 +112,9 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                     }}
                   />
                 </FormControl>
-                <FormDescription>This is the name of your crush</FormDescription>
+                <FormDescription>
+                  This is the name of your crush
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -122,7 +136,9 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                     }}
                   />
                 </FormControl>
-                <FormDescription>Your name to be revealed as part of the game.</FormDescription>
+                <FormDescription>
+                  Your name to be revealed as part of the game.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -132,8 +148,14 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
     ),
     2: (
       <div>
-        <h2 className="text-2xl font-bold">Game 2: Secret Passphrase Question 🤓</h2>
-        <p className="text-base">Ask a fun secret question for your Valentine to guess. Provide up to 7 clues to help them. In order to win this gift your valentine&lsquo;s must explicitly state the two words.</p>
+        <h2 className="text-2xl font-bold">
+          Game 2: Secret Passphrase Question 🤓
+        </h2>
+        <p className="text-base">
+          Ask a fun secret question for your Valentine to guess. Provide up to 7
+          clues to help them. In order to win this gift your valentine&lsquo;s
+          must explicitly state the two words.
+        </p>
 
         <FormField
           control={formData.control}
@@ -148,7 +170,10 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                   className="resize-none"
                 />
               </FormControl>
-              <FormDescription>Ask a fun secret question for your Valentine to guess. Provide up to 7 clues to help them.</FormDescription>
+              <FormDescription>
+                Ask a fun secret question for your Valentine to guess. Provide
+                up to 7 clues to help them.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -167,7 +192,9 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                   type="password"
                 />
               </FormControl>
-              <FormDescription>Here goes the answer to the question. Two words max.</FormDescription>
+              <FormDescription>
+                Here goes the answer to the question. Two words max.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -176,8 +203,13 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
         <div className="py-3 w-full">
           <Separator />
         </div>
-        <h3 className="text-xl font-bold">Clues to help solve the passphrase 🧙‍♂️</h3>
-        <p className="text-base">You can add up to 7 clues for helping your valentine through this game.</p>
+        <h3 className="text-xl font-bold">
+          Clues to help solve the passphrase 🧙‍♂️
+        </h3>
+        <p className="text-base">
+          You can add up to 7 clues for helping your valentine through this
+          game.
+        </p>
 
         <div className="flex items-center justify-between flex-wrap sm:flex-nowrap w-full gap-2">
           <FormField
@@ -197,7 +229,9 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                     }}
                   />
                 </FormControl>
-                <FormDescription>Please add the first clue here.</FormDescription>
+                <FormDescription>
+                  Please add the first clue here.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -219,7 +253,9 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                     }}
                   />
                 </FormControl>
-                <FormDescription>Please add the second clue here.</FormDescription>
+                <FormDescription>
+                  Please add the second clue here.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -346,7 +382,12 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
     3: (
       <div>
         <h2 className="text-2xl font-bold">Game 3: A Poem ✨📜</h2>
-        <p className="text-base">Write a poem that will be revealed to your Valentine. This poem will be revealed as a lovely surprise. Write a poem here and express your feelings. Haiku, Jane Austen, Shakespeare or Bukowski style. Or create your own cheesy version of a poem.</p>
+        <p className="text-base">
+          Write a poem that will be revealed to your Valentine. This poem will
+          be revealed as a lovely surprise. Write a poem here and express your
+          feelings. Haiku, Jane Austen, Shakespeare or Bukowski style. Or create
+          your own cheesy version of a poem.
+        </p>
 
         <FormField
           control={formData.control}
@@ -365,7 +406,10 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                   className="resize-none min-h-[300px]"
                 />
               </FormControl>
-              <FormDescription>Express your feelings. This is required for Cringy Cupid to work.</FormDescription>
+              <FormDescription>
+                Express your feelings. This is required for Cringy Cupid to
+                work.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -375,7 +419,10 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
     4: (
       <div>
         <h2 className="text-2xl font-bold">Risky Game: Get a date 💖</h2>
-        <h3 className="text-xl font-bold">If your valentine solves all games, she will be able to reveal a date site and book the date and time via Calendly.</h3>
+        <h3 className="text-xl font-bold">
+          If your valentine solves all games, she will be able to reveal a date
+          site and book the date and time via Calendly.
+        </h3>
         <FormField
           control={formData.control}
           name="date_site"
@@ -415,7 +462,9 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                   }}
                 />
               </FormControl>
-              <FormDescription>Here you can provide additional context about the date.</FormDescription>
+              <FormDescription>
+                Here you can provide additional context about the date.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -437,7 +486,10 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
                   }}
                 />
               </FormControl>
-              <FormDescription>We recommend adding your own calendly link tied to your Google Calendar to find the best time.</FormDescription>
+              <FormDescription>
+                We recommend adding your own calendly link tied to your Google
+                Calendar to find the best time.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -445,48 +497,68 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
       </div>
     ),
     5: (
-        <div>
-          <h1 className="text-3xl font-bold">Send $LOVE quest 🌹</h1>
-          <h2 className="text-2xl font-bold">This is a gift</h2>
-          <p className="text-base">$LOVE are tokens that unlock a given amount of roses and are the first gift the user receives during the game. You will receive a shareable link you can send to a user or embedd or download as a QR so that you can gift $LOVE to your Valentine&lsquo;s.</p>
-          <div className="px-4 pt-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-xl">💸💕💸</span>
-            </div>
-            <FormField
-              control={formData.control}
-              name="amount_roses"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Amount of Roses ($LOVE)</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <InputMoney
-                        placeholder="0.0000"
-                        value={field.value?.toString() || ""}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          const value = e.target.value;
-                          if (value === "" || /^\d*\.?\d*$/.test(value)) {
-                            const numericValue = value;
-                            field.onChange(numericValue);
-                            setTokenAmount(Number(numericValue)); // Update parent state for peanut
-                          }
-                        }}
-                        className="text-center w-full text-7xl "
-                      />
-                      <div className="w-full flex justify-center mt-2">
-                        <TokenChip token={BaseTokens[0]} />
-                      </div>
-                    </div>
-                  </FormControl>
-                  <FormDescription>Enter the amount of $LOVE tokens</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <div>
+        <h1 className="text-3xl font-bold">
+          Send {chainId === Avalanche.chainId ? "USDC" : "$LOVE"} quest 🌹
+        </h1>
+        <h2 className="text-2xl font-bold">This is a gift</h2>
+        <p className="text-base">
+          {chainId === Avalanche.chainId ? "USDC" : "$LOVE"} are tokens that
+          unlock a given amount of roses and are the first gift the user
+          receives during the game. You will receive a shareable link you can
+          send to a user or embedd or download as a QR so that you can gift{" "}
+          {chainId === Avalanche.chainId ? "USDC" : "$LOVE"} to your
+          Valentine&lsquo;s.
+        </p>
+        <div className="px-4 pt-2">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-xl">💸💕💸</span>
           </div>
+          <FormField
+            control={formData.control}
+            name="amount_roses"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>
+                  Amount of Roses (
+                  {chainId === Avalanche.chainId ? "USDC" : "$LOVE"})
+                </FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <InputMoney
+                      placeholder="0.0000"
+                      value={field.value?.toString() || ""}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const value = e.target.value;
+                        if (value === "" || /^\d*\.?\d*$/.test(value)) {
+                          const numericValue = value;
+                          field.onChange(numericValue);
+                          setTokenAmount(Number(numericValue)); // Update parent state for peanut
+                        }
+                      }}
+                      className="text-center w-full text-7xl "
+                    />
+                    <div className="w-full flex justify-center mt-2">
+                      {chainId === Avalanche.chainId && (
+                        <TokenChip token={AvalancheTokens[0]} />
+                      )}
+                      {chainId === Base.chainId && (
+                        <TokenChip token={BaseTokens[0]} />
+                      )}
+                    </div>
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  Enter the amount of{" "}
+                  {chainId === Avalanche.chainId ? "USDC" : "$LOVE"} tokens
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-      )
+      </div>
+    ),
   };
 
   const steps = Object.keys(stepFormElements).map(Number);
@@ -496,7 +568,9 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
   });
 
   const current = stepFormElements[currentStep];
-  const { formState: { isSubmitting } } = formData;
+  const {
+    formState: { isSubmitting },
+  } = formData;
 
   return (
     <div className="flex flex-col gap-2 pt-3">
@@ -512,7 +586,7 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
           initial={{ opacity: 0, x: 15 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -15 }}
-          transition={{ duration: 0.4, type: 'spring' }}
+          transition={{ duration: 0.4, type: "spring" }}
           className="flex flex-col gap-2"
         >
           {current}
@@ -531,9 +605,12 @@ export function MultiStepViewer({ formData, loading, tokenAmount, setTokenAmount
             className="mt-5 flex items-center gap-2 self-end w-full"
             disabled={loading}
             onClick={handleFormSubmit}
-
           >
-            <span>Create Quest Link 🌹</span>
+            <span>
+              {chainId === Avalanche.chainId
+                ? "Create Quest Link 🌹"
+                : "Create Quest Link 🌹"}
+            </span>
           </Button>
         ) : (
           <Button

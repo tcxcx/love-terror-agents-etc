@@ -1,5 +1,4 @@
 import { BaseSepoliaTokens, BaseTokens } from "@/constants/Tokens";
-import { Base, BaseSepolia } from "@/constants/Chains";
 import { IS_MAINNET as isMainnet } from "@/constants/Env";
 
 export const useGetTokensOrChain = (
@@ -11,11 +10,5 @@ export const useGetTokensOrChain = (
   }
   if (type === "tokens" && isMainnet) {
     if (chainId === 8453) return BaseTokens;
-  }
-  if (type === "chain" && !isMainnet) {
-    if (chainId === 84532) return BaseSepolia;
-  }
-  if (type === "chain" && isMainnet) {
-    if (chainId === 84532) return BaseSepolia;
   }
 };

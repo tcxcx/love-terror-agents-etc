@@ -9,7 +9,6 @@ import peanut, {
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useTransactionStore } from "@/store";
 import { useToast } from "@/hooks/use-toast";
-import { useChainId } from "wagmi";
 import { useEthersSigner } from "@/lib/wagmi";
 import { NATIVE_TOKEN_ADDRESS } from "@/constants/Tokens";
 import { Token } from "@/types";
@@ -18,13 +17,15 @@ import { saveCreatedLinkToLocalStorage } from "@/utils/local-storage";
 import { playAudio } from "@/utils/audio/server";
 
 import { parseUnits } from "viem";
+import { Avalanche } from "@/constants/Chains";
+import { useNetworkManager } from "./use-dynamic-network";
 
 export const usePeanut = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { primaryWallet } = useDynamicContext();
   const { setLoading, setError } = useTransactionStore();
   const { toast } = useToast();
-  const chainId = useChainId();
+  const chainId = useNetworkManager();
   const signer = useEthersSigner({ chainId });
 
   const generatePassword = async () => {
@@ -57,7 +58,7 @@ export const usePeanut = () => {
         const baseUrl = `${window.location.origin}/love`;
 
         return {
-          chainId: chainId.toString(),
+          chainId: chainId?.toString() || "",
           tokenAmount: parseFloat(
             Number(tokenValue).toFixed(tokenDetails.tokenDecimals)
           ),
@@ -99,7 +100,10 @@ export const usePeanut = () => {
         typeof tokenAddress === "string" ? tokenAddress : tokenAddress.address;
 
       const linkDetails = generateLinkDetails({
-        tokenValue: parseUnits(amount, 12).toString(),
+        tokenValue:
+          chainId === Avalanche.chainId
+            ? amount
+            : parseUnits(amount, 12).toString(),
         tokenAddress: actualTokenAddress,
       });
 
