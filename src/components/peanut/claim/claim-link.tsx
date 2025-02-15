@@ -398,6 +398,12 @@ export default function ClaimLink({ peanutLink, text }: ClaimLinkProps) {
                             </div>
                           </>
                         )}
+                        {paymentInfo?.claimed && (
+                          <div className="mt-6 flex justify-center">
+                            <GameButton peanutLink={peanutLink} />
+                          </div>
+                        )}
+                        
                       </div>
                     </div>
                   </div>

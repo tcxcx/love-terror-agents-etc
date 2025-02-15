@@ -20,6 +20,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
   useEffect(() => {
     async function initializeGame() {
       try {
+        console.log('peanutLink', peanutLink);
         const rose = await getRoseByPeanutLink(peanutLink);
 
         console.log('rose id', rose?.game_id);

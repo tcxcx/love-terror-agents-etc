@@ -34,7 +34,7 @@ export function LoveLink() {
           return;
         }
 
-        const baseUrl = process.env.NEXT_PUBLIC_URL || "https://cringy-cupid.com";
+        const baseUrl = process.env.NEXT_PUBLIC_URL || "https://cringy-cupid.com.com";
         const fullUrl = `${baseUrl}/love?claimId=${claimId}`;
 
         await fetchLinkDetails(

@@ -167,10 +167,10 @@ export function CupidForm() {
         .select()
         .single();
       console.log(submittedRose, "submittedRose in HandleSubmit");
-      console.log(
-        roseError?.message || roseError,
-        "roseError in HandleSubmit "
-      );
+      if (roseError) {
+        console.error("Error creating rose:", roseError?.message || roseError);
+        throw new Error(`Failed to create rose: ${roseError?.message || "Unknown error"}`);
+      }
       const { data: gameData, error: gameError } = await supabase
         .from("games")
         .insert([
