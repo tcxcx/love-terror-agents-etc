@@ -22,12 +22,10 @@ import { triggerConfetti } from "@/utils";
 import supabase from "@/utils/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 
-
 export function getChainInfoByChainId(chainId: number | string) {
   const id = Number(chainId);
   const chainName = chainIdMapping[id] || `Chain ${id}`;
   const chainIcon = chainIcons[id] || "";
-
 
   const isMainnet = Object.values(Chains).find(
     (chain) => chain.chainId === id
@@ -48,11 +46,8 @@ interface ClaimLinkProps extends BaseClaimProps {
   text?: string;
 }
 
-export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
-  const {
-    claimPayLink,
-    isLoading: isPeanutLoading,
-  } = usePeanut();
+export default function ClaimLink({ peanutLink, text }: ClaimLinkProps) {
+  const { claimPayLink, isLoading: isPeanutLoading } = usePeanut();
 
   const { address } = useAccount();
 
@@ -65,7 +60,6 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
     null
   );
   const [userLoggedIn, setUserLoggedIn] = useState<any>(null);
-
 
   const [inProgress, setInProgress] = useState(false);
   const [currentText, setCurrentText] = useState(
@@ -82,9 +76,11 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
   const [userId, setUserId] = useState<string>(uuidv4());
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user?.id) {
-        window.location.href = '/';
+        window.location.href = "/";
         return;
       }
       setUserLoggedIn(user);
@@ -92,7 +88,6 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
     };
     getUser();
   }, []);
-
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputLink(e.target.value);
@@ -149,33 +144,34 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
           () => setCurrentText("Claiming your roses 🌹🌹🌹"),
           address
         );
-        
+
         if (!details?.link) {
           throw new Error("Failed to record peanut link");
         }
 
         const peanutLink = details?.link as string;
 
-        const { data: peanutLinkRecord, error: peanutLinkError } = await supabase
-          .from("peanut_link")
-          .update({
-            claimed: true as boolean,
-            claimed_wallet: userId
-          })
-          .eq("link", peanutLink)
-          .select()
-          .single();  
+        const { data: peanutLinkRecord, error: peanutLinkError } =
+          await supabase
+            .from("peanut_link")
+            .update({
+              claimed: true as boolean,
+              claimed_wallet: userId,
+            })
+            .eq("link", peanutLink)
+            .select()
+            .single();
 
         console.log(details?.link, "peanutLink in claim link");
 
-          const { data: gamesUpdate, error: gamesUpdateError } = await supabase
+        const { data: gamesUpdate, error: gamesUpdateError } = await supabase
           .from("games")
           .update({
-           claimed_by: userId
+            claimed_by: userId,
           })
           .eq("peanut_link", peanutLink)
           .select()
-          .single();   
+          .single();
 
         console.log(gamesUpdate, "gamesUpdate in claim link");
         console.log(gamesUpdateError, "gamesUpdateError in claim link");
@@ -186,7 +182,6 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
         }
 
         console.log(peanutLinkRecord, "peanutLinkRecord in claim link");
-
 
         if (!peanutLinkRecord) {
           throw new Error("Failed to record peanut link");
@@ -199,7 +194,6 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
         );
 
         triggerConfetti("😍");
-
       } catch (error) {
         console.error("Error claiming payment link:", error);
         setInProgress(false);
@@ -229,12 +223,9 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
               </>
             )}
           </div>
-
         </div>
       </div>
-        {paymentInfo?.claimed! && (
-            <GameButton peanutLink={details?.link!} />
-          )}
+      {paymentInfo?.claimed! && <GameButton peanutLink={details?.link!} />}
     </section>
   );
 
@@ -256,7 +247,7 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
             className="mt-1 rounded border px-3 py-2 flex-grow"
           />
           <Button onClick={handlePasteClick} className="ml-1">
-          <ClipboardPasteIcon className="size-6" />
+            <ClipboardPasteIcon className="size-6" />
           </Button>
         </div>
       </div>
@@ -273,9 +264,7 @@ export default function ClaimLink({peanutLink, text}: ClaimLinkProps) {
   return (
     <section className="mx-auto h-full flex flex-col items-center">
       <div className="flex flex-col items-center justify-center py-4">
-        <h1 className="text-3xl font-bold text-accent">
-          {text}
-        </h1>
+        <h1 className="text-3xl font-bold text-accent">{text}</h1>
         <h2 className="text-xl font-bold text-accent">
           You can begin the game and claim roses after claiming.
         </h2>
