@@ -154,10 +154,14 @@ export function CupidForm() {
           // if (!rose) {
           //   throw new Error("Failed to create rose submission");
           // }
+
           console.log(formData, "formData in HandleSubmit");
           console.log(formData.amount_roses.toString(), "tokenAmount in HandleSubmit");
           console.log(address, "address in HandleSubmit");
           console.log(linkResponse.paymentLink[0], "linkResponse.paymentLink[0] in HandleSubmit");
+
+          const peanutLink = linkResponse.paymentLink[0] as string;
+
           const { data: submittedRose, error: roseError } = await supabase
             .from("roses")
             .insert([
@@ -165,14 +169,14 @@ export function CupidForm() {
                 ...formData,
                 amount_roses: formData.amount_roses.toString(),
                 wallet_address_created_by: address,
-                peanut_link: linkResponse.paymentLink[0],
+                peanut_link: peanutLink,
                 claimed: false,
               },
             ])
             .select()
             .single();
           console.log(submittedRose, "submittedRose in HandleSubmit");
-          console.log(roseError, "roseError in HandleSubmit");
+          console.log(roseError?.message || roseError, "roseError in HandleSubmit ");
           const { data: gameData, error: gameError } = await supabase
             .from("games")
             .insert([
@@ -181,12 +185,13 @@ export function CupidForm() {
                 ascii_game: false,
                 guess_game: false,
                 poem_game: false,
-                peanut_link: linkResponse.paymentLink[0],
+                peanut_link: peanutLink,
               },
             ])
             .select()
             .single();
           console.log(gameData, "gameData in HandleSubmit");
+          console.log(gameError?.message || gameError, "gameError in HandleSubmit");
           console.log(gameError, "gameError in HandleSubmit");
     
           const { data, error } = await supabase
@@ -194,7 +199,7 @@ export function CupidForm() {
             .insert([
               {
                 rose_id: submittedRose?.id,
-                link: linkResponse.paymentLink[0],
+                link: peanutLink,
                 claimed: false,
                 wallet_created: address as string,
                 created_at: new Date().toISOString(),
@@ -210,12 +215,6 @@ export function CupidForm() {
             .update({ peanut_link: linkResponse.paymentLink[0] })
             .eq("id", submittedRose?.id);
     
-          // const peanutLinkRecord = await createPeanutLink(
-          //   rose.id,
-          //   linkResponse.paymentLink[0],
-          //   address as string,
-          //   false
-          // );
     
           triggerConfetti("😍");
         } catch (error: any) {

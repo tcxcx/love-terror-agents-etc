@@ -21,12 +21,8 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
     async function initializeGame() {
       try {
         const rose = await getRoseByPeanutLink(peanutLink);
-        if (!rose?.game_id) {
-          console.error("No rose found for this peanut link");
-          return;
-        }
 
-        console.log('rose id', rose.game_id);
+        console.log('rose id', rose?.game_id);
 
         let currentGameState = await getGameState(rose?.peanut_link!);
 
@@ -34,7 +30,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
           const { data: newGameState, error: gameError } = await supabase
             .from("games")
             .select("*")
-            .eq("game_id", rose.game_id)
+            .eq("peanut_link", rose?.peanut_link)
             .single();
 
           console.log('newGameState', newGameState);
@@ -66,7 +62,7 @@ export default function LovePage({ peanutLink }: { peanutLink: string }) {
         };
 
         // Set both local and Zustand state
-        setGameState(completeGameState);
+        setGameState(completeGameState as GameState);
         setZustandGameState(completeGameState as any);
 
       } catch (error) {

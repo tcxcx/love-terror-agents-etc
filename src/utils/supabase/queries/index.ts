@@ -58,8 +58,7 @@ export async function getRoseByPeanutLink(
     .from("roses")
     .select(
       `
-      *,
-      game_id
+      *
     `
     )
     .eq("peanut_link", peanutLink)
